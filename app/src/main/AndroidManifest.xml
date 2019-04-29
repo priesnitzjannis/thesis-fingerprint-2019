@@ -3,6 +3,14 @@
           xmlns:tools="http://schemas.android.com/tools"
           package="de.dali.thesisfingerprint2019">
 
+    <!-- Camera Permission -->
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-feature android:name="android.hardware.camera2.full"/>
+
+    <!-- Storage Permission -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+
     <application
             android:name=".AppController"
             android:allowBackup="false"

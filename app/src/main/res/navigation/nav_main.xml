@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:android="http://schemas.android.com/apk/res/android"
-           xmlns:app="http://schemas.android.com/apk/res-auto"
-           android:id="@+id/nav_main" app:startDestination="@id/fingerScanningFragment">
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+           xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
+           android:id="@+id/nav_main"
+           app:startDestination="@id/fingerScanningFragment">
 
     <fragment android:id="@+id/fingerScanningFragment"
               android:name="de.dali.thesisfingerprint2019.ui.main.fragment.FingerScanningFragment"
-              android:label="FingerScanningFragment"/>
+              android:label="FingerScanningFragment"
+              tools:layout="@layout/fragment_finger_scanning"/>
 
-</resources>
+</navigation>
