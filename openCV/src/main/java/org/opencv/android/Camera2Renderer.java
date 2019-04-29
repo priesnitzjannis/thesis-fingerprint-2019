@@ -58,13 +58,10 @@ public class Camera2Renderer extends CameraGLRendererBase {
             Log.e(LOGTAG, "Camera isn't initialized!");
             return false;
         }
-        CameraManager manager = (CameraManager) mView.getContext()
-                .getSystemService(Context.CAMERA_SERVICE);
+        CameraManager manager = (CameraManager) mView.getContext().getSystemService(Context.CAMERA_SERVICE);
         try {
-            CameraCharacteristics characteristics = manager
-                    .getCameraCharacteristics(mCameraID);
-            StreamConfigurationMap map = characteristics
-                    .get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+            CameraCharacteristics characteristics = manager.getCameraCharacteristics(mCameraID);
+            StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
             int bestWidth = 0, bestHeight = 0;
             float aspect = (float)width / height;
             for (Size psize : map.getOutputSizes(SurfaceTexture.class)) {
