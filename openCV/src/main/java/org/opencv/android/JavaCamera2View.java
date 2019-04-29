@@ -53,12 +53,31 @@ public class JavaCamera2View extends CameraBridgeViewBase {
     private HandlerThread mBackgroundThread;
     private Handler mBackgroundHandler;
 
+    private boolean isTorchOn = false;
+
     public JavaCamera2View(Context context, int cameraId) {
         super(context, cameraId);
     }
 
     public JavaCamera2View(Context context, AttributeSet attrs) {
         super(context, attrs);
+    }
+
+    public void toggleFlash(){
+        try {
+            if (!isTorchOn) {
+                mPreviewRequestBuilder.set(CaptureRequest.FLASH_MODE, CaptureRequest.FLASH_MODE_TORCH);
+                isTorchOn = true;
+            } else {
+                mPreviewRequestBuilder.set(CaptureRequest.FLASH_MODE, CaptureRequest.FLASH_MODE_OFF);
+                isTorchOn = false;
+            }
+
+            mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON);
+            mCaptureSession.setRepeatingRequest(mPreviewRequestBuilder.build(), null, null);
+        } catch (CameraAccessException e) {
+            e.printStackTrace();
+        }
     }
 
     private void startBackgroundThread() {

@@ -24,6 +24,7 @@ import de.dali.thesisfingerprint2019.R
 import de.dali.thesisfingerprint2019.databinding.FragmentFingerScanningBinding
 import de.dali.thesisfingerprint2019.ui.base.BaseFragment
 import de.dali.thesisfingerprint2019.ui.main.viewmodel.FingerScanningViewModel
+import kotlinx.android.synthetic.main.fragment_finger_scanning.*
 import kotlinx.android.synthetic.main.fragment_finger_scanning.view.*
 import org.opencv.android.BaseLoaderCallback
 import org.opencv.android.CameraBridgeViewBase
@@ -86,6 +87,12 @@ class FingerScanningFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.root.javaCamera2View.visibility = VISIBLE
         binding.root.javaCamera2View.setCvCameraViewListener(listener)
+
+        binding.root.buttonFlash.setOnClickListener { javaCamera2View.toggleFlash() }
+    }
+
+    override fun onResume() {
+        super.onResume()
         requestMultiplePermissions()
     }
 
