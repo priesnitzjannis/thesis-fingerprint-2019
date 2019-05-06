@@ -5,7 +5,6 @@ import dagger.Provides
 import de.dali.thesisfingerprint2019.processing.ProcessingPipeline
 import de.dali.thesisfingerprint2019.processing.stein.*
 import de.dali.thesisfingerprint2019.ui.main.handler.UIHandler
-import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
