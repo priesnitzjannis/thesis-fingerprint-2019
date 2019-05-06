@@ -1,3 +1,18 @@
 <resources>
     <string name="app_name">Thesis Fingerprint 2019</string>
+
+    <string name="dialog_title_requierments">Required Permissions</string>
+    <string name="dialog_title_permission">Camera &amp; storage Permission</string>
+    <string name="dialog_title_opencv">OpenCV</string>
+
+    <string name="dialog_message_requierments">This app require permission to use awesome feature. Grant them in app
+        settings.
+    </string>
+    <string name="dialog_message_permission">All permissions have to be granted, to start the app.</string>
+    <string name="dialog_message_opencv">Initialization of OpenCV failed.</string>
+
+    <string name="dialog_button_requierments">Settings</string>
+    <string name="dialog_button_permission">Retry</string>
+    <string name="dialog_button_quit">Quit</string>
+
 </resources>

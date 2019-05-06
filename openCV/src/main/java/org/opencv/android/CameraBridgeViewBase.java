@@ -2,6 +2,7 @@ package org.opencv.android;
 
 import java.util.List;
 
+import android.annotation.SuppressLint;
 import android.content.res.Resources;
 import android.graphics.Matrix;
 import android.hardware.camera2.CameraAccessException;
@@ -518,6 +519,7 @@ public abstract class CameraBridgeViewBase extends SurfaceView implements Surfac
         updateMatrix();
     }
 
+    @SuppressLint("NewApi")
     private void updateMatrix() {
         CameraManager manager = (CameraManager) getContext().getSystemService(Context.CAMERA_SERVICE);
         int sensorOrientation = 0;
@@ -544,24 +546,14 @@ public abstract class CameraBridgeViewBase extends SurfaceView implements Surfac
         float ch  = (float)Resources.getSystem().getDisplayMetrics().heightPixels;
 
         float scale = cw / mh;
-        float scale2 = ch / mw;
-        if(scale2 > scale){
-            scale = scale2;
-        }
+        float scale2 = mw / ch;
 
-        boolean isFrontCamera = mCameraIndex == CAMERA_ID_FRONT;
+        mScale = scale2 < scale ? scale2 : scale;
 
         mMatrix.reset();
-        if (isFrontCamera) {
-            mMatrix.preScale(-1, 1, hw, hh); //MH - this will mirror the camera
-        }
         mMatrix.preTranslate(hw, hh);
-        if (isFrontCamera){
-            mMatrix.preRotate(270);
-        } else {
-            mMatrix.preRotate(sensorOrientation);
-        }
+        mMatrix.preRotate(sensorOrientation);
         mMatrix.preTranslate(-hw, -hh);
-        mMatrix.preScale(scale,scale,hw,hh);
+        mMatrix.preScale(mScale,mScale,hw,hh);
     }
 }

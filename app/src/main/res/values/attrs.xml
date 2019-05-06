@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<declare-styleable name="FlashButton">
-		<attr name="state_flash_enabled" format="boolean"/>
-	</declare-styleable>
+    <declare-styleable name="FlashButton">
+        <attr name="state_flash_enabled" format="boolean"/>
+    </declare-styleable>
 </resources>

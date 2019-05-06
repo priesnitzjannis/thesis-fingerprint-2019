@@ -290,8 +290,8 @@ public class JavaCamera2View extends CameraBridgeViewBase {
             int bestWidth = 0, bestHeight = 0;
             float aspect = (float) width / height;
             android.util.Size[] sizes = map.getOutputSizes(ImageReader.class);
-            bestWidth = sizes[0].getWidth();
-            bestHeight = sizes[0].getHeight();
+            bestWidth = sizes[7].getWidth();
+            bestHeight = sizes[7].getHeight();
             for (android.util.Size sz : sizes) {
                 int w = sz.getWidth(), h = sz.getHeight();
                 Log.d(LOGTAG, "trying size: " + w + "x" + h);
@@ -329,11 +329,12 @@ public class JavaCamera2View extends CameraBridgeViewBase {
             mFrameWidth = mPreviewSize.getWidth();
             mFrameHeight = mPreviewSize.getHeight();
 
+            /*
             if ((getLayoutParams().width == LayoutParams.MATCH_PARENT) && (getLayoutParams().height == LayoutParams.MATCH_PARENT))
                 mScale = Math.min(((float)height)/mFrameHeight, ((float)width)/mFrameWidth);
             else
                 mScale = 0;
-
+            */
             AllocateCache();
 
             if (needReconfig) {
