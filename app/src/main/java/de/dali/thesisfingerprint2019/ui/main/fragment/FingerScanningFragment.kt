@@ -102,7 +102,11 @@ class FingerScanningFragment : BaseFragment() {
         binding.root.javaCamera2View.setCvCameraViewListener(listener)
         binding.root.buttonFlash.setOnClickListener { javaCamera2View.toggleFlash() }
 
-        fingerScanningViewModel.setViews(binding.root.resultView)
+        fingerScanningViewModel.setViews(
+            binding.root.resultView,
+            binding.root.resultView2
+        )
+
         fingerScanningViewModel.setSensorOrientation(Utils.getSensorOrientation(activity))
 
         requestMultiplePermissions()

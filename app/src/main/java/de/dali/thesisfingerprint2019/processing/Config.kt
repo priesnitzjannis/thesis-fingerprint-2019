@@ -19,7 +19,7 @@ object Config {
     //endregion
 
     //region ALL
-    var TRESHOLD_RED = 245.0
+    var TRESHOLD_RED = 230.0
     //endregion
 
     var MAX_KERNEL_LENGTH = 31

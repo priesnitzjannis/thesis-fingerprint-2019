@@ -33,7 +33,7 @@ class ProcessingPipeline(
                 super.handleMessage(msg)
                 val image = (msg?.obj as Mat)
 
-                val placeholder = Mat()
+                var processedMat = Mat()
                 val rotatedImage = image.rotate(0.0 - sensorOrientation)
 
                 val resultImages = mutableListOf<Mat>()
@@ -42,7 +42,7 @@ class ProcessingPipeline(
                     processingSteps.forEach {
                         val startTime = System.currentTimeMillis()
 
-                        val result = it.run(rotatedImage, placeholder)
+                        val result = it.run(rotatedImage, processedMat)
 
                         val endTime = System.currentTimeMillis()
                         it.addExecutionTimes(endTime - startTime)
@@ -51,13 +51,14 @@ class ProcessingPipeline(
                             return@loop
                         }else{
                             resultImages.add(result)
+                            processedMat = result
                         }
                     }
                 }
 
                 finalize(resultImages)
 
-                releaseImage(listOf(image, placeholder, rotatedImage))
+                releaseImage(listOf(image, processedMat, rotatedImage))
             }
         }
     }

@@ -22,8 +22,8 @@ class ProcessingModule {
     ): ProcessingPipeline {
         return ProcessingPipeline(
             uiHandler,
-            qualityAssurance /*,
-            fingerDetection,
+            qualityAssurance,
+            fingerDetection /*,
             fingerSegmentation,
             rotateFinger,
             enhancement */

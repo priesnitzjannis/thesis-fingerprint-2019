@@ -32,6 +32,8 @@ class QualityAssurance @Inject constructor() : ProcessingStep() {
         val point = calcCenterPoint(originalImage)
         val fingerInROI = fingerIsInROI(originalImage, point)
 
+        if (fingerInROI) Log.e(TAG, "fingerInROI") else Log.e(TAG, "fingerNotInROI")
+
         if (fingerInROI) {
             val blurred = Mat.zeros(originalImage.rows(), originalImage.cols(), CvType.CV_64FC1)
             val gray = Mat.zeros(originalImage.rows(), originalImage.cols(), CvType.CV_64FC1)
@@ -112,7 +114,7 @@ class QualityAssurance @Inject constructor() : ProcessingStep() {
             }
         }
 
-        return (1 / (CENTER_SIZE_X * CENTER_SIZE_Y)) * sum
+        return sum / (CENTER_SIZE_X * CENTER_SIZE_Y)
     }
 
 }

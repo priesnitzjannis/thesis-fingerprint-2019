@@ -22,54 +22,66 @@ class FingerDetection @Inject constructor() : ProcessingStep() {
     }
 
     private fun detectLeft(processedImage: Mat?): Int {
+        var borderX = 0
+
         processedImage?.run {
-            for (x in 0..rows()) {
-                for (y in 0..cols()) {
+            for (x in 0 until cols()) {
+                for (y in 0 until rows()) {
                     if (get(x, y)[0] >= TRESHOLD_RED) {
-                        return@run x
+                        borderX = x
+                        return@run
                     }
                 }
             }
         }
-        return 0
+        return borderX
     }
 
     private fun detectRight(processedImage: Mat?): Int {
+        var borderX = 0
+
         processedImage?.run {
-            for (x in rows() downTo 0) {
-                for (y in cols() downTo 0) {
+            for (x in cols()-1 downTo 0) {
+                for (y in 0 until rows()) {
                     if (get(x, y)[0] >= TRESHOLD_RED) {
-                        return@run x
+                        borderX = x
+                        return@run
                     }
                 }
             }
         }
-        return 0
+        return borderX
     }
 
     private fun detectTop(processedImage: Mat?): Int {
+        var borderY = 0
+
         processedImage?.run {
-            for (y in cols() downTo 0) {
-                for (x in 0..cols()) {
+            for (y in rows()-1 downTo 0) {
+                for (x in 0 until cols()) {
                     if (get(x, y)[0] >= TRESHOLD_RED) {
-                        return@run x
+                        borderY = y
+                        return@run
                     }
                 }
             }
         }
-        return 0
+        return borderY
     }
 
     private fun detectBottom(processedImage: Mat?): Int {
+        var borderY = 0
+
         processedImage?.run {
-            for (y in 0..cols()) {
-                for (x in 0..rows()) {
+            for (y in 0 until rows()) {
+                for (x in 0 until cols()) {
                     if (get(x, y)[0] >= TRESHOLD_RED) {
-                        return@run x
+                        borderY = y
+                        return@run
                     }
                 }
             }
         }
-        return 0
+        return borderY
     }
 }
