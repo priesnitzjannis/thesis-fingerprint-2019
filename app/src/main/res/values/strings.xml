@@ -15,4 +15,33 @@
     <string name="dialog_button_permission">Retry</string>
     <string name="dialog_button_quit">Quit</string>
 
+    <string name="fragment_details_gender">Gender:</string>
+    <string name="fragment_details_age">Age:</string>
+    <string name="fragment_details_skin_color">Skin Color:</string>
+    <string name="fragment_details_location">Location:</string>
+    <string name="fragment_details_illumination">Illumination:</string>
+
+    <string name="fragment_selection_no_entities">No fingerprints were found. Press the button on the lower right side
+        to create a new one.
+    </string>
+    <string name="fragment_selection_record_set">Record Set #</string>
+    <string name="fragment_selection_created_on">Created on :</string>
+    <string name="title">Title</string>
+    <string name="fragment_details_vendor">Vendor</string>
+
+    <string-array name="fragment_details_spinner_gender">
+        <item>Male</item>
+        <item>Female</item>
+    </string-array>
+
+    <string-array name="fragment_details_spinner_skin_color">
+        <item>Male</item>
+        <item>Female</item>
+    </string-array>
+
+    <string-array name="fragment_details_spinner_location">
+        <item>Indoor</item>
+        <item>Outdoor</item>
+    </string-array>
+
 </resources>

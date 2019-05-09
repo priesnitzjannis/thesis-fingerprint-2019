@@ -14,7 +14,7 @@ import org.opencv.core.Mat
 
 class ProcessingPipeline(
     private val uiHandler: UIHandler,
-    private vararg val processingSteps : ProcessingStep
+    private vararg val processingSteps: ProcessingStep
 ) : HandlerThread(TAG, THREAD_PRIORITY_BACKGROUND) {
 
     var sensorOrientation: Int = 0
@@ -47,9 +47,9 @@ class ProcessingPipeline(
                         val endTime = System.currentTimeMillis()
                         it.addExecutionTimes(endTime - startTime)
 
-                        if (result == null){
+                        if (result == null) {
                             return@loop
-                        }else{
+                        } else {
                             resultImages.add(result)
                             processedMat = result
                         }

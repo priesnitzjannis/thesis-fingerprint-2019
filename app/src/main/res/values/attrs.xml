@@ -3,4 +3,18 @@
     <declare-styleable name="FlashButton">
         <attr name="state_flash_enabled" format="boolean"/>
     </declare-styleable>
+
+    <attr name="title" format="string" />
+
+    <declare-styleable name="EditTextWithTitle">
+        <attr name="title"/>
+        <attr name="enabled" format="boolean"/>
+        <attr name="inputType" format="string"/>
+    </declare-styleable>
+
+    <declare-styleable name="SpinnerWithTitle">
+        <attr name="title"/>
+        <attr name="values" format="reference"/>
+    </declare-styleable>
+
 </resources>

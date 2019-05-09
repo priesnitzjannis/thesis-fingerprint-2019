@@ -41,7 +41,7 @@ class FingerDetection @Inject constructor() : ProcessingStep() {
         var borderX = 0
 
         processedImage?.run {
-            for (x in cols()-1 downTo 0) {
+            for (x in cols() - 1 downTo 0) {
                 for (y in 0 until rows()) {
                     if (get(x, y)[0] >= TRESHOLD_RED) {
                         borderX = x
@@ -57,7 +57,7 @@ class FingerDetection @Inject constructor() : ProcessingStep() {
         var borderY = 0
 
         processedImage?.run {
-            for (y in rows()-1 downTo 0) {
+            for (y in rows() - 1 downTo 0) {
                 for (x in 0 until cols()) {
                     if (get(x, y)[0] >= TRESHOLD_RED) {
                         borderY = y

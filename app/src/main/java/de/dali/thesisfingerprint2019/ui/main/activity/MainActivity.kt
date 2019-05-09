@@ -27,4 +27,5 @@ class MainActivity : BaseActivity(), HasSupportFragmentInjector {
     override fun supportFragmentInjector(): DispatchingAndroidInjector<Fragment> {
         return dispatchingAndroidInjector
     }
+
 }

@@ -46,15 +46,15 @@ class ResultView @JvmOverloads constructor(
         }
     }
 
-    fun clear(){
+    fun clear() {
         val canvas = holder.lockCanvas()
         if (canvas != null) {
-            canvas.drawColor( 0, PorterDuff.Mode.CLEAR )
+            canvas.drawColor(0, PorterDuff.Mode.CLEAR)
             holder.unlockCanvasAndPost(canvas)
         }
     }
 
-    private fun calcScale(height: Int, width: Int): Float{
+    private fun calcScale(height: Int, width: Int): Float {
         val mw = this.width.toFloat()
         val mh = this.height.toFloat()
 
@@ -63,5 +63,5 @@ class ResultView @JvmOverloads constructor(
 
         return if (scale2 < scale) scale2 else scale
     }
-    
+
 }

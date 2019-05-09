@@ -2,11 +2,30 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
             android:id="@+id/nav_main"
-            app:startDestination="@id/fingerScanningFragment">
+            app:startDestination="@id/selectionFragment">
 
     <fragment android:id="@+id/fingerScanningFragment"
               android:name="de.dali.thesisfingerprint2019.ui.main.fragment.FingerScanningFragment"
               android:label="FingerScanningFragment"
               tools:layout="@layout/fragment_finger_scanning"/>
+
+    <fragment android:id="@+id/detailsFragment"
+              android:name="de.dali.thesisfingerprint2019.ui.main.fragment.DetailsFragment"
+              android:label="DetailsFragment">
+
+        <argument android:name="fingerPrintEntity"
+                  app:argType="de.dali.thesisfingerprint2019.data.local.entity.FingerPrintEntity"
+                  app:nullable="true"
+                  android:defaultValue="@null"/>
+        <action android:id="@+id/to_fingerScanningFragment"
+                app:destination="@id/fingerScanningFragment"/>
+
+    </fragment>
+
+    <fragment android:id="@+id/selectionFragment"
+              android:name="de.dali.thesisfingerprint2019.ui.main.fragment.SelectionFragment"
+              android:label="SelectionFragment">
+        <action android:id="@+id/to_detailsFragment" app:destination="@id/detailsFragment"/>
+    </fragment>
 
 </navigation>

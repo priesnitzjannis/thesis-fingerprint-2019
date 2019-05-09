@@ -63,6 +63,7 @@ dependencies {
     /* Android Architecture Component - Room Persistance Lib  */
     implementation 'android.arch.persistence.room:runtime:1.1.1'
     implementation 'android.arch.persistence.room:rxjava2:1.1.1'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     kapt 'android.arch.persistence.room:compiler:1.1.1'
 
     /* Dagger2  */
@@ -75,8 +76,12 @@ dependencies {
     /* Permission Handling */
     implementation 'com.karumi:dexter:5.0.0'
 
+    /* Debugging */
+    implementation 'com.facebook.stetho:stetho:1.5.1'
+
     /* Tests */
     testImplementation 'junit:junit:4.13-beta-2'
-    androidTestImplementation 'androidx.test:runner:1.2.0-alpha04'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0-alpha04'
+    androidTestImplementation 'androidx.test:runner:1.2.0-beta01'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0-beta01'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
 }

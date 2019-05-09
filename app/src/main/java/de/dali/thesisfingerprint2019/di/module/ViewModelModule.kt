@@ -6,7 +6,9 @@ import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
 import de.dali.thesisfingerprint2019.factory.ViewModelFactory
+import de.dali.thesisfingerprint2019.ui.main.viewmodel.DetailsViewModel
 import de.dali.thesisfingerprint2019.ui.main.viewmodel.FingerScanningViewModel
+import de.dali.thesisfingerprint2019.ui.main.viewmodel.SelectionViewModel
 
 @Module
 internal abstract class ViewModelModule {
@@ -17,6 +19,16 @@ internal abstract class ViewModelModule {
     @Binds
     @IntoMap
     @ViewModelKey(FingerScanningViewModel::class)
-    protected abstract fun movieListViewModel(moviesListViewModel: FingerScanningViewModel): ViewModel
+    protected abstract fun fingerScanningViewModel(fingerScanningViewModel: FingerScanningViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(DetailsViewModel::class)
+    protected abstract fun detailsViewModel(detailsViewModel: DetailsViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(SelectionViewModel::class)
+    protected abstract fun selectionViewModel(selectionViewModel: SelectionViewModel): ViewModel
 
 }

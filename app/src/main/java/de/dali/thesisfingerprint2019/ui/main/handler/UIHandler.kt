@@ -3,7 +3,6 @@ package de.dali.thesisfingerprint2019.ui.main.handler
 import android.graphics.Bitmap
 import android.os.Handler
 import android.os.Message
-import android.widget.ImageView
 import de.dali.thesisfingerprint2019.ui.base.custom.ResultView
 import java.lang.ref.WeakReference
 
@@ -37,7 +36,7 @@ class UIHandler : Handler() {
         if (bitmaps.isNotEmpty()) {
             weakRefQualityAssurance.get()?.drawBitmap(bitmaps[0])
             weakRefFingerDetection.get()?.drawBitmap(bitmaps[1])
-        }else{
+        } else {
             weakRefQualityAssurance.get()?.clear()
             weakRefFingerDetection.get()?.clear()
         }

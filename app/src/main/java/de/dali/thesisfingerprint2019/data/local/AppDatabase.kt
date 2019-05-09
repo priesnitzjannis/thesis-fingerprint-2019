@@ -14,6 +14,6 @@ import de.dali.thesisfingerprint2019.data.local.entity.FingerPrintEntity
 @TypeConverters()
 abstract class AppDatabase : RoomDatabase() {
 
-    abstract fun movieDao(): FingerPrintDao
+    abstract fun fingerPrintDao(): FingerPrintDao
 
 }

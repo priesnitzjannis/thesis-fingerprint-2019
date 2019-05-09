@@ -13,7 +13,7 @@ class FlashButton @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : AppCompatImageView(context, attrs, defStyleAttr) {
 
-    var messageUnread: Boolean = false
+    var flashState: Boolean = false
         set(value) {
             if (field != value) {
                 field = value
@@ -28,15 +28,15 @@ class FlashButton @JvmOverloads constructor(
     }
 
     override fun performClick(): Boolean {
-        messageUnread = !messageUnread
+        flashState = !flashState
         return super.performClick()
     }
 
     override fun onCreateDrawableState(extraSpace: Int): IntArray {
-        return if (messageUnread) {
+        return if (flashState) {
             val drawableState = super.onCreateDrawableState(extraSpace + 1)
 
-            View.mergeDrawableStates(drawableState, STATE_MESSAGE_UNREAD)
+            View.mergeDrawableStates(drawableState, STATE_FLASH)
             drawableState
         } else {
             super.onCreateDrawableState(extraSpace)
@@ -44,7 +44,7 @@ class FlashButton @JvmOverloads constructor(
     }
 
     companion object {
-        private val STATE_MESSAGE_UNREAD = intArrayOf(R.attr.state_flash_enabled)
+        private val STATE_FLASH = intArrayOf(R.attr.state_flash_enabled)
     }
 
 }

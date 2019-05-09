@@ -1,10 +1,16 @@
 package de.dali.thesisfingerprint2019.utils
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.hardware.camera2.CameraAccessException
 import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraManager
+import android.os.Build
+import android.os.Environment
 import org.opencv.core.Mat
+import java.io.File
+import java.io.FileOutputStream
+
 
 object Utils {
 
@@ -29,6 +35,44 @@ object Utils {
     fun releaseImage(mats: List<Mat>) {
         mats.forEach {
             it.release()
+        }
+    }
+
+    private fun saveImage(finalBitmap: Bitmap, quality: Int) {
+        val root = Environment.getExternalStorageDirectory().toString()
+        val myDir = File("$root/saved_images")
+        myDir.mkdirs()
+
+        val name = "${System.currentTimeMillis()}.jpg"
+
+        val file = File(myDir, name)
+        if (file.exists()) file.delete()
+        val out = FileOutputStream(file)
+        finalBitmap.compress(Bitmap.CompressFormat.JPEG, quality, out)
+        out.flush()
+        out.close()
+    }
+
+    fun getDeviceName(): String {
+        val manufacturer = Build.MANUFACTURER
+        val model = Build.MODEL
+        return if (model.toLowerCase().startsWith(manufacturer.toLowerCase())) {
+            capitalize(model)
+        } else {
+            capitalize(manufacturer) + " " + model
+        }
+    }
+
+
+    private fun capitalize(s: String?): String {
+        if (s == null || s.isEmpty()) {
+            return ""
+        }
+        val first = s[0]
+        return if (Character.isUpperCase(first)) {
+            s
+        } else {
+            Character.toUpperCase(first) + s.substring(1)
         }
     }
 

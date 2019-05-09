@@ -22,7 +22,7 @@ class DbModule {
     @Provides
     @Singleton
     internal fun provideMovieDao(appDatabase: AppDatabase): FingerPrintDao {
-        return appDatabase.movieDao()
+        return appDatabase.fingerPrintDao()
     }
 
 }
