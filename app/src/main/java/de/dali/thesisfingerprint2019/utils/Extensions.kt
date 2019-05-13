@@ -1,6 +1,7 @@
 package de.dali.thesisfingerprint2019.utils
 
 import android.graphics.Bitmap
+import androidx.appcompat.widget.AppCompatSpinner
 import org.opencv.android.Utils
 import org.opencv.core.Mat
 import org.opencv.core.Point
@@ -37,4 +38,16 @@ fun Mat.rotate(angle: Double): Mat {
     Imgproc.warpAffine(this, result, rotMatrix, size)
 
     return result
+}
+
+fun AppCompatSpinner.setString(value: String) {
+    var pos = 0
+
+    for (i in 0 until this.count) {
+        if (this.getItemAtPosition(i).toString().equals(value, ignoreCase = true)) {
+            pos = i
+            break
+        }
+    }
+    this.setSelection(pos)
 }

@@ -1,9 +1,6 @@
-package de.dali.thesisfingerprint2019.ui.main.fragment
+package de.dali.thesisfingerprint2019.ui.main.fragment.scanning
 
-import android.Manifest.permission.*
-import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.VISIBLE
@@ -11,19 +8,12 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
-import com.karumi.dexter.Dexter
-import com.karumi.dexter.MultiplePermissionsReport
-import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import dagger.android.support.AndroidSupportInjection
 import de.dali.thesisfingerprint2019.R
 import de.dali.thesisfingerprint2019.databinding.FragmentFingerScanningBinding
 import de.dali.thesisfingerprint2019.ui.base.BaseFragment
-import de.dali.thesisfingerprint2019.ui.main.viewmodel.FingerScanningViewModel
-import de.dali.thesisfingerprint2019.utils.Constants.SETTINGS_REQUEST_CODE
+import de.dali.thesisfingerprint2019.ui.main.viewmodel.scanning.FingerScanningViewModel
 import de.dali.thesisfingerprint2019.utils.Dialogs
-import de.dali.thesisfingerprint2019.utils.NavUtil
 import de.dali.thesisfingerprint2019.utils.Utils
 import kotlinx.android.synthetic.main.fragment_finger_scanning.*
 import kotlinx.android.synthetic.main.fragment_finger_scanning.view.*
@@ -76,7 +66,7 @@ class FingerScanningFragment : BaseFragment() {
             when (status) {
                 LoaderCallbackInterface.SUCCESS -> {
                     fingerScanningViewModel.startProcessingPipeline()
-                    binding.root.javaCamera2View.enableView()
+                    binding.javaCamera2View.enableView()
                 }
                 else -> {
                     super.onManagerConnected(status)
@@ -98,24 +88,23 @@ class FingerScanningFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.root.javaCamera2View.visibility = VISIBLE
-        binding.root.javaCamera2View.setCvCameraViewListener(listener)
-        binding.root.buttonFlash.setOnClickListener { javaCamera2View.toggleFlash() }
+        binding.javaCamera2View.visibility = VISIBLE
+        binding.javaCamera2View.setCvCameraViewListener(listener)
+        binding.buttonFlash.setOnClickListener { javaCamera2View.toggleFlash() }
 
         fingerScanningViewModel.setViews(
-            binding.root.resultView,
-            binding.root.resultView2
+            binding.resultView,
+            binding.resultView2
         )
 
         fingerScanningViewModel.setSensorOrientation(Utils.getSensorOrientation(activity))
 
-        requestMultiplePermissions()
-
+        initOpenCV()
     }
 
     override fun onPause() {
         super.onPause()
-        binding.root.javaCamera2View.disableView()
+        binding.javaCamera2View.disableView()
         fingerScanningViewModel.stopProcessingPipeline()
     }
 
@@ -124,58 +113,10 @@ class FingerScanningFragment : BaseFragment() {
         fingerScanningViewModel.clearQueue()
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == SETTINGS_REQUEST_CODE) {
-            requestMultiplePermissions()
-        }
-    }
-
     private fun initialiseViewModel() {
         fingerScanningViewModel = ViewModelProviders.of(this, viewModelFactory).get(FingerScanningViewModel::class.java)
     }
 
-    private fun requestMultiplePermissions() {
-        Dexter.withActivity(activity)
-            .withPermissions(
-                CAMERA,
-                WRITE_EXTERNAL_STORAGE,
-                READ_EXTERNAL_STORAGE
-            )
-            .withListener(object : MultiplePermissionsListener {
-                override fun onPermissionsChecked(report: MultiplePermissionsReport) {
-                    if (report.isAnyPermissionPermanentlyDenied) {
-                        Dialogs.showDialog(
-                            activity,
-                            R.string.dialog_title_requierments,
-                            R.string.dialog_message_requierments,
-                            R.string.dialog_button_requierments
-                        ) { NavUtil.navToSettings(activity) }
-                    } else if (!report.areAllPermissionsGranted()) {
-                        Dialogs.showDialog(
-                            activity,
-                            R.string.dialog_title_permission,
-                            R.string.dialog_message_permission,
-                            R.string.dialog_title_permission,
-                            ::requestMultiplePermissions
-                        )
-                    } else {
-                        initOpenCV()
-                    }
-                }
-
-                override fun onPermissionRationaleShouldBeShown(
-                    permissions: List<PermissionRequest>,
-                    token: PermissionToken
-                ) {
-                    token.continuePermissionRequest()
-                }
-            }).withErrorListener {
-                Log.e(TAG, it.name)
-            }
-            .onSameThread()
-            .check()
-    }
 
     private fun initOpenCV() {
         if (OpenCVLoader.initDebug()) {

@@ -7,6 +7,7 @@ import androidx.appcompat.widget.AppCompatSpinner
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import de.dali.thesisfingerprint2019.R
+import de.dali.thesisfingerprint2019.utils.setString
 
 class SpinnerWithTitle @JvmOverloads constructor(
     context: Context,
@@ -34,5 +35,13 @@ class SpinnerWithTitle @JvmOverloads constructor(
     }
 
     fun getSelectedString(): String = spinner.selectedItem.toString()
+
+    fun setSelectedItem(item: String) {
+        spinner.setString(item)
+    }
+
+    fun lock(lockUI: Boolean) {
+        spinner.isEnabled = !lockUI
+    }
 
 }

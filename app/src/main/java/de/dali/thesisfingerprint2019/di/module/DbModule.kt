@@ -6,6 +6,7 @@ import dagger.Module
 import dagger.Provides
 import de.dali.thesisfingerprint2019.data.local.AppDatabase
 import de.dali.thesisfingerprint2019.data.local.dao.FingerPrintDao
+import de.dali.thesisfingerprint2019.data.local.dao.TestPersonDao
 import javax.inject.Singleton
 
 @Module
@@ -21,8 +22,14 @@ class DbModule {
 
     @Provides
     @Singleton
-    internal fun provideMovieDao(appDatabase: AppDatabase): FingerPrintDao {
+    internal fun provideFingerPrintDao(appDatabase: AppDatabase): FingerPrintDao {
         return appDatabase.fingerPrintDao()
+    }
+
+    @Provides
+    @Singleton
+    internal fun provideTestPersonDao(appDatabase: AppDatabase): TestPersonDao {
+        return appDatabase.testPersontDao()
     }
 
 }

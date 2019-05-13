@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    <de.dali.thesisfingerprint2019.ui.base.custom.FingerSelectionRow
+            android:id="@+id/fingerSelectionThumb"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:showHeader="true"
+            app:row_title="@string/row_multiselect_thumb"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" android:layout_marginStart="8dp" android:layout_marginEnd="8dp"/>
+
+    <de.dali.thesisfingerprint2019.ui.base.custom.FingerSelectionRow
+            android:id="@+id/fingerSelectionIndexFinger"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:row_title="@string/row_multiselect_index_finger"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/fingerSelectionThumb" android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp" android:layout_marginTop="8dp"/>
+
+    <de.dali.thesisfingerprint2019.ui.base.custom.FingerSelectionRow
+            android:id="@+id/fingerSelectionMiddleFinger"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:row_title="@string/row_multiselect_middle_finger"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/fingerSelectionIndexFinger" android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp" android:layout_marginTop="8dp"/>
+
+    <de.dali.thesisfingerprint2019.ui.base.custom.FingerSelectionRow
+            android:id="@+id/fingerSelectionRingFinger"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:row_title="@string/row_multiselect_ring_finger"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/fingerSelectionMiddleFinger" android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp" android:layout_marginTop="8dp"/>
+
+    <de.dali.thesisfingerprint2019.ui.base.custom.FingerSelectionRow
+            android:id="@+id/fingerSelectionLittleFinger"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:row_title="@string/row_multiselect_little_finger"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/fingerSelectionRingFinger" android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp" android:layout_marginTop="8dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

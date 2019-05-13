@@ -1,12 +1,13 @@
 package de.dali.thesisfingerprint2019.ui.base.custom
 
 import android.content.Context
-import android.text.InputType.*
+import android.text.InputType.TYPE_CLASS_NUMBER
+import android.text.SpannableStringBuilder
 import android.util.AttributeSet
-import androidx.constraintlayout.widget.ConstraintLayout
-import de.dali.thesisfingerprint2019.R
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.constraintlayout.widget.ConstraintLayout
+import de.dali.thesisfingerprint2019.R
 
 
 class EditTextWithTitle @JvmOverloads constructor(
@@ -27,12 +28,12 @@ class EditTextWithTitle @JvmOverloads constructor(
         val attributes = context.obtainStyledAttributes(attrs, R.styleable.EditTextWithTitle)
         title.text = attributes.getString(R.styleable.EditTextWithTitle_title)
 
-        val enabled = attributes.getBoolean(R.styleable.EditTextWithTitle_enabled,true)
+        val enabled = attributes.getBoolean(R.styleable.EditTextWithTitle_enabled, true)
         val inputType = attributes.getString(R.styleable.EditTextWithTitle_inputType)
 
         editText.isEnabled = enabled
 
-        if (inputType == "numerical"){
+        if (inputType == "numerical") {
             editText.inputType = TYPE_CLASS_NUMBER
         }
 
@@ -40,6 +41,14 @@ class EditTextWithTitle @JvmOverloads constructor(
 
     }
 
-    fun getEditTextValue() : String = editText.text.toString()
+    fun getEditTextValue(): String = editText.text.toString()
+
+    fun setText(text: SpannableStringBuilder) {
+        editText.text = text
+    }
+
+    fun lock(lockUI: Boolean) {
+        editText.isEnabled = !lockUI
+    }
 
 }

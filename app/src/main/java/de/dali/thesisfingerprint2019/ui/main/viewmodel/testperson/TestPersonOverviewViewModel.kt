@@ -1,26 +1,26 @@
-package de.dali.thesisfingerprint2019.ui.main.viewmodel
+package de.dali.thesisfingerprint2019.ui.main.viewmodel.testperson
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import de.dali.thesisfingerprint2019.data.local.entity.FingerPrintEntity
-import de.dali.thesisfingerprint2019.data.repository.FingerPrintRepository
+import de.dali.thesisfingerprint2019.data.local.entity.TestPersonEntity
+import de.dali.thesisfingerprint2019.data.repository.TestPersonRepository
 import de.dali.thesisfingerprint2019.ui.base.BaseViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
+class TestPersonOverviewViewModel @Inject constructor(val testPersonRepository: TestPersonRepository) :
+    BaseViewModel() {
 
-class SelectionViewModel @Inject constructor(val fingerPrintRepository: FingerPrintRepository) : BaseViewModel() {
-
-    val listOfFingerPrints = MutableLiveData<List<FingerPrintEntity>>()
+    val listOfTestPerson = MutableLiveData<List<TestPersonEntity>>()
     var compositeDisposable: CompositeDisposable = CompositeDisposable()
 
-    fun loadFingerPrints() {
-        val fingerprintDisposable = fingerPrintRepository.getAllFingerprints()
+    fun loadTestPerson() {
+        val fingerprintDisposable = testPersonRepository.getAllTestPerson()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(this::onFingerPrintsFetched, this::onError)
+            .subscribe(this::onFetchComplete, this::onError)
         compositeDisposable.add(fingerprintDisposable)
     }
 
@@ -28,8 +28,8 @@ class SelectionViewModel @Inject constructor(val fingerPrintRepository: FingerPr
         Log.d(TAG, throwable.message)
     }
 
-    private fun onFingerPrintsFetched(fingerprints: List<FingerPrintEntity>) {
-        listOfFingerPrints.value = fingerprints
+    private fun onFetchComplete(testPerson: List<TestPersonEntity>) {
+        listOfTestPerson.value = testPerson
     }
 
     override fun onCleared() {
@@ -38,7 +38,7 @@ class SelectionViewModel @Inject constructor(val fingerPrintRepository: FingerPr
     }
 
     companion object {
-        val TAG = SelectionViewModel::class.java.simpleName
+        val TAG = TestPersonOverviewViewModel::class.java.simpleName
     }
 
 }

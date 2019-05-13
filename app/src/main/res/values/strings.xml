@@ -2,7 +2,7 @@
     <string name="app_name">Thesis Fingerprint 2019</string>
 
     <string name="dialog_title_requierments">Required Permissions</string>
-    <string name="dialog_title_permission">Camera &amp; storage Permission</string>
+    <string name="dialog_title_permission">Camera &amp; Storage Permission</string>
     <string name="dialog_title_opencv">OpenCV</string>
 
     <string name="dialog_message_requierments">This app require permission to use awesome feature. Grant them in app
@@ -20,14 +20,30 @@
     <string name="fragment_details_skin_color">Skin Color:</string>
     <string name="fragment_details_location">Location:</string>
     <string name="fragment_details_illumination">Illumination:</string>
+    <string name="fragment_details_vendor">Vendor:</string>
 
-    <string name="fragment_selection_no_entities">No fingerprints were found. Press the button on the lower right side
+    <string name="fragment_finger_print_overview_no_entity">No fingerprints were found. Press the button on the lower
+        right side
         to create a new one.
     </string>
+
+    <string name="fragment_test_person_overview_no_entity">No test persons were found. Press the button on the lower
+        right side
+        to create a new one.
+    </string>
+
     <string name="fragment_selection_record_set">Record Set #</string>
     <string name="fragment_selection_created_on">Created on :</string>
     <string name="title">Title</string>
-    <string name="fragment_details_vendor">Vendor</string>
+    <string name="row_multiselect_right">Right</string>
+    <string name="row_multiselect_left">Left</string>
+    <string name="row_multiselect_thumb">Thumb</string>
+    <string name="row_multiselect_index_finger">Index Finger</string>
+    <string name="row_multiselect_middle_finger">Middle Finger</string>
+    <string name="row_multiselect_ring_finger">Ring Finger</string>
+    <string name="row_multiselect_little_finger">Little Finger</string>
+    <string name="fragment_details_scan">Scan</string>
+    <string name="placeholder">Placeholder</string>
 
     <string-array name="fragment_details_spinner_gender">
         <item>Male</item>
@@ -35,13 +51,22 @@
     </string-array>
 
     <string-array name="fragment_details_spinner_skin_color">
-        <item>Male</item>
-        <item>Female</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
     </string-array>
 
     <string-array name="fragment_details_spinner_location">
         <item>Indoor</item>
         <item>Outdoor</item>
     </string-array>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="fragment_test_person_overview">Testperson #</string>
+    <string name="fragment_test_person_continue">Continue</string>
 
 </resources>

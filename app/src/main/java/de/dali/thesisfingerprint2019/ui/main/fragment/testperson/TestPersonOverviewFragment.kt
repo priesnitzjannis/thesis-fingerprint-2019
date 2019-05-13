@@ -1,0 +1,109 @@
+package de.dali.thesisfingerprint2019.ui.main.fragment.testperson
+
+import android.content.Intent
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.NavHostFragment
+import dagger.android.support.AndroidSupportInjection
+import de.dali.thesisfingerprint2019.R
+import de.dali.thesisfingerprint2019.data.local.entity.TestPersonEntity
+import de.dali.thesisfingerprint2019.databinding.FragmentTestPersonOverviewBinding
+import de.dali.thesisfingerprint2019.ui.base.BaseFragment
+import de.dali.thesisfingerprint2019.ui.base.custom.ListWithLoadingSpinner.LIST.EMPTY
+import de.dali.thesisfingerprint2019.ui.base.custom.ListWithLoadingSpinner.LIST.RESULT
+import de.dali.thesisfingerprint2019.ui.base.custom.TestPersonOverviewAdapter
+import de.dali.thesisfingerprint2019.ui.main.viewmodel.testperson.TestPersonOverviewViewModel
+import de.dali.thesisfingerprint2019.utils.Constants
+import de.dali.thesisfingerprint2019.utils.PermissionHandling
+import kotlinx.android.synthetic.main.childview_list.view.*
+import kotlinx.android.synthetic.main.fragment_test_person_overview.view.*
+import kotlinx.android.synthetic.main.view_list_with_loading_spinner.view.*
+import javax.inject.Inject
+
+class TestPersonOverviewFragment : BaseFragment() {
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+
+    lateinit var binding: FragmentTestPersonOverviewBinding
+
+    lateinit var testPersonOverviewViewModel: TestPersonOverviewViewModel
+
+    lateinit var adapter: TestPersonOverviewAdapter
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        AndroidSupportInjection.inject(this)
+        initialiseViewModel()
+        initialiseAdapter()
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_test_person_overview, container, false)
+
+        binding.personItems.rvList.adapter = adapter
+        binding.btnAdd.setOnClickListener {
+            val action =
+                TestPersonOverviewFragmentDirections.actionTestPersonOverviewFragmentToTestPersonCreateFragment(null)
+            NavHostFragment.findNavController(this).navigate(action)
+        }
+
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        testPersonOverviewViewModel.loadTestPerson()
+        testPersonOverviewViewModel.listOfTestPerson.observe(this, Observer { updateList(it) })
+
+        PermissionHandling.requestMultiplePermissions(activity, this)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == Constants.SETTINGS_REQUEST_CODE) {
+            PermissionHandling.requestMultiplePermissions(activity, this)
+        }
+    }
+
+    private fun initialiseViewModel() {
+        testPersonOverviewViewModel =
+            ViewModelProviders.of(this, viewModelFactory).get(TestPersonOverviewViewModel::class.java)
+    }
+
+    private fun initialiseAdapter() {
+        adapter = TestPersonOverviewAdapter()
+
+        adapter.setCallback {
+            val action =
+                TestPersonOverviewFragmentDirections.actionTestPersonOverviewFragmentToTestPersonCreateFragment(it)
+            NavHostFragment.findNavController(this).navigate(action)
+        }
+    }
+
+    private fun updateList(testperson: List<TestPersonEntity>) {
+        binding.btnAdd.show()
+
+        when {
+            testperson.isEmpty() -> {
+                binding.personItems.vfSelection.displayedChild = EMPTY.state
+            }
+
+            testperson.isNotEmpty() -> {
+                adapter.list = testperson
+                binding.personItems.vfSelection.displayedChild = RESULT.state
+            }
+        }
+    }
+
+    companion object {
+        val TAG = TestPersonOverviewFragment::class.java.simpleName
+    }
+
+}

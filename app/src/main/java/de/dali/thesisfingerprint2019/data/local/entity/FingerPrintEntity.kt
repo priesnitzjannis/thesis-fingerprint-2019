@@ -2,41 +2,46 @@ package de.dali.thesisfingerprint2019.data.local.entity
 
 import androidx.annotation.NonNull
 import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.ForeignKey.CASCADE
 import androidx.room.PrimaryKey
 import java.io.Serializable
 
 @Entity(tableName = "finger_print")
 data class FingerPrintEntity(
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     @NonNull
-    var id: Long,
+    var id: Long = 0,
+
+    @ForeignKey(
+        entity = TestPersonEntity::class,
+        parentColumns = ["id"],
+        childColumns = ["personID"],
+        onDelete = CASCADE
+    )
+    @NonNull
+    var personID: Long? = null,
 
     @NonNull
-    var gender: String,
+    var location: String? = null,
 
     @NonNull
-    var age: Int,
+    var illumination: Float? = null,
 
     @NonNull
-    var fingerIndex: Int,
+    var resolution: String? = null,
 
     @NonNull
-    var skinColor: String,
+    var correctionDegree: Float? = null,
 
     @NonNull
-    var location: String,
+    var vendor: String? = null,
 
     @NonNull
-    var illumination: Int,
+    var listOfFingerIds: List<String>? = null,
 
     @NonNull
-    var resolution: String,
-
-    @NonNull
-    var correctionDegree: Float,
-
-    @NonNull
-    var vendor: String
+    var imageList: List<String>? = null
 
 ) : Serializable
 

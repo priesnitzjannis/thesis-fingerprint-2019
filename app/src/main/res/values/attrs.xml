@@ -4,7 +4,7 @@
         <attr name="state_flash_enabled" format="boolean"/>
     </declare-styleable>
 
-    <attr name="title" format="string" />
+    <attr name="title" format="string"/>
 
     <declare-styleable name="EditTextWithTitle">
         <attr name="title"/>
@@ -15,6 +15,15 @@
     <declare-styleable name="SpinnerWithTitle">
         <attr name="title"/>
         <attr name="values" format="reference"/>
+    </declare-styleable>
+
+    <declare-styleable name="FingerSelectionRow">
+        <attr name="showHeader" format="boolean"/>
+        <attr name="row_title" format="string"/>
+    </declare-styleable>
+
+    <declare-styleable name="ListWithLoadingSpinner">
+        <attr name="error_text" format="string"/>
     </declare-styleable>
 
 </resources>

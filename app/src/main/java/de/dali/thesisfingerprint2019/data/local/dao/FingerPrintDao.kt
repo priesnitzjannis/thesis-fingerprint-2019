@@ -7,8 +7,8 @@ import io.reactivex.Single
 @Dao
 interface FingerPrintDao {
 
-    @Insert
-    fun insert(fingerprint: FingerPrintEntity)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insert(fingerprint: FingerPrintEntity): Long
 
     @Update
     fun update(fingerprint: FingerPrintEntity)
@@ -21,5 +21,8 @@ interface FingerPrintDao {
 
     @Query("SELECT * from finger_print")
     fun getAllFingerprints(): Single<List<FingerPrintEntity>>
+
+    @Query("SELECT * from finger_print WHERE personID = :id")
+    fun getAllFingerprintsByTestPerson(id: Int): Single<List<FingerPrintEntity>>
 
 }

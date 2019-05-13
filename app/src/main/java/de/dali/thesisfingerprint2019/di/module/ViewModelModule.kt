@@ -6,9 +6,11 @@ import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
 import de.dali.thesisfingerprint2019.factory.ViewModelFactory
-import de.dali.thesisfingerprint2019.ui.main.viewmodel.DetailsViewModel
-import de.dali.thesisfingerprint2019.ui.main.viewmodel.FingerScanningViewModel
-import de.dali.thesisfingerprint2019.ui.main.viewmodel.SelectionViewModel
+import de.dali.thesisfingerprint2019.ui.main.viewmodel.fingerprint.FingerPrintCreateViewModel
+import de.dali.thesisfingerprint2019.ui.main.viewmodel.fingerprint.FingerPrintOverviewViewModel
+import de.dali.thesisfingerprint2019.ui.main.viewmodel.scanning.FingerScanningViewModel
+import de.dali.thesisfingerprint2019.ui.main.viewmodel.testperson.TestPersonCreateViewModel
+import de.dali.thesisfingerprint2019.ui.main.viewmodel.testperson.TestPersonOverviewViewModel
 
 @Module
 internal abstract class ViewModelModule {
@@ -16,19 +18,35 @@ internal abstract class ViewModelModule {
     @Binds
     internal abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory
 
+    //region TESTPERSON
+    @Binds
+    @IntoMap
+    @ViewModelKey(TestPersonOverviewViewModel::class)
+    protected abstract fun testPersonOverViewModel(testPersonOverviewViewModel: TestPersonOverviewViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(TestPersonCreateViewModel::class)
+    protected abstract fun testPersonCreateViewModel(testPersonCreateViewModel: TestPersonCreateViewModel): ViewModel
+    //endregion
+
+    //region FINGERPRINT
+    @Binds
+    @IntoMap
+    @ViewModelKey(FingerPrintOverviewViewModel::class)
+    protected abstract fun fingerPrintOverviewViewModel(fingerPrintOverviewViewModel: FingerPrintOverviewViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(FingerPrintCreateViewModel::class)
+    protected abstract fun fingerPrintCreateViewModel(fingerPrintCreateViewModel: FingerPrintCreateViewModel): ViewModel
+    //endregion
+
+    //region SCANNING
     @Binds
     @IntoMap
     @ViewModelKey(FingerScanningViewModel::class)
     protected abstract fun fingerScanningViewModel(fingerScanningViewModel: FingerScanningViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(DetailsViewModel::class)
-    protected abstract fun detailsViewModel(detailsViewModel: DetailsViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(SelectionViewModel::class)
-    protected abstract fun selectionViewModel(selectionViewModel: SelectionViewModel): ViewModel
+    //endregion
 
 }

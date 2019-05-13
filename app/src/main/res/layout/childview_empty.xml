@@ -7,7 +7,6 @@
 
     <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/txtNoEntities"
-            android:text="@string/fragment_selection_no_entities"
             android:textSize="20sp"
             android:textStyle="bold"
             android:layout_width="0dp"

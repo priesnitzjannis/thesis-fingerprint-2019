@@ -9,9 +9,7 @@ import javax.inject.Singleton
 @Singleton
 class FingerPrintRepository @Inject constructor(private val fingerPrintDao: FingerPrintDao) {
 
-    fun insert(fingerprint: FingerPrintEntity) {
-        fingerPrintDao.insert(fingerprint)
-    }
+    fun insert(fingerprint: FingerPrintEntity): Long = fingerPrintDao.insert(fingerprint)
 
     fun update(fingerprint: FingerPrintEntity) {
         fingerPrintDao.update(fingerprint)
@@ -25,8 +23,6 @@ class FingerPrintRepository @Inject constructor(private val fingerPrintDao: Fing
         fingerPrintDao.deleteAll()
     }
 
-    fun getAllFingerprints(): Single<List<FingerPrintEntity>> {
-        return fingerPrintDao.getAllFingerprints()
-    }
+    fun getAllFingerprints(): Single<List<FingerPrintEntity>> = fingerPrintDao.getAllFingerprints()
 
 }

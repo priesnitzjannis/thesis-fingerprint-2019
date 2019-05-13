@@ -10,6 +10,7 @@ import android.os.Environment
 import org.opencv.core.Mat
 import java.io.File
 import java.io.FileOutputStream
+import java.util.*
 
 
 object Utils {
@@ -37,6 +38,8 @@ object Utils {
             it.release()
         }
     }
+
+    fun toReadableDate(time: Long): Date = Date(time)
 
     private fun saveImage(finalBitmap: Bitmap, quality: Int) {
         val root = Environment.getExternalStorageDirectory().toString()

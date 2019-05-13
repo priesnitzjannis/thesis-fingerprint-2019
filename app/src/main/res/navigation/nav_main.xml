@@ -2,30 +2,54 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
             android:id="@+id/nav_main"
-            app:startDestination="@id/selectionFragment">
+            app:startDestination="@id/testPersonOverviewFragment">
 
     <fragment android:id="@+id/fingerScanningFragment"
-              android:name="de.dali.thesisfingerprint2019.ui.main.fragment.FingerScanningFragment"
+              android:name="de.dali.thesisfingerprint2019.ui.main.fragment.scanning.FingerScanningFragment"
               android:label="FingerScanningFragment"
-              tools:layout="@layout/fragment_finger_scanning"/>
-
-    <fragment android:id="@+id/detailsFragment"
-              android:name="de.dali.thesisfingerprint2019.ui.main.fragment.DetailsFragment"
-              android:label="DetailsFragment">
-
+              tools:layout="@layout/fragment_finger_scanning">
         <argument android:name="fingerPrintEntity"
-                  app:argType="de.dali.thesisfingerprint2019.data.local.entity.FingerPrintEntity"
-                  app:nullable="true"
-                  android:defaultValue="@null"/>
-        <action android:id="@+id/to_fingerScanningFragment"
+                  app:argType="de.dali.thesisfingerprint2019.data.local.entity.FingerPrintEntity"/>
+    </fragment>
+
+    <fragment android:id="@+id/testPersonOverviewFragment"
+              android:name="de.dali.thesisfingerprint2019.ui.main.fragment.testperson.TestPersonOverviewFragment"
+              android:label="fragment_test_person_overview" tools:layout="@layout/fragment_test_person_overview">
+        <action android:id="@+id/action_testPersonOverviewFragment_to_testPersonCreateFragment"
+                app:destination="@id/testPersonCreateFragment"/>
+        <action android:id="@+id/action_testPersonOverviewFragment_to_settingsFragment"
+                app:destination="@id/settingsFragment"/>
+    </fragment>
+    <fragment android:id="@+id/testPersonCreateFragment"
+              android:name="de.dali.thesisfingerprint2019.ui.main.fragment.testperson.TestPersonCreateFragment"
+              android:label="fragment_test_person_create" tools:layout="@layout/fragment_test_person_create">
+        <action android:id="@+id/action_testPersonCreateFragment_to_fingerPrintOverViewFragment"
+                app:destination="@id/fingerPrintOverViewFragment"/>
+        <argument android:name="testPersonEntity"
+                  app:argType="de.dali.thesisfingerprint2019.data.local.entity.TestPersonEntity" app:nullable="true"
+        />
+    </fragment>
+    <fragment android:id="@+id/fingerPrintOverViewFragment"
+              android:name="de.dali.thesisfingerprint2019.ui.main.fragment.fingerprint.FingerPrintOverViewFragment"
+              android:label="fragment_finger_print_overview" tools:layout="@layout/fragment_finger_print_overview">
+        <action android:id="@+id/action_fingerPrintOverViewFragment_to_fingerPrintCreateFragment"
+                app:destination="@id/fingerPrintCreateFragment"/>
+        <argument android:name="testPersonEntity"
+                  app:argType="de.dali.thesisfingerprint2019.data.local.entity.TestPersonEntity"/>
+    </fragment>
+    <fragment android:id="@+id/fingerPrintCreateFragment"
+              android:name="de.dali.thesisfingerprint2019.ui.main.fragment.fingerprint.FingerPrintCreateFragment"
+              android:label="fragment_finger_print_create" tools:layout="@layout/fragment_finger_print_create">
+        <action android:id="@+id/action_fingerPrintCreateFragment_to_fingerScanningFragment"
                 app:destination="@id/fingerScanningFragment"/>
-
+        <argument android:name="fingerPrintEntity"
+                  app:argType="de.dali.thesisfingerprint2019.data.local.entity.FingerPrintEntity" app:nullable="true"
+        />
+        <argument android:name="testPersonEntity"
+                  app:argType="de.dali.thesisfingerprint2019.data.local.entity.TestPersonEntity"/>
     </fragment>
-
-    <fragment android:id="@+id/selectionFragment"
-              android:name="de.dali.thesisfingerprint2019.ui.main.fragment.SelectionFragment"
-              android:label="SelectionFragment">
-        <action android:id="@+id/to_detailsFragment" app:destination="@id/detailsFragment"/>
-    </fragment>
+    <fragment android:id="@+id/settingsFragment"
+              android:name="de.dali.thesisfingerprint2019.ui.main.fragment.settings.SettingsFragment"
+              android:label="fragment_settings" tools:layout="@layout/fragment_settings"/>
 
 </navigation>

@@ -38,32 +38,14 @@
                     app:title="@string/fragment_details_skin_color"
                     app:values="@array/fragment_details_spinner_skin_color"/>
 
-            <de.dali.thesisfingerprint2019.ui.base.custom.SpinnerWithTitle
-                    android:id="@+id/spinnerLocation"
+            <Button
+                    android:id="@+id/btnContinue"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingStart="8dp"
-                    android:paddingEnd="8dp"
-                    app:title="@string/fragment_details_location"
-                    app:values="@array/fragment_details_spinner_location"/>
-
-            <de.dali.thesisfingerprint2019.ui.base.custom.EditTextWithTitle
-                    android:id="@+id/editIllumination"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="8dp"
-                    android:paddingEnd="8dp"
-                    app:enabled="false"
-                    app:title="@string/fragment_details_illumination"/>
-
-            <de.dali.thesisfingerprint2019.ui.base.custom.EditTextWithTitle
-                    android:id="@+id/editVendor"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="8dp"
-                    android:paddingEnd="8dp"
-                    app:enabled="false"
-                    app:title="@string/fragment_details_vendor"/>
+                    android:text="@string/fragment_test_person_continue"
+                    android:paddingTop="16dp"
+                    android:paddingBottom="16dp"
+                    style="@style/Widget.AppCompat.Button.Colored"/>
 
         </LinearLayout>
 
