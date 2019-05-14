@@ -12,6 +12,7 @@ import dagger.android.support.AndroidSupportInjection
 import de.dali.thesisfingerprint2019.R
 import de.dali.thesisfingerprint2019.databinding.FragmentFingerScanningBinding
 import de.dali.thesisfingerprint2019.ui.base.BaseFragment
+import de.dali.thesisfingerprint2019.ui.main.fragment.testperson.TestPersonCreateFragmentArgs
 import de.dali.thesisfingerprint2019.ui.main.viewmodel.scanning.FingerScanningViewModel
 import de.dali.thesisfingerprint2019.utils.Dialogs
 import de.dali.thesisfingerprint2019.utils.Utils
@@ -87,6 +88,13 @@ class FingerScanningFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        arguments?.let {
+            val entity = FingerScanningFragmentArgs.fromBundle(it).fingerPrintEntity
+            fingerScanningViewModel.entity = entity
+        }
+
+
         binding.javaCamera2View.visibility = VISIBLE
         binding.javaCamera2View.setCvCameraViewListener(listener)
         binding.buttonFlash.setOnClickListener { javaCamera2View.toggleFlash() }

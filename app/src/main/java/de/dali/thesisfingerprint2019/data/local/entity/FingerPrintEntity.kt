@@ -11,7 +11,7 @@ import java.io.Serializable
 data class FingerPrintEntity(
     @PrimaryKey(autoGenerate = true)
     @NonNull
-    var id: Long = 0,
+    var id: Long? = null,
 
     @ForeignKey(
         entity = TestPersonEntity::class,
@@ -29,19 +29,19 @@ data class FingerPrintEntity(
     var illumination: Float,
 
     @NonNull
-    var resolution: String,
-
-    @NonNull
-    var correctionDegree: Float,
-
-    @NonNull
     var vendor: String,
 
     @NonNull
     var listOfFingerIds: List<String>,
 
     @NonNull
-    var imageList: List<String>
+    var resolution: String? = null,
+
+    @NonNull
+    var correctionDegree: Float? = null,
+
+    @NonNull
+    var imageList: List<String>? = null
 
 ) : Serializable
 

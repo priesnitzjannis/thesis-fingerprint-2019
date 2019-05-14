@@ -18,6 +18,8 @@ class FingerScanningViewModel @Inject constructor(
     val processingPipeline: ProcessingPipeline
 ) : BaseViewModel() {
 
+    lateinit var entity: FingerPrintEntity
+
     var compositeDisposable: CompositeDisposable = CompositeDisposable()
 
     fun startProcessingPipeline() {
