@@ -20,28 +20,28 @@ data class FingerPrintEntity(
         onDelete = CASCADE
     )
     @NonNull
-    var personID: Long? = null,
+    var personID: Long,
 
     @NonNull
-    var location: String? = null,
+    var location: String,
 
     @NonNull
-    var illumination: Float? = null,
+    var illumination: Float,
 
     @NonNull
-    var resolution: String? = null,
+    var resolution: String,
 
     @NonNull
-    var correctionDegree: Float? = null,
+    var correctionDegree: Float,
 
     @NonNull
-    var vendor: String? = null,
+    var vendor: String,
 
     @NonNull
-    var listOfFingerIds: List<String>? = null,
+    var listOfFingerIds: List<String>,
 
     @NonNull
-    var imageList: List<String>? = null
+    var imageList: List<String>
 
 ) : Serializable
 

@@ -16,7 +16,6 @@ import de.dali.thesisfingerprint2019.ui.main.viewmodel.scanning.FingerScanningVi
 import de.dali.thesisfingerprint2019.utils.Dialogs
 import de.dali.thesisfingerprint2019.utils.Utils
 import kotlinx.android.synthetic.main.fragment_finger_scanning.*
-import kotlinx.android.synthetic.main.fragment_finger_scanning.view.*
 import org.opencv.android.BaseLoaderCallback
 import org.opencv.android.CameraBridgeViewBase
 import org.opencv.android.LoaderCallbackInterface

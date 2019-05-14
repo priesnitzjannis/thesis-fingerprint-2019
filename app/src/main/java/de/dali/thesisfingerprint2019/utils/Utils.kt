@@ -41,6 +41,13 @@ object Utils {
 
     fun toReadableDate(time: Long): Date = Date(time)
 
+    fun createFolder(folderMain: String, folderUser: String? = null, folderFingerprint: String? = null) {
+        val file = File("${Environment.getExternalStorageDirectory()}/$folderMain/$folderUser/$folderFingerprint")
+        if (!file.exists()) {
+            file.mkdirs()
+        }
+    }
+
     private fun saveImage(finalBitmap: Bitmap, quality: Int) {
         val root = Environment.getExternalStorageDirectory().toString()
         val myDir = File("$root/saved_images")

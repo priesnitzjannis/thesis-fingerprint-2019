@@ -12,4 +12,32 @@ class FingerPrintCreateViewModel @Inject constructor(val fingerPrintRepository: 
     lateinit var testPersonEntity: TestPersonEntity
     lateinit var fingerPrintEntity: FingerPrintEntity
 
+    var personID: Long = 0L
+    var location: String = ""
+    var illumination: Float = 0F
+    var vendor: String = ""
+
+    var thumbIdx: String? = null
+    var indexIdx: String? = null
+    var middleIdx: String? = null
+    var ringIdx: String? = null
+    var littleIdx: String? = null
+
+    var selectedFinger: List<String> = mutableListOf(
+        thumbIdx,
+        indexIdx,
+        middleIdx,
+        ringIdx,
+        littleIdx
+    ).filterNotNull()
+
+    fun createFingerPrintEntity(): FingerPrintEntity {
+        return FingerPrintEntity(
+            personID = personID,
+            location = location,
+            illumination = illumination,
+            vendor = vendor,
+            listOfFingerIds = selectedFinger
+        )
+    }
 }

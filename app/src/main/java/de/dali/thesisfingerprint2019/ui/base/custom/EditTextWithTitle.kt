@@ -1,8 +1,10 @@
 package de.dali.thesisfingerprint2019.ui.base.custom
 
 import android.content.Context
+import android.text.Editable
 import android.text.InputType.TYPE_CLASS_NUMBER
 import android.text.SpannableStringBuilder
+import android.text.TextWatcher
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.appcompat.widget.AppCompatTextView
@@ -41,7 +43,16 @@ class EditTextWithTitle @JvmOverloads constructor(
 
     }
 
-    fun getEditTextValue(): String = editText.text.toString()
+    fun setCallback(onChange: (Int) -> Unit) {
+        editText.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                onChange(Integer.valueOf(s.toString()))
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+    }
 
     fun setText(text: SpannableStringBuilder) {
         editText.text = text

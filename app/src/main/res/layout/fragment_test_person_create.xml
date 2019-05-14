@@ -2,53 +2,64 @@
 <layout xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+    <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
+                                                       android:layout_height="match_parent">
 
-        <LinearLayout android:layout_width="match_parent"
-                      android:layout_height="wrap_content"
-                      android:orientation="vertical">
+        <ScrollView
+                android:layout_width="0dp"
+                android:layout_height="0dp" app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginBottom="8dp" app:layout_constraintBottom_toTopOf="@+id/btnContinue">
 
-            <de.dali.thesisfingerprint2019.ui.base.custom.SpinnerWithTitle
-                    android:id="@+id/spinnerGender"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="8dp"
-                    android:paddingEnd="8dp"
-                    app:title="@string/fragment_details_gender"
-                    app:values="@array/fragment_details_spinner_gender"/>
+            <LinearLayout android:layout_width="match_parent"
+                          android:layout_height="wrap_content"
+                          android:orientation="vertical">
 
-            <de.dali.thesisfingerprint2019.ui.base.custom.EditTextWithTitle
-                    android:id="@+id/editAge"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="8dp"
-                    android:paddingEnd="8dp"
-                    app:inputType="numerical"
-                    app:enabled="true"
-                    app:title="@string/fragment_details_age"/>
+                <de.dali.thesisfingerprint2019.ui.base.custom.SpinnerWithTitle
+                        android:id="@+id/spinnerGender"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="8dp"
+                        android:paddingEnd="8dp"
+                        app:title="@string/fragment_details_gender"
+                        app:values="@array/fragment_details_spinner_gender"/>
 
-            <de.dali.thesisfingerprint2019.ui.base.custom.SpinnerWithTitle
-                    android:id="@+id/spinnerColor"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="8dp"
-                    android:paddingEnd="8dp"
-                    app:title="@string/fragment_details_skin_color"
-                    app:values="@array/fragment_details_spinner_skin_color"/>
+                <de.dali.thesisfingerprint2019.ui.base.custom.EditTextWithTitle
+                        android:id="@+id/editAge"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="8dp"
+                        android:paddingEnd="8dp"
+                        app:inputType="numerical"
+                        app:enabled="true"
+                        app:title="@string/fragment_details_age"/>
 
-            <Button
-                    android:id="@+id/btnContinue"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/fragment_test_person_continue"
-                    android:paddingTop="16dp"
-                    android:paddingBottom="16dp"
-                    style="@style/Widget.AppCompat.Button.Colored"/>
+                <de.dali.thesisfingerprint2019.ui.base.custom.SpinnerWithTitle
+                        android:id="@+id/spinnerColor"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="8dp"
+                        android:paddingEnd="8dp"
+                        app:title="@string/fragment_details_skin_color"
+                        app:values="@array/fragment_details_spinner_skin_color"/>
 
-        </LinearLayout>
 
-    </ScrollView>
+            </LinearLayout>
+
+        </ScrollView>
+
+        <Button
+                android:id="@+id/btnContinue"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/fragment_test_person_continue"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp"
+                style="@style/Widget.AppCompat.Button.Colored" android:layout_marginBottom="8dp"
+                app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

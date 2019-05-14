@@ -19,6 +19,8 @@ import de.dali.thesisfingerprint2019.data.local.entity.FingerPrintEntity
 import de.dali.thesisfingerprint2019.databinding.FragmentFingerPrintCreateBinding
 import de.dali.thesisfingerprint2019.ui.base.BaseFragment
 import de.dali.thesisfingerprint2019.ui.main.viewmodel.fingerprint.FingerPrintCreateViewModel
+import de.dali.thesisfingerprint2019.utils.Utils
+import kotlinx.android.synthetic.main.row_multiselect.view.*
 import javax.inject.Inject
 
 class FingerPrintCreateFragment : BaseFragment() {
@@ -42,7 +44,6 @@ class FingerPrintCreateFragment : BaseFragment() {
         super.onCreate(savedInstanceState)
         AndroidSupportInjection.inject(this)
         initialiseViewModel()
-        initialiseListener()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -54,19 +55,17 @@ class FingerPrintCreateFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.btnScan.setOnClickListener {
-            val action = FingerPrintCreateFragmentDirections.actionFingerPrintCreateFragmentToFingerScanningFragment(
-                fingerPrintCreateViewModel.fingerPrintEntity
-            )
-            NavHostFragment.findNavController(this).navigate(action)
-        }
+        initialiseListener()
+        initOnCLick()
+        initOnChange()
 
         arguments?.let {
             val entity = FingerPrintCreateFragmentArgs.fromBundle(it).fingerPrintEntity
             if (entity != null) {
                 fingerPrintCreateViewModel.fingerPrintEntity = entity
+                updateUI(fingerPrintCreateViewModel.fingerPrintEntity, true)
             } else {
-                fingerPrintCreateViewModel.fingerPrintEntity = FingerPrintEntity()
+                setVendor()
                 sensorManager.registerListener(lightEventListener, lightSensor, SensorManager.SENSOR_DELAY_UI)
             }
         }
@@ -76,7 +75,7 @@ class FingerPrintCreateFragment : BaseFragment() {
         lightEventListener = object : SensorEventListener {
             override fun onSensorChanged(sensorEvent: SensorEvent) {
                 val value = sensorEvent.values[0]
-                fingerPrintCreateViewModel.fingerPrintEntity.illumination = value
+                fingerPrintCreateViewModel.illumination = value
                 sensorManager.unregisterListener(lightEventListener)
             }
 
@@ -86,15 +85,57 @@ class FingerPrintCreateFragment : BaseFragment() {
         }
     }
 
+    private fun setVendor() {
+        fingerPrintCreateViewModel.vendor = Utils.getDeviceName()
+        binding.editVendor.setText(SpannableStringBuilder(fingerPrintCreateViewModel.vendor))
+    }
+
+    private fun initOnChange() {
+        binding.spinnerLocation.setCallback { fingerPrintCreateViewModel.location = it }
+
+        binding.multiSelect.fingerSelectionThumb.setOnChangeListener {
+            fingerPrintCreateViewModel.thumbIdx = it.toString()
+        }
+        binding.multiSelect.fingerSelectionIndexFinger.setOnChangeListener {
+            fingerPrintCreateViewModel.indexIdx = it.toString()
+        }
+        binding.multiSelect.fingerSelectionMiddleFinger.setOnChangeListener {
+            fingerPrintCreateViewModel.middleIdx = it.toString()
+        }
+        binding.multiSelect.fingerSelectionRingFinger.setOnChangeListener {
+            fingerPrintCreateViewModel.ringIdx = it.toString()
+        }
+        binding.multiSelect.fingerSelectionLittleFinger.setOnChangeListener {
+            fingerPrintCreateViewModel.littleIdx = it.toString()
+        }
+    }
+
+    private fun initOnCLick() {
+        binding.btnScan.setOnClickListener {
+
+            fingerPrintCreateViewModel.createFingerPrintEntity()
+            val action = FingerPrintCreateFragmentDirections.actionFingerPrintCreateFragmentToFingerScanningFragment(
+                fingerPrintCreateViewModel.fingerPrintEntity
+            )
+            NavHostFragment.findNavController(this).navigate(action)
+        }
+    }
+
     private fun initialiseViewModel() {
         fingerPrintCreateViewModel =
             ViewModelProviders.of(this, viewModelFactory).get(FingerPrintCreateViewModel::class.java)
     }
 
-    private fun updateUI(entity: FingerPrintEntity) {
-        binding.spinnerLocation.setSelectedItem(entity.location ?: "")
+    private fun updateUI(entity: FingerPrintEntity, lockUI: Boolean) {
+        binding.spinnerLocation.setSelectedItem(entity.location)
+        binding.spinnerLocation.lock(lockUI)
+
         binding.editIllumination.setText(SpannableStringBuilder(entity.illumination.toString()))
-        binding.editVendor.setText(SpannableStringBuilder(entity.vendor ?: ""))
+        binding.editIllumination.lock(lockUI)
+
+        binding.editVendor.setText(SpannableStringBuilder(entity.vendor))
+        binding.editVendor.lock(lockUI)
+
     }
 
     companion object {

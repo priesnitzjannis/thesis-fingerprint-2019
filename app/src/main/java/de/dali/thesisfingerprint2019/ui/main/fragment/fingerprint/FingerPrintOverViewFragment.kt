@@ -63,7 +63,7 @@ class FingerPrintOverViewFragment : BaseFragment() {
             NavHostFragment.findNavController(this).navigate(action)
         }
 
-        fingerPrintOverViewModel.loadFingerPrints()
+        fingerPrintOverViewModel.loadFingerPrints(fingerPrintOverViewModel.entity.personID!!)
         fingerPrintOverViewModel.listOfFingerPrints.observe(this, Observer { updateList(it) })
     }
 

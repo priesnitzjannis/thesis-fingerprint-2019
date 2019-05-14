@@ -19,8 +19,8 @@ class FingerPrintOverviewViewModel @Inject constructor(val fingerPrintRepository
     val listOfFingerPrints = MutableLiveData<List<FingerPrintEntity>>()
     var compositeDisposable: CompositeDisposable = CompositeDisposable()
 
-    fun loadFingerPrints() {
-        val fingerprintDisposable = fingerPrintRepository.getAllFingerprints()
+    fun loadFingerPrints(personID: Long) {
+        val fingerprintDisposable = fingerPrintRepository.getAllFingerprintsByTestPerson(personID)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(this::onFingerPrintsFetched, this::onError)

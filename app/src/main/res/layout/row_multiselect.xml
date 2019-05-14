@@ -13,7 +13,9 @@
             app:row_title="@string/row_multiselect_thumb"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" android:layout_marginStart="8dp" android:layout_marginEnd="8dp"/>
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"/>
 
     <de.dali.thesisfingerprint2019.ui.base.custom.FingerSelectionRow
             android:id="@+id/fingerSelectionIndexFinger"
@@ -22,8 +24,10 @@
             app:row_title="@string/row_multiselect_index_finger"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/fingerSelectionThumb" android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp" android:layout_marginTop="8dp"/>
+            app:layout_constraintTop_toBottomOf="@+id/fingerSelectionThumb"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="8dp"/>
 
     <de.dali.thesisfingerprint2019.ui.base.custom.FingerSelectionRow
             android:id="@+id/fingerSelectionMiddleFinger"
@@ -32,8 +36,10 @@
             app:row_title="@string/row_multiselect_middle_finger"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/fingerSelectionIndexFinger" android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp" android:layout_marginTop="8dp"/>
+            app:layout_constraintTop_toBottomOf="@+id/fingerSelectionIndexFinger"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="8dp"/>
 
     <de.dali.thesisfingerprint2019.ui.base.custom.FingerSelectionRow
             android:id="@+id/fingerSelectionRingFinger"
@@ -42,8 +48,10 @@
             app:row_title="@string/row_multiselect_ring_finger"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/fingerSelectionMiddleFinger" android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp" android:layout_marginTop="8dp"/>
+            app:layout_constraintTop_toBottomOf="@+id/fingerSelectionMiddleFinger"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="8dp"/>
 
     <de.dali.thesisfingerprint2019.ui.base.custom.FingerSelectionRow
             android:id="@+id/fingerSelectionLittleFinger"
@@ -52,7 +60,9 @@
             app:row_title="@string/row_multiselect_little_finger"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/fingerSelectionRingFinger" android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp" android:layout_marginTop="8dp"/>
+            app:layout_constraintTop_toBottomOf="@+id/fingerSelectionRingFinger"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="8dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

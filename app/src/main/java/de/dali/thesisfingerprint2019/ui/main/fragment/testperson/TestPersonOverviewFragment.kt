@@ -22,7 +22,6 @@ import de.dali.thesisfingerprint2019.ui.main.viewmodel.testperson.TestPersonOver
 import de.dali.thesisfingerprint2019.utils.Constants
 import de.dali.thesisfingerprint2019.utils.PermissionHandling
 import kotlinx.android.synthetic.main.childview_list.view.*
-import kotlinx.android.synthetic.main.fragment_test_person_overview.view.*
 import kotlinx.android.synthetic.main.view_list_with_loading_spinner.view.*
 import javax.inject.Inject
 
@@ -47,6 +46,12 @@ class TestPersonOverviewFragment : BaseFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_test_person_overview, container, false)
 
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         binding.personItems.rvList.adapter = adapter
         binding.btnAdd.setOnClickListener {
             val action =
@@ -54,11 +59,6 @@ class TestPersonOverviewFragment : BaseFragment() {
             NavHostFragment.findNavController(this).navigate(action)
         }
 
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         testPersonOverviewViewModel.loadTestPerson()
         testPersonOverviewViewModel.listOfTestPerson.observe(this, Observer { updateList(it) })
 
@@ -73,8 +73,9 @@ class TestPersonOverviewFragment : BaseFragment() {
     }
 
     private fun initialiseViewModel() {
-        testPersonOverviewViewModel =
-            ViewModelProviders.of(this, viewModelFactory).get(TestPersonOverviewViewModel::class.java)
+        testPersonOverviewViewModel = ViewModelProviders
+            .of(this, viewModelFactory)
+            .get(TestPersonOverviewViewModel::class.java)
     }
 
     private fun initialiseAdapter() {

@@ -23,6 +23,7 @@ class FingerPrintRepository @Inject constructor(private val fingerPrintDao: Fing
         fingerPrintDao.deleteAll()
     }
 
-    fun getAllFingerprints(): Single<List<FingerPrintEntity>> = fingerPrintDao.getAllFingerprints()
+    fun getAllFingerprintsByTestPerson(personID: Long): Single<List<FingerPrintEntity>> =
+        fingerPrintDao.getAllFingerprintsByTestPerson(personID)
 
 }

@@ -4,6 +4,7 @@ package de.dali.thesisfingerprint2019.ui.main.fragment.testperson
 import android.app.ProgressDialog
 import android.os.Bundle
 import android.text.SpannableStringBuilder
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +18,6 @@ import de.dali.thesisfingerprint2019.data.local.entity.TestPersonEntity
 import de.dali.thesisfingerprint2019.databinding.FragmentTestPersonCreateBinding
 import de.dali.thesisfingerprint2019.ui.base.BaseFragment
 import de.dali.thesisfingerprint2019.ui.main.viewmodel.testperson.TestPersonCreateViewModel
-import kotlinx.android.synthetic.main.fragment_test_person_create.view.*
 import javax.inject.Inject
 
 class TestPersonCreateFragment : BaseFragment() {
@@ -46,6 +46,8 @@ class TestPersonCreateFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        initOnChange()
+
         arguments?.let {
             val entity = TestPersonCreateFragmentArgs.fromBundle(it).testPersonEntity
 
@@ -55,15 +57,18 @@ class TestPersonCreateFragment : BaseFragment() {
             }
         }
 
-        binding.btnContinue.setOnClickListener {
-            handleOnClick()
-        }
-
+        binding.btnContinue.setOnClickListener { handleOnClick() }
     }
 
     private fun initialiseViewModel() {
         testPersonCreateViewModel =
             ViewModelProviders.of(this, viewModelFactory).get(TestPersonCreateViewModel::class.java)
+    }
+
+    private fun initOnChange() {
+        binding.editAge.setCallback { testPersonCreateViewModel.age = it }
+        binding.spinnerGender.setCallback { testPersonCreateViewModel.gender = it }
+        binding.spinnerColor.setCallback { testPersonCreateViewModel.color = it }
     }
 
     private fun updateUI(entity: TestPersonEntity, lockUI: Boolean) {
@@ -89,14 +94,7 @@ class TestPersonCreateFragment : BaseFragment() {
             navToFingerPrintOverViewFrag(testPersonCreateViewModel.entity)
         } else {
             showProgressDialogWithTitle()
-
-            testPersonCreateViewModel.entity = TestPersonEntity(
-                gender = binding.spinnerGender.getSelectedString(),
-                age = Integer.valueOf(binding.editAge.getEditTextValue()),
-                skinColor = binding.spinnerColor.getSelectedString(),
-                timestamp = System.currentTimeMillis()
-            )
-
+            testPersonCreateViewModel.generateTestPerson()
             testPersonCreateViewModel.insertTestPerson(testPersonCreateViewModel.entity, ::onSuccess, ::onError)
         }
     }
@@ -108,7 +106,7 @@ class TestPersonCreateFragment : BaseFragment() {
     }
 
     private fun onError(t: Throwable) {
-
+        Log.e(TAG, t.message)
     }
 
     private fun showProgressDialogWithTitle() {

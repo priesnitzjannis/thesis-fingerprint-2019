@@ -15,6 +15,10 @@ class TestPersonCreateViewModel @Inject constructor(private val testPersonReposi
     lateinit var entity: TestPersonEntity
     var compositeDisposable: CompositeDisposable = CompositeDisposable()
 
+    lateinit var gender: String
+    lateinit var color: String
+    var age: Int = 0
+
     fun insertTestPerson(
         person: TestPersonEntity,
         onSuccess: (Long) -> Unit,
@@ -27,6 +31,15 @@ class TestPersonCreateViewModel @Inject constructor(private val testPersonReposi
             .subscribe(onSuccess, onError)
 
         compositeDisposable.add(disposable)
+    }
+
+    fun generateTestPerson() {
+        entity = TestPersonEntity(
+            gender = gender,
+            age = age,
+            skinColor = color,
+            timestamp = System.currentTimeMillis()
+        )
     }
 
     fun isTestPersonInitialised(): Boolean = ::entity.isInitialized

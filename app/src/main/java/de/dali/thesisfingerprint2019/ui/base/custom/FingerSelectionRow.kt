@@ -24,6 +24,8 @@ class FingerSelectionRow @JvmOverloads constructor(
 
     private val rowTitle: String
 
+    private lateinit var onChange: (Int) -> Unit
+
     init {
         inflate(context, R.layout.row_finger_selection, this)
 
@@ -48,22 +50,26 @@ class FingerSelectionRow @JvmOverloads constructor(
         attributes.recycle()
     }
 
-    fun getSelection(): Int {
+    fun setOnChangeListener(onChange: (Int) -> Unit) {
+        this.onChange = onChange
+    }
+
+    private fun getSelection(): Int {
         return when (rowTitle) {
             context.getString(R.string.row_multiselect_thumb) -> {
-                if (cbLeft.isChecked) 0 else 1
+                if (cbLeft.isChecked) 1 else 6
             }
-            context.getString(R.string.row_multiselect_thumb) -> {
-                if (cbLeft.isChecked) 0 else 1
+            context.getString(R.string.row_multiselect_index_finger) -> {
+                if (cbLeft.isChecked) 2 else 7
             }
-            context.getString(R.string.row_multiselect_thumb) -> {
-                if (cbLeft.isChecked) 0 else 1
+            context.getString(R.string.row_multiselect_middle_finger) -> {
+                if (cbLeft.isChecked) 3 else 8
             }
-            context.getString(R.string.row_multiselect_thumb) -> {
-                if (cbLeft.isChecked) 0 else 1
+            context.getString(R.string.row_multiselect_ring_finger) -> {
+                if (cbLeft.isChecked) 4 else 9
             }
-            context.getString(R.string.row_multiselect_thumb) -> {
-                if (cbLeft.isChecked) 0 else 1
+            context.getString(R.string.row_multiselect_little_finger) -> {
+                if (cbLeft.isChecked) 5 else 10
             }
             else -> -1
         }
@@ -84,6 +90,9 @@ class FingerSelectionRow @JvmOverloads constructor(
                 if (cbRight.isChecked) {
                     cbRight.isChecked = false
                 }
+
+                val selection = getSelection()
+                onChange(selection)
             }
         }
 
@@ -92,6 +101,9 @@ class FingerSelectionRow @JvmOverloads constructor(
                 if (cbLeft.isChecked) {
                     cbLeft.isChecked = false
                 }
+
+                val selection = getSelection()
+                onChange(selection)
             }
         }
     }
