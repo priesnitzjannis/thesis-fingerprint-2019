@@ -1,6 +1,8 @@
 package de.dali.thesisfingerprint2019.ui.main.fragment.scanning
 
+import android.app.ProgressDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.VISIBLE
@@ -12,7 +14,6 @@ import dagger.android.support.AndroidSupportInjection
 import de.dali.thesisfingerprint2019.R
 import de.dali.thesisfingerprint2019.databinding.FragmentFingerScanningBinding
 import de.dali.thesisfingerprint2019.ui.base.BaseFragment
-import de.dali.thesisfingerprint2019.ui.main.fragment.testperson.TestPersonCreateFragmentArgs
 import de.dali.thesisfingerprint2019.ui.main.viewmodel.scanning.FingerScanningViewModel
 import de.dali.thesisfingerprint2019.utils.Dialogs
 import de.dali.thesisfingerprint2019.utils.Utils
@@ -21,9 +22,10 @@ import org.opencv.android.BaseLoaderCallback
 import org.opencv.android.CameraBridgeViewBase
 import org.opencv.android.LoaderCallbackInterface
 import org.opencv.android.OpenCVLoader
-import org.opencv.core.CvType
-import org.opencv.core.Mat
 import javax.inject.Inject
+import org.opencv.core.*
+import org.opencv.imgproc.Imgproc.rectangle
+
 
 class FingerScanningFragment : BaseFragment() {
 
@@ -33,6 +35,8 @@ class FingerScanningFragment : BaseFragment() {
     lateinit var binding: FragmentFingerScanningBinding
 
     lateinit var fingerScanningViewModel: FingerScanningViewModel
+
+    lateinit var progressDialog: ProgressDialog
 
     lateinit var mRgba: Mat
 
@@ -52,9 +56,21 @@ class FingerScanningFragment : BaseFragment() {
             frameCounter++
             mRgba = inputFrame.rgba()
 
+
             if (frameCounter % 10 == 0) {
-                fingerScanningViewModel.processImage(mRgba)
+                fingerScanningViewModel.sendToPipeline(mRgba)
             }
+
+            val pX = mRgba.cols() / 2.0
+            val pY = mRgba.rows() / 2.0
+
+            rectangle(
+                mRgba,
+                Point(pX, pY),
+                Point(pX + 150, pY + 150),
+                Scalar(255.0, 0.0, 0.0, 255.0),
+                3
+            )
 
             return mRgba
         }
@@ -99,12 +115,17 @@ class FingerScanningFragment : BaseFragment() {
         binding.javaCamera2View.setCvCameraViewListener(listener)
         binding.buttonFlash.setOnClickListener { javaCamera2View.toggleFlash() }
 
-        fingerScanningViewModel.setViews(
-            binding.resultView,
-            binding.resultView2
-        )
-
         fingerScanningViewModel.setSensorOrientation(Utils.getSensorOrientation(activity))
+        fingerScanningViewModel.setCallback {
+            activity.runOnUiThread {
+                binding.javaCamera2View.disableView()
+                fingerScanningViewModel.stopProcessingPipeline()
+
+                showProgressDialogWithTitle()
+
+                fingerScanningViewModel.processImage(it, {progressDialog.dismiss()}, { Log.e(TAG, it.message)})
+            }
+        }
 
         initOpenCV()
     }
@@ -135,6 +156,19 @@ class FingerScanningFragment : BaseFragment() {
                 R.string.dialog_message_opencv
             )
         }
+    }
+
+    private fun showProgressDialogWithTitle() {
+        progressDialog = ProgressDialog(context)
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER)
+        progressDialog.setCancelable(false)
+        progressDialog.setTitle("Please Wait..")
+        progressDialog.setMessage("Preparing to download ...")
+        progressDialog.show()
+    }
+
+    private fun dismissDialog(){
+        progressDialog.dismiss()
     }
 
     companion object {

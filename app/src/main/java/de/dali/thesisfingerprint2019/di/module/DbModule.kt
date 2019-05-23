@@ -29,7 +29,7 @@ class DbModule {
     @Provides
     @Singleton
     internal fun provideTestPersonDao(appDatabase: AppDatabase): TestPersonDao {
-        return appDatabase.testPersontDao()
+        return appDatabase.testPersonDao()
     }
 
 }

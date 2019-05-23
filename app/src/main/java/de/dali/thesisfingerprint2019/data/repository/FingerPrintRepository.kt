@@ -11,17 +11,11 @@ class FingerPrintRepository @Inject constructor(private val fingerPrintDao: Fing
 
     fun insert(fingerprint: FingerPrintEntity): Long = fingerPrintDao.insert(fingerprint)
 
-    fun update(fingerprint: FingerPrintEntity) {
-        fingerPrintDao.update(fingerprint)
-    }
+    fun update(fingerprint: FingerPrintEntity) = fingerPrintDao.update(fingerprint)
 
-    fun delete(fingerprint: FingerPrintEntity) {
-        fingerPrintDao.delete(fingerprint)
-    }
+    fun delete(fingerprint: FingerPrintEntity) = fingerPrintDao.delete(fingerprint)
 
-    fun deleteAll() {
-        fingerPrintDao.deleteAll()
-    }
+    fun deleteAll() = fingerPrintDao.deleteAll()
 
     fun getAllFingerprintsByTestPerson(personID: Long): Single<List<FingerPrintEntity>> =
         fingerPrintDao.getAllFingerprintsByTestPerson(personID)

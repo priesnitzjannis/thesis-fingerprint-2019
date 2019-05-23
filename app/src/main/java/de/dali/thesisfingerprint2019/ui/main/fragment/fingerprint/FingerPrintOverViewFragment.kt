@@ -9,6 +9,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.NavHostFragment
+import androidx.recyclerview.widget.DividerItemDecoration
 import dagger.android.support.AndroidSupportInjection
 import de.dali.thesisfingerprint2019.R
 import de.dali.thesisfingerprint2019.data.local.entity.FingerPrintEntity
@@ -54,9 +55,15 @@ class FingerPrintOverViewFragment : BaseFragment() {
         }
 
         binding.fingerItems.rvList.adapter = adapter
+        binding.fingerItems.rvList.addItemDecoration(
+            DividerItemDecoration(
+                binding.fingerItems.rvList.context,
+                DividerItemDecoration.VERTICAL
+            )
+        )
+
         binding.btnAddFingerprint.setOnClickListener {
-            val action = FingerPrintOverViewFragmentDirections
-                .actionFingerPrintOverViewFragmentToFingerPrintCreateFragment(
+            val action = FingerPrintOverViewFragmentDirections.toFingerPrintCreateFragment(
                     null,
                     fingerPrintOverViewModel.entity
                 )
@@ -77,7 +84,7 @@ class FingerPrintOverViewFragment : BaseFragment() {
 
         adapter.setCallback {
             val action = FingerPrintOverViewFragmentDirections
-                .actionFingerPrintOverViewFragmentToFingerPrintCreateFragment(
+                .toFingerPrintCreateFragment(
                     null,
                     fingerPrintOverViewModel.entity
                 )

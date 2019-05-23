@@ -546,14 +546,24 @@ public abstract class CameraBridgeViewBase extends SurfaceView implements Surfac
         float ch  = (float)Resources.getSystem().getDisplayMetrics().heightPixels;
 
         float scale = cw / mh;
-        float scale2 = mw / ch;
+        float scale2 = ch / mw;
+        if(scale2 > scale){
+            scale = scale2;
+        }
 
-        mScale = scale2 < scale ? scale2 : scale;
+        boolean isFrontCamera = mCameraIndex == CAMERA_ID_FRONT;
 
         mMatrix.reset();
+        if (isFrontCamera) {
+            mMatrix.preScale(-1, 1, hw, hh); //MH - this will mirror the camera
+        }
         mMatrix.preTranslate(hw, hh);
-        mMatrix.preRotate(sensorOrientation);
+        if (isFrontCamera){
+            mMatrix.preRotate(270);
+        } else {
+            mMatrix.preRotate(sensorOrientation);
+        }
         mMatrix.preTranslate(-hw, -hh);
-        mMatrix.preScale(mScale,mScale,hw,hh);
+        mMatrix.preScale(scale,scale,hw,hh);
     }
 }

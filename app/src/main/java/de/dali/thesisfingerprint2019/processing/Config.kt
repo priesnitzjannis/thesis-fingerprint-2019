@@ -4,23 +4,27 @@ import org.opencv.core.CvType.CV_16S
 
 object Config {
     //region QA
-    var CENTER_SIZE_X = 50.0
-    var CENTER_SIZE_Y = 50.0
-    var CENTER_OFFSET_X = CENTER_SIZE_X / 2.0
-    var CENTER_OFFSET_Y = CENTER_SIZE_Y / 2.0
-    var GRAD_X = 0.75
-    var GRAD_Y = 0.75
-    var K_SIZE_GAUS = 3.0
-    var K_SIZE_SOBEL = 3
-    var SCALE = 1.0
-    var DELTA = 3.0
-    var DDEPTH = CV_16S
-    var EDGE_DENS_TRESHOLD = 5.0
+    const val CENTER_SIZE_X = 150.0
+    const val CENTER_SIZE_Y = 150.0
+    const val CENTER_OFFSET_X = CENTER_SIZE_X / 2.0
+    const val CENTER_OFFSET_Y = CENTER_SIZE_Y / 2.0
+    const val GRAD_X = 0.75
+    const val GRAD_Y = 0.75
+    const val K_SIZE_GAUS = 3.0
+    const val K_SIZE_SOBEL = 3
+    const val SCALE = 1.0
+    const val DELTA = 3.0
+    const val DDEPTH = CV_16S
+    const val EDGE_DENS_TRESHOLD = 15.0
+    //endregion
+
+    //region FD
+    const val STEP_SIZE = 24
     //endregion
 
     //region ALL
-    var TRESHOLD_RED = 230.0
+    const val TRESHOLD_RED = 100.0
     //endregion
 
-    var MAX_KERNEL_LENGTH = 31
+    const val MAX_KERNEL_LENGTH = 31
 }

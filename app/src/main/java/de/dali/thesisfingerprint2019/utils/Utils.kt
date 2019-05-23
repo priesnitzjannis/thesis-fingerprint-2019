@@ -7,11 +7,13 @@ import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraManager
 import android.os.Build
 import android.os.Environment
+import android.util.Log
 import org.opencv.core.Mat
 import java.io.File
 import java.io.FileOutputStream
 import java.util.*
-
+import org.opencv.core.CvException
+import org.opencv.imgproc.Imgproc
 
 object Utils {
 
@@ -41,26 +43,34 @@ object Utils {
 
     fun toReadableDate(time: Long): Date = Date(time)
 
-    fun createFolder(folderMain: String, folderUser: String? = null, folderFingerprint: String? = null) {
-        val file = File("${Environment.getExternalStorageDirectory()}/$folderMain/$folderUser/$folderFingerprint")
-        if (!file.exists()) {
-            file.mkdirs()
+    fun saveImages(
+        folderMain: String,
+        folderUser: String,
+        folderFingerprint: String,
+        finalBitmaps: List<Bitmap>,
+        quality: Int
+    ) : List<String> {
+        val pathname = "${Environment.getExternalStorageDirectory()}/$folderMain/$folderUser/$folderFingerprint"
+        val myDir = File(pathname)
+
+        val listOfImages = mutableListOf<String>()
+
+        if (!myDir.exists()) myDir.mkdirs()
+
+        finalBitmaps.forEach {
+            val name = "${System.currentTimeMillis()}.jpg"
+
+            val file = File(myDir, name)
+            if (file.exists()) file.delete()
+            val out = FileOutputStream(file)
+            it.compress(Bitmap.CompressFormat.JPEG, quality, out)
+            out.flush()
+            out.close()
+
+            listOfImages.add("$folderUser/$folderFingerprint/$name")
         }
-    }
 
-    private fun saveImage(finalBitmap: Bitmap, quality: Int) {
-        val root = Environment.getExternalStorageDirectory().toString()
-        val myDir = File("$root/saved_images")
-        myDir.mkdirs()
-
-        val name = "${System.currentTimeMillis()}.jpg"
-
-        val file = File(myDir, name)
-        if (file.exists()) file.delete()
-        val out = FileOutputStream(file)
-        finalBitmap.compress(Bitmap.CompressFormat.JPEG, quality, out)
-        out.flush()
-        out.close()
+        return listOfImages
     }
 
     fun getDeviceName(): String {
@@ -84,6 +94,22 @@ object Utils {
         } else {
             Character.toUpperCase(first) + s.substring(1)
         }
+    }
+
+    fun convertMatToBitMap(input: Mat): Bitmap? {
+        var bmp: Bitmap? = null
+        val rgb = Mat()
+        Imgproc.cvtColor(input, rgb, Imgproc.COLOR_BGR2RGB)
+
+        try {
+            bmp = Bitmap.createBitmap(rgb.cols(), rgb.rows(), Bitmap.Config.ARGB_8888)
+
+            org.opencv.android.Utils.matToBitmap(rgb, bmp)
+        } catch (e: CvException) {
+            Log.d("Exception", e.message)
+        }
+
+        return bmp
     }
 
 }

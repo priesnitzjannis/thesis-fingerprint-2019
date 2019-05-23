@@ -24,7 +24,7 @@ class FingerSelectionRow @JvmOverloads constructor(
 
     private val rowTitle: String
 
-    private lateinit var onChange: (Int) -> Unit
+    private lateinit var onChange: (Int?, Int?) -> Unit
 
     init {
         inflate(context, R.layout.row_finger_selection, this)
@@ -50,26 +50,47 @@ class FingerSelectionRow @JvmOverloads constructor(
         attributes.recycle()
     }
 
-    fun setOnChangeListener(onChange: (Int) -> Unit) {
+    fun setOnChangeListener(onChange: (Int?, Int?) -> Unit) {
         this.onChange = onChange
     }
 
-    private fun getSelection(): Int {
-        return when (rowTitle) {
+    fun update(list: List<String>) {
+        when (rowTitle) {
             context.getString(R.string.row_multiselect_thumb) -> {
-                if (cbLeft.isChecked) 1 else 6
+                if (list.contains("1")) cbRight.isChecked = true else if (list.contains("6")) cbLeft.isChecked = true
             }
             context.getString(R.string.row_multiselect_index_finger) -> {
-                if (cbLeft.isChecked) 2 else 7
+                if (list.contains("2")) cbRight.isChecked = true else if (list.contains("7")) cbLeft.isChecked = true
             }
             context.getString(R.string.row_multiselect_middle_finger) -> {
-                if (cbLeft.isChecked) 3 else 8
+                if (list.contains("3")) cbRight.isChecked = true else if (list.contains("8")) cbLeft.isChecked = true
             }
             context.getString(R.string.row_multiselect_ring_finger) -> {
-                if (cbLeft.isChecked) 4 else 9
+                if (list.contains("4")) cbRight.isChecked = true else if (list.contains("9")) cbLeft.isChecked = true
             }
             context.getString(R.string.row_multiselect_little_finger) -> {
-                if (cbLeft.isChecked) 5 else 10
+                if (list.contains("5")) cbRight.isChecked = true else if (list.contains("10")) cbLeft.isChecked = true
+            }
+            else -> -1
+        }
+    }
+
+    private fun getSelection(id: Int): Int {
+        return when (rowTitle) {
+            context.getString(R.string.row_multiselect_thumb) -> {
+                if (id == R.id.cbRight) 1 else if (id == R.id.cbLeft) 6 else -1
+            }
+            context.getString(R.string.row_multiselect_index_finger) -> {
+                if (id == R.id.cbRight) 2 else if (id == R.id.cbLeft) 7 else -1
+            }
+            context.getString(R.string.row_multiselect_middle_finger) -> {
+                if (id == R.id.cbRight) 3 else if (id == R.id.cbLeft) 8 else -1
+            }
+            context.getString(R.string.row_multiselect_ring_finger) -> {
+                if (id == R.id.cbRight) 4 else if (id == R.id.cbLeft) 9 else -1
+            }
+            context.getString(R.string.row_multiselect_little_finger) -> {
+                if (id == R.id.cbRight) 5 else if (id == R.id.cbLeft) 10 else -1
             }
             else -> -1
         }
@@ -87,25 +108,52 @@ class FingerSelectionRow @JvmOverloads constructor(
     private fun initClickHandling() {
         with(cbLeft) {
             setOnClickListener {
-                if (cbRight.isChecked) {
+                val oldVal: Int?
+                val newVal: Int?
+
+                if (!isChecked) {
+                    oldVal = getSelection(id)
+                    newVal = null
+                } else if (cbRight.isChecked) {
                     cbRight.isChecked = false
+
+                    oldVal = getSelection(cbRight.id)
+                    newVal = getSelection(id)
+                } else {
+                    oldVal = null
+                    newVal = getSelection(id)
                 }
 
-                val selection = getSelection()
-                onChange(selection)
+                onChange(oldVal, newVal)
             }
         }
 
         with(cbRight) {
             setOnClickListener {
-                if (cbLeft.isChecked) {
+                val oldVal: Int?
+                val newVal: Int?
+
+                if (!isChecked) {
+                    oldVal = getSelection(id)
+                    newVal = null
+                } else if (cbLeft.isChecked) {
                     cbLeft.isChecked = false
+
+                    oldVal = getSelection(cbLeft.id)
+                    newVal = getSelection(id)
+                } else {
+                    oldVal = null
+                    newVal = getSelection(id)
                 }
 
-                val selection = getSelection()
-                onChange(selection)
+                onChange(oldVal, newVal)
             }
         }
+    }
+
+    fun lock(lockUI: Boolean) {
+        cbRight.isEnabled = !lockUI
+        cbLeft.isEnabled = !lockUI
     }
 
 }

@@ -19,7 +19,7 @@
                         </option>
                         <option name="myPositions">
                           <map>
-                            <entry key="action_fingerPrintCreateFragment_to_fingerScanningFragment">
+                            <entry key="toFingerScanningFragment">
                               <value>
                                 <LayoutPositions />
                               </value>
@@ -40,7 +40,7 @@
                         </option>
                         <option name="myPositions">
                           <map>
-                            <entry key="action_fingerPrintOverViewFragment_to_fingerPrintCreateFragment">
+                            <entry key="toFingerPrintCreateFragment">
                               <value>
                                 <LayoutPositions />
                               </value>
@@ -85,7 +85,7 @@
                         </option>
                         <option name="myPositions">
                           <map>
-                            <entry key="action_testPersonCreateFragment_to_fingerPrintOverViewFragment">
+                            <entry key="toFingerPrintOverViewFragment">
                               <value>
                                 <LayoutPositions />
                               </value>
@@ -106,12 +106,12 @@
                         </option>
                         <option name="myPositions">
                           <map>
-                            <entry key="action_testPersonOverviewFragment_to_settingsFragment">
+                            <entry key="toSettingsFragment">
                               <value>
                                 <LayoutPositions />
                               </value>
                             </entry>
-                            <entry key="action_testPersonOverviewFragment_to_testPersonCreateFragment">
+                            <entry key="toTestPersonCreateFragment">
                               <value>
                                 <LayoutPositions />
                               </value>

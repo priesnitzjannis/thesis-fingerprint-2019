@@ -11,6 +11,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import de.dali.thesisfingerprint2019.R
 import de.dali.thesisfingerprint2019.utils.setString
 
+
 class SpinnerWithTitle @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -42,7 +43,7 @@ class SpinnerWithTitle @JvmOverloads constructor(
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {}
 
-            override fun onItemSelected(adapterView: AdapterView<*>, view: View, i: Int, l: Long) {
+            override fun onItemSelected(adapterView: AdapterView<*>, view: View?, i: Int, l: Long) {
                 val selected = array[i].toString()
                 callback(selected)
             }
@@ -54,6 +55,7 @@ class SpinnerWithTitle @JvmOverloads constructor(
     }
 
     fun lock(lockUI: Boolean) {
+        spinner.alpha = if (lockUI) 0.3f else 1.0f
         spinner.isEnabled = !lockUI
     }
 

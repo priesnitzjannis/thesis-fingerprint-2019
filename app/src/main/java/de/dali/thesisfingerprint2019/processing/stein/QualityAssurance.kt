@@ -16,25 +16,24 @@ import de.dali.thesisfingerprint2019.processing.Config.SCALE
 import de.dali.thesisfingerprint2019.processing.Config.TRESHOLD_RED
 import de.dali.thesisfingerprint2019.processing.ProcessingStep
 import de.dali.thesisfingerprint2019.utils.Utils.releaseImage
+import org.opencv.core.*
 import org.opencv.core.Core.*
-import org.opencv.core.CvType
-import org.opencv.core.Mat
-import org.opencv.core.Point
-import org.opencv.core.Size
 import org.opencv.imgproc.Imgproc.*
 import javax.inject.Inject
 
 class QualityAssurance @Inject constructor() : ProcessingStep() {
+
+    var edgeDensity: Double = 0.0
+
     override val TAG: String
         get() = QualityAssurance::class.java.simpleName
 
-    override fun run(originalImage: Mat, processedImage: Mat): Mat? {
+    override fun run(originalImage: Mat): Mat? {
         val point = calcCenterPoint(originalImage)
         val fingerInROI = fingerIsInROI(originalImage, point)
 
-        if (fingerInROI) Log.e(TAG, "fingerInROI") else Log.e(TAG, "fingerNotInROI")
-
         if (fingerInROI) {
+            val result = Mat.zeros(originalImage.rows(), originalImage.cols(), CvType.CV_64FC1)
             val blurred = Mat.zeros(originalImage.rows(), originalImage.cols(), CvType.CV_64FC1)
             val gray = Mat.zeros(originalImage.rows(), originalImage.cols(), CvType.CV_64FC1)
             val grad_x = Mat.zeros(originalImage.rows(), originalImage.cols(), CvType.CV_64FC1)
@@ -50,7 +49,7 @@ class QualityAssurance @Inject constructor() : ProcessingStep() {
             convertScaleAbs(grad_x, abs_grad_x)
             convertScaleAbs(grad_y, abs_grad_y)
 
-            addWeighted(abs_grad_x, GRAD_X, abs_grad_y, GRAD_Y, 0.0, processedImage)
+            addWeighted(abs_grad_x, GRAD_X, abs_grad_y, GRAD_Y, 0.0, result)
 
             releaseImage(
                 listOf(
@@ -63,12 +62,12 @@ class QualityAssurance @Inject constructor() : ProcessingStep() {
                 )
             )
 
-            val edgeDensity = edgeDensity(processedImage, point)
+            edgeDensity = edgeDensity(result, point)
 
-            Log.e(TAG, "edgeDensity ---> $edgeDensity")
+            Log.e(TAG, "edgeDens -> $edgeDensity")
 
             return if (edgeDensity > EDGE_DENS_TRESHOLD) {
-                processedImage
+                originalImage
             } else {
                 null
             }
@@ -90,14 +89,24 @@ class QualityAssurance @Inject constructor() : ProcessingStep() {
         val endX = startX + CENTER_SIZE_X.toInt()
         val endY = startY + CENTER_SIZE_Y.toInt()
 
-        for (i in startX..endX) {
-            for (j in startY..endY) {
-                if (TRESHOLD_RED < originalImage.get(j, i)[0]) {
-                    return true
-                }
+        val lRgb = ArrayList<Mat>(3)
+        split(originalImage, lRgb)
+
+        val imageR =  lRgb[0]
+
+        var sum = 0.0
+
+        for (i in startX until endX) {
+            for (j in startY until endY) {
+             sum += imageR.get(j, i)[0]
             }
         }
-        return false
+
+        val avg = sum/(CENTER_SIZE_X * CENTER_SIZE_Y)
+
+        Log.e(TAG, "avgRed ---> $avg")
+
+        return avg > TRESHOLD_RED
     }
 
     private fun edgeDensity(processedImage: Mat, pCenter: Point): Double {
@@ -108,8 +117,8 @@ class QualityAssurance @Inject constructor() : ProcessingStep() {
         val endX = startX + CENTER_SIZE_X.toInt()
         val endY = startY + CENTER_SIZE_Y.toInt()
 
-        for (i in startX..endX) {
-            for (j in startY..endY) {
+        for (i in startX until endX) {
+            for (j in startY until endY) {
                 sum += processedImage.get(j, i)[0]
             }
         }

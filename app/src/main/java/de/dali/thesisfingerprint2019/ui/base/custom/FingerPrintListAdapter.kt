@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import de.dali.thesisfingerprint2019.R
 import de.dali.thesisfingerprint2019.data.local.entity.FingerPrintEntity
 import de.dali.thesisfingerprint2019.ui.base.custom.FingerPrintListAdapter.FingerPrintViewHolder
+import de.dali.thesisfingerprint2019.utils.Utils
 
 class FingerPrintListAdapter : RecyclerView.Adapter<FingerPrintViewHolder>() {
 
@@ -42,8 +43,12 @@ class FingerPrintListAdapter : RecyclerView.Adapter<FingerPrintViewHolder>() {
     override fun onBindViewHolder(holder: FingerPrintViewHolder, position: Int) {
         list?.let {
             val entity = it[position]
-            holder.txtRecordSet.text = (position + 1).toString()
-            holder.txtCreatedOn.text = entity.id.toString()
+            holder.txtRecordSet.text =
+                holder.itemView.context.getString(R.string.fragment_selection_record_set, entity.id.toString())
+            holder.txtCreatedOn.text = holder.itemView.context.getString(
+                R.string.fragment_selection_created_on,
+                Utils.toReadableDate(entity.timestamp!!).toString()
+            )
         }
     }
 

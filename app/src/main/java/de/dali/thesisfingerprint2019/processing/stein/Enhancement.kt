@@ -10,12 +10,12 @@ class Enhancement @Inject constructor() : ProcessingStep() {
     override val TAG: String
         get() = Enhancement::class.java.simpleName
 
-    override fun run(originalImage: Mat, processedImage: Mat): Mat? {
-        cvtColor(processedImage, processedImage, COLOR_BGR2GRAY)
-        medianBlur(processedImage, processedImage, MAX_KERNEL_LENGTH)
-        adaptiveThreshold(processedImage, processedImage, 125.0, ADAPTIVE_THRESH_MEAN_C, THRESH_BINARY, 19, 12.0)
+    override fun run(originalImage: Mat): Mat? {
+        cvtColor(originalImage, originalImage, COLOR_BGR2GRAY)
+        medianBlur(originalImage, originalImage, MAX_KERNEL_LENGTH)
+        adaptiveThreshold(originalImage, originalImage, 125.0, ADAPTIVE_THRESH_MEAN_C, THRESH_BINARY, 19, 12.0)
 
-        return processedImage
+        return originalImage
     }
 
 }

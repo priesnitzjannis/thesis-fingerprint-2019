@@ -2,6 +2,7 @@ package de.dali.thesisfingerprint2019.utils
 
 import android.graphics.Bitmap
 import androidx.appcompat.widget.AppCompatSpinner
+import androidx.lifecycle.MutableLiveData
 import org.opencv.android.Utils
 import org.opencv.core.Mat
 import org.opencv.core.Point
@@ -50,4 +51,11 @@ fun AppCompatSpinner.setString(value: String) {
         }
     }
     this.setSelection(pos)
+}
+
+fun MutableLiveData<MutableList<Int>>.update(oldVal: Int?, newVal: Int?){
+    if (oldVal != null) this.value?.remove(oldVal)
+    if (newVal != null) this.value?.add(newVal)
+
+    this.value = this.value
 }

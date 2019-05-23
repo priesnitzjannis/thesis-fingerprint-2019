@@ -11,7 +11,7 @@ import de.dali.thesisfingerprint2019.data.local.entity.TestPersonEntity
 
 @Database(
     entities = [FingerPrintEntity::class,
-        TestPersonEntity::class],
+                TestPersonEntity::class],
     version = 1,
     exportSchema = false
 )
@@ -21,6 +21,6 @@ import de.dali.thesisfingerprint2019.data.local.entity.TestPersonEntity
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun fingerPrintDao(): FingerPrintDao
-    abstract fun testPersontDao(): TestPersonDao
+    abstract fun testPersonDao(): TestPersonDao
 
 }

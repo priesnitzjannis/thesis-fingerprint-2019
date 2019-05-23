@@ -10,6 +10,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.NavHostFragment
+import androidx.recyclerview.widget.DividerItemDecoration
 import dagger.android.support.AndroidSupportInjection
 import de.dali.thesisfingerprint2019.R
 import de.dali.thesisfingerprint2019.data.local.entity.TestPersonEntity
@@ -53,9 +54,16 @@ class TestPersonOverviewFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.personItems.rvList.adapter = adapter
+        binding.personItems.rvList.addItemDecoration(
+            DividerItemDecoration(
+                binding.personItems.rvList.context,
+                DividerItemDecoration.VERTICAL
+            )
+        )
+
         binding.btnAdd.setOnClickListener {
             val action =
-                TestPersonOverviewFragmentDirections.actionTestPersonOverviewFragmentToTestPersonCreateFragment(null)
+                TestPersonOverviewFragmentDirections.toTestPersonCreateFragment(null)
             NavHostFragment.findNavController(this).navigate(action)
         }
 
@@ -82,8 +90,7 @@ class TestPersonOverviewFragment : BaseFragment() {
         adapter = TestPersonOverviewAdapter()
 
         adapter.setCallback {
-            val action =
-                TestPersonOverviewFragmentDirections.actionTestPersonOverviewFragmentToTestPersonCreateFragment(it)
+            val action = TestPersonOverviewFragmentDirections.toTestPersonCreateFragment(it)
             NavHostFragment.findNavController(this).navigate(action)
         }
     }

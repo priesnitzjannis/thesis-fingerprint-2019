@@ -66,7 +66,10 @@ class TestPersonCreateFragment : BaseFragment() {
     }
 
     private fun initOnChange() {
-        binding.editAge.setCallback { testPersonCreateViewModel.age = it }
+        binding.editAge.setCallback {
+            testPersonCreateViewModel.age = it.toInt()
+            binding.btnContinue.isEnabled = it != -1F
+        }
         binding.spinnerGender.setCallback { testPersonCreateViewModel.gender = it }
         binding.spinnerColor.setCallback { testPersonCreateViewModel.color = it }
     }
@@ -85,7 +88,7 @@ class TestPersonCreateFragment : BaseFragment() {
 
     private fun navToFingerPrintOverViewFrag(entity: TestPersonEntity) {
         val action = TestPersonCreateFragmentDirections
-            .actionTestPersonCreateFragmentToFingerPrintOverViewFragment(entity)
+            .toFingerPrintOverViewFragment(entity)
         NavHostFragment.findNavController(this).navigate(action)
     }
 
@@ -101,6 +104,7 @@ class TestPersonCreateFragment : BaseFragment() {
 
     private fun onSuccess(id: Long) {
         testPersonCreateViewModel.entity.personID = id
+
         progressDialog.dismiss()
         navToFingerPrintOverViewFrag(testPersonCreateViewModel.entity)
     }

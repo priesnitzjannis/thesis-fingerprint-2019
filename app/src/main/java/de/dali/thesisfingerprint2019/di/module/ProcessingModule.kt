@@ -2,8 +2,13 @@ package de.dali.thesisfingerprint2019.di.module
 
 import dagger.Module
 import dagger.Provides
-import de.dali.thesisfingerprint2019.processing.ProcessingPipeline
-import de.dali.thesisfingerprint2019.processing.stein.*
+import de.dali.thesisfingerprint2019.processing.ProcessingThread
+import de.dali.thesisfingerprint2019.processing.QualityAssuranceThread
+import de.dali.thesisfingerprint2019.processing.stein.Enhancement
+import de.dali.thesisfingerprint2019.processing.stein.FingerSegmentation
+import de.dali.thesisfingerprint2019.processing.stein.QualityAssurance
+import de.dali.thesisfingerprint2019.processing.stein.RotateFinger
+import de.dali.thesisfingerprint2019.processing.stein.FingerDetectionImprecisely
 import de.dali.thesisfingerprint2019.ui.main.handler.UIHandler
 import javax.inject.Singleton
 
@@ -12,23 +17,30 @@ class ProcessingModule {
 
     @Provides
     @Singleton
-    fun provideProcessingPipeline(
-        uiHandler: UIHandler,
-        qualityAssurance: QualityAssurance,
-        fingerDetection: FingerDetection,
+    fun provideQualityAssurance(
+        qualityAssurance: QualityAssurance
+    ): QualityAssuranceThread = QualityAssuranceThread(
+        qualityAssurance
+    )
+
+    @Provides
+    @Singleton
+    fun provideProcessing(
+        fingerDetection: FingerDetectionImprecisely
+        /*
         fingerSegmentation: FingerSegmentation,
         rotateFinger: RotateFinger,
         enhancement: Enhancement
-    ): ProcessingPipeline {
-        return ProcessingPipeline(
-            uiHandler,
-            qualityAssurance,
-            fingerDetection /*,
-            fingerSegmentation,
-            rotateFinger,
-            enhancement */
-        )
-    }
+        */
+    ): ProcessingThread = ProcessingThread(
+        fingerDetection
+        /*
+        fingerSegmentation,
+        rotateFinger,
+        enhancement
+        */
+    )
+
 
     @Provides
     @Singleton
@@ -40,7 +52,7 @@ class ProcessingModule {
 
     @Provides
     @Singleton
-    fun providesFingerDetection(): FingerDetection = FingerDetection()
+    fun providesFingerDetection(): FingerDetectionImprecisely = FingerDetectionImprecisely()
 
     @Provides
     @Singleton

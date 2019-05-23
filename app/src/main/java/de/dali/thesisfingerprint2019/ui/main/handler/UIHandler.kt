@@ -9,15 +9,15 @@ import java.lang.ref.WeakReference
 class UIHandler : Handler() {
 
     private lateinit var weakRefQualityAssurance: WeakReference<ResultView>
-    private lateinit var weakRefFingerDetection: WeakReference<ResultView>
-    //private lateinit var weakRefFingerSegmentation: WeakReference<ImageView>
-    //private lateinit var weakRefFingerRotation: WeakReference<ImageView>
-    //private lateinit var weakRefEnhancement: WeakReference<ImageView>
+    //private lateinit var weakRefFingerDetection: WeakReference<ResultView>
+    private lateinit var weakRefFingerSegmentation: WeakReference<ResultView>
+    //private lateinit var weakRefFingerRotation: WeakReference<ResultView>
+    //private lateinit var weakRefEnhancement: WeakReference<ResultView>
 
     fun setViews(views: Array<out ResultView>) {
         weakRefQualityAssurance = WeakReference(views[0])
-        weakRefFingerDetection = WeakReference(views[1])
-        //weakRefFingerSegmentation = WeakReference(fingerSegmentation)
+        //weakRefFingerDetection = WeakReference(views[1])
+        weakRefFingerSegmentation = WeakReference(views[1])
         //weakRefFingerRotation = WeakReference(fingerRotation)
         //weakRefEnhancement = WeakReference(fingerEnhancement)
     }
@@ -35,10 +35,7 @@ class UIHandler : Handler() {
 
         if (bitmaps.isNotEmpty()) {
             weakRefQualityAssurance.get()?.drawBitmap(bitmaps[0])
-            weakRefFingerDetection.get()?.drawBitmap(bitmaps[1])
-        } else {
-            weakRefQualityAssurance.get()?.clear()
-            weakRefFingerDetection.get()?.clear()
+            weakRefFingerSegmentation.get()?.drawBitmap(bitmaps[1])
         }
     }
 

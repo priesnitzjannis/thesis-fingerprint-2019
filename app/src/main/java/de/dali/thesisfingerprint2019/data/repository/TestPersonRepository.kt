@@ -11,17 +11,11 @@ class TestPersonRepository @Inject constructor(private val testPersonDao: TestPe
 
     fun insert(testPerson: TestPersonEntity): Long = testPersonDao.insert(testPerson)
 
-    fun update(testPerson: TestPersonEntity) {
-        testPersonDao.update(testPerson)
-    }
+    fun update(testPerson: TestPersonEntity) = testPersonDao.update(testPerson)
 
-    fun delete(testPerson: TestPersonEntity) {
-        testPersonDao.delete(testPerson)
-    }
+    fun delete(testPerson: TestPersonEntity) = testPersonDao.delete(testPerson)
 
-    fun deleteAll() {
-        testPersonDao.deleteAll()
-    }
+    fun deleteAll() = testPersonDao.deleteAll()
 
     fun getAllTestPerson(): Single<List<TestPersonEntity>> = testPersonDao.getAllTestPerson()
 

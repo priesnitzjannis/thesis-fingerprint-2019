@@ -35,13 +35,14 @@ data class FingerPrintEntity(
     var listOfFingerIds: List<String>,
 
     @NonNull
+    var timestamp: Long? = null,
+
     var resolution: String? = null,
 
-    @NonNull
     var correctionDegree: Float? = null,
 
-    @NonNull
     var imageList: List<String>? = null
+
 
 ) : Serializable
 

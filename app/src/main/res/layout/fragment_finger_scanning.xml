@@ -3,17 +3,17 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
         <org.opencv.android.JavaCamera2View
                 android:id="@+id/javaCamera2View"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:visibility="gone"
                 app:camera_id="back"
-                app:layout_constraintBottom_toBottomOf="@+id/guideline"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"/>
@@ -23,56 +23,10 @@
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:background="@drawable/state_flash"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
-                app:state_flash_enabled="true"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_margin="24dp"/>
 
-        <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guideline"
-                android:orientation="horizontal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintGuide_percent="0.5"/>
-
-        <de.dali.thesisfingerprint2019.ui.base.custom.ResultView
-                android:id="@+id/resultView"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/guideline"
-                app:layout_constraintBottom_toTopOf="@+id/guideline2"
-                app:layout_constraintEnd_toStartOf="@+id/guideline3"/>
-
-        <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guideline2"
-                android:orientation="horizontal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintGuide_percent="0.75"/>
-
-        <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guideline3"
-                android:orientation="vertical"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintGuide_percent="0.334"/>
-
-        <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guideline4"
-                android:orientation="vertical"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintGuide_percent="0.667"/>
-        <de.dali.thesisfingerprint2019.ui.base.custom.ResultView
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:id="@+id/resultView2" app:layout_constraintStart_toStartOf="@+id/guideline3"
-                app:layout_constraintEnd_toStartOf="@+id/guideline4"
-                app:layout_constraintBottom_toTopOf="@+id/guideline2"
-                app:layout_constraintTop_toTopOf="@+id/guideline"/>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </RelativeLayout>
 
 </layout>

@@ -42,9 +42,32 @@
                         app:enabled="false"
                         app:title="@string/fragment_details_vendor"/>
 
+                <de.dali.thesisfingerprint2019.ui.base.custom.EditTextWithTitle
+                        android:id="@+id/editResolution"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="8dp"
+                        android:paddingEnd="8dp"
+                        app:enabled="false"
+                        app:title="@string/fragment_details_resolution"/>
+
+                <de.dali.thesisfingerprint2019.ui.base.custom.EditTextWithTitle
+                        android:id="@+id/editCorrectionDegree"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="8dp"
+                        android:paddingEnd="8dp"
+                        app:enabled="false"
+                        app:title="@string/fragment_details_correction_degree"/>
+
                 <include
                         android:id="@+id/multiSelect"
                         layout="@layout/row_multiselect"/>
+
+                <include
+                        android:id="@+id/resultImage"
+                        layout="@layout/childview_result_imageview"/>
+
 
             </LinearLayout>
 

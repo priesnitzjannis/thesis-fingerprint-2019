@@ -1,63 +1,70 @@
 package de.dali.thesisfingerprint2019.ui.main.viewmodel.scanning
 
 
+import android.graphics.Bitmap
 import de.dali.thesisfingerprint2019.data.local.entity.FingerPrintEntity
 import de.dali.thesisfingerprint2019.data.repository.FingerPrintRepository
-import de.dali.thesisfingerprint2019.processing.ProcessingPipeline
+import de.dali.thesisfingerprint2019.processing.ProcessingThread
+import de.dali.thesisfingerprint2019.processing.QualityAssuranceThread
 import de.dali.thesisfingerprint2019.ui.base.BaseViewModel
-import de.dali.thesisfingerprint2019.ui.base.custom.ResultView
+import de.dali.thesisfingerprint2019.utils.Constants
+import de.dali.thesisfingerprint2019.utils.Constants.NAME_MAIN_FOLDER
+import de.dali.thesisfingerprint2019.utils.Utils
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
 import org.opencv.core.Mat
 import javax.inject.Inject
 
 class FingerScanningViewModel @Inject constructor(
-    val fingerPrintRepository: FingerPrintRepository,
-    val processingPipeline: ProcessingPipeline
+    private val fingerPrintRepository: FingerPrintRepository,
+    private val qualityAssuranceThread: QualityAssuranceThread,
+    private val processingThread: ProcessingThread
 ) : BaseViewModel() {
 
     lateinit var entity: FingerPrintEntity
 
     var compositeDisposable: CompositeDisposable = CompositeDisposable()
 
-    fun startProcessingPipeline() {
-        processingPipeline.launch()
-    }
+    fun startProcessingPipeline() = qualityAssuranceThread.launch()
 
-    fun stopProcessingPipeline() {
-        processingPipeline.close()
-    }
+    fun stopProcessingPipeline() = qualityAssuranceThread.close()
 
-    fun clearQueue() {
-        processingPipeline.clearQueue()
-    }
+    fun clearQueue() = qualityAssuranceThread.clearQueue()
 
-    fun processImage(originalImage: Mat) {
-        processingPipeline.processImage(originalImage)
-    }
+    fun sendToPipeline(originalImage: Mat) = qualityAssuranceThread.sendToPipeline(originalImage)
 
-    fun setViews(vararg views: ResultView) {
-        processingPipeline.setViews(views)
-    }
+    fun setCallback(callback: (Mat) -> Unit) = qualityAssuranceThread.setCallback(callback)
 
     fun setSensorOrientation(sensorOrientation: Int) {
-        processingPipeline.sensorOrientation = sensorOrientation
+        qualityAssuranceThread.sensorOrientation = sensorOrientation
     }
 
-    fun insertTestPerson(
-        fingerprint: FingerPrintEntity,
-        onSuccess: (Long) -> Unit,
-        onError: (Throwable) -> Unit
-    ) {
+    fun  processImage(image: Mat,
+                     onSuccess:(Unit) -> Unit,
+                     onError:(Throwable) -> Unit){
 
-        val disposable = Single.fromCallable { fingerPrintRepository.insert(fingerprint) }
+        val disposable = Single.fromCallable {
+            val bmps = processingThread.process(image)
+            val imageList = Utils.saveImages(NAME_MAIN_FOLDER,
+                                             entity.personID.toString(),
+                                             entity.id.toString(),
+                                             bmps,
+                                             100)
+
+            entity.imageList = imageList
+
+            val id = fingerPrintRepository.insert(entity)
+
+        }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(onSuccess, onError)
 
         compositeDisposable.add(disposable)
+
     }
 
     override fun onCleared() {

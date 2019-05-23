@@ -29,8 +29,8 @@
         right side to create a new one.
     </string>
 
-    <string name="fragment_selection_record_set">Record Set #</string>
-    <string name="fragment_selection_created_on">Created on :</string>
+    <string name="fragment_selection_record_set">Record Set #%1$s</string>
+    <string name="fragment_selection_created_on">Created on :%1$s</string>
     <string name="title">Title</string>
     <string name="row_multiselect_right">Right</string>
     <string name="row_multiselect_left">Left</string>
@@ -61,9 +61,9 @@
         <item>Outdoor</item>
     </string-array>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="fragment_test_person_overview">Testperson #%1$s</string>
     <string name="fragment_test_person_continue">Continue</string>
+    <string name="fragment_details_resolution">Resolution:</string>
+    <string name="fragment_details_correction_degree">Correction Degree:</string>
 
 </resources>
