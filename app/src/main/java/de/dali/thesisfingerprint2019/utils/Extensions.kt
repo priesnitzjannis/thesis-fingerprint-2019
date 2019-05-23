@@ -53,7 +53,7 @@ fun AppCompatSpinner.setString(value: String) {
     this.setSelection(pos)
 }
 
-fun MutableLiveData<MutableList<Int>>.update(oldVal: Int?, newVal: Int?){
+fun MutableLiveData<MutableList<Int>>.update(oldVal: Int?, newVal: Int?) {
     if (oldVal != null) this.value?.remove(oldVal)
     if (newVal != null) this.value?.add(newVal)
 

@@ -20,11 +20,8 @@ import androidx.navigation.fragment.NavHostFragment
 import dagger.android.support.AndroidSupportInjection
 import de.dali.thesisfingerprint2019.R
 import de.dali.thesisfingerprint2019.data.local.entity.FingerPrintEntity
-import de.dali.thesisfingerprint2019.data.local.entity.TestPersonEntity
 import de.dali.thesisfingerprint2019.databinding.FragmentFingerPrintCreateBinding
 import de.dali.thesisfingerprint2019.ui.base.BaseFragment
-import de.dali.thesisfingerprint2019.ui.main.fragment.testperson.TestPersonCreateFragment
-import de.dali.thesisfingerprint2019.ui.main.fragment.testperson.TestPersonCreateFragmentDirections
 import de.dali.thesisfingerprint2019.ui.main.viewmodel.fingerprint.FingerPrintCreateViewModel
 import de.dali.thesisfingerprint2019.utils.Utils
 import de.dali.thesisfingerprint2019.utils.update
@@ -78,7 +75,8 @@ class FingerPrintCreateFragment : BaseFragment() {
 
                 if (entity.correctionDegree == null &&
                     entity.imageList == null &&
-                    entity.resolution == null){
+                    entity.resolution == null
+                ) {
                     hideParts()
                 }
 
@@ -207,7 +205,11 @@ class FingerPrintCreateFragment : BaseFragment() {
         } else {
             showProgressDialogWithTitle()
             fingerPrintCreateViewModel.createFingerPrintEntity()
-            fingerPrintCreateViewModel.insertFingerPrint(fingerPrintCreateViewModel.fingerPrintEntity, ::onSuccess, ::onError)
+            fingerPrintCreateViewModel.insertFingerPrint(
+                fingerPrintCreateViewModel.fingerPrintEntity,
+                ::onSuccess,
+                ::onError
+            )
         }
     }
 

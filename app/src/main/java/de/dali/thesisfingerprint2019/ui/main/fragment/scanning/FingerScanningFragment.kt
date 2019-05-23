@@ -22,9 +22,12 @@ import org.opencv.android.BaseLoaderCallback
 import org.opencv.android.CameraBridgeViewBase
 import org.opencv.android.LoaderCallbackInterface
 import org.opencv.android.OpenCVLoader
-import javax.inject.Inject
-import org.opencv.core.*
+import org.opencv.core.CvType
+import org.opencv.core.Mat
+import org.opencv.core.Point
+import org.opencv.core.Scalar
 import org.opencv.imgproc.Imgproc.rectangle
+import javax.inject.Inject
 
 
 class FingerScanningFragment : BaseFragment() {
@@ -66,7 +69,7 @@ class FingerScanningFragment : BaseFragment() {
 
             rectangle(
                 mRgba,
-                Point(pX, pY),
+                Point(pX - 75, pY - 75),
                 Point(pX + 150, pY + 150),
                 Scalar(255.0, 0.0, 0.0, 255.0),
                 3
@@ -123,7 +126,7 @@ class FingerScanningFragment : BaseFragment() {
 
                 showProgressDialogWithTitle()
 
-                fingerScanningViewModel.processImage(it, {progressDialog.dismiss()}, { Log.e(TAG, it.message)})
+                fingerScanningViewModel.processImage(it, { progressDialog.dismiss() }, { Log.e(TAG, it.message) })
             }
         }
 
@@ -167,7 +170,7 @@ class FingerScanningFragment : BaseFragment() {
         progressDialog.show()
     }
 
-    private fun dismissDialog(){
+    private fun dismissDialog() {
         progressDialog.dismiss()
     }
 

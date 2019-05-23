@@ -2,7 +2,7 @@ package de.dali.thesisfingerprint2019.processing.stein
 
 import de.dali.thesisfingerprint2019.processing.Config
 import de.dali.thesisfingerprint2019.processing.ProcessingStep
-import org.opencv.core.Core
+import de.dali.thesisfingerprint2019.utils.Utils
 import org.opencv.core.Mat
 import org.opencv.core.Point
 import org.opencv.core.Rect
@@ -14,36 +14,28 @@ class FingerDetectionPrecisely @Inject constructor() : ProcessingStep() {
         get() = FingerDetectionPrecisely::class.java.simpleName
 
     override fun run(originalImage: Mat): Mat? {
-        val matR = getRedChannelFromMat(originalImage)
-
         val center = Point(
-            originalImage.rows() / 2.0,
-            originalImage.cols() / 2.0
+            originalImage.cols() / 2.0,
+            originalImage.rows() / 2.0
         )
+        val xLeft = detectLeft(originalImage, center)
+        val xRight = detectRight(originalImage, center)
+        val yTop = detectTop(originalImage, center)
+        val yBottom = detectBottom(originalImage, center)
+        val roi = Rect(yBottom, xLeft, yTop - yBottom, xRight - xLeft)
 
-        val xLeft = detectLeft(matR, center)
-        val xRight = detectRight(matR, center)
-        val yTop = detectTop(matR, center)
-        val yBottom = detectBottom(matR, center)
+        val bmpOrg = Utils.convertMatToBitMap(Mat(originalImage, roi))
 
-        val roi = Rect(xLeft, yBottom, xRight - xLeft, yTop - yBottom)
         return Mat(originalImage, roi)
-    }
-
-    private fun getRedChannelFromMat(originalImage: Mat): Mat {
-        val lRgb = ArrayList<Mat>(3)
-        Core.split(originalImage, lRgb)
-
-        return lRgb[0]
     }
 
     private fun detectLeft(originalImage: Mat?, center: Point): Int {
         var borderX = 0
 
         originalImage?.run {
-            for (x in center.x.toInt() downTo 0) {
-                if (get(x, center.y.toInt())[0] < Config.TRESHOLD_RED) {
-                    borderX = x
+            for (y in center.y.toInt() downTo 0) {
+                if (get(y, center.x.toInt())[0] < 150) {
+                    borderX = y
                     return@run
                 }
             }
@@ -52,12 +44,12 @@ class FingerDetectionPrecisely @Inject constructor() : ProcessingStep() {
     }
 
     private fun detectRight(originalImage: Mat?, center: Point): Int {
-        var borderX = 0
+        var borderX = originalImage?.cols() ?: 0
 
         originalImage?.run {
-            for (x in center.x.toInt() until rows() - 1) {
-                if (get(x, center.y.toInt())[0] < Config.TRESHOLD_RED) {
-                    borderX = x
+            for (y in center.y.toInt() until rows()) {
+                if (get(y, center.x.toInt())[0] < 150) {
+                    borderX = y
                     return@run
                 }
             }
@@ -66,11 +58,11 @@ class FingerDetectionPrecisely @Inject constructor() : ProcessingStep() {
     }
 
     private fun detectTop(originalImage: Mat?, center: Point): Int {
-        var borderY = 0
+        var borderY = originalImage?.cols() ?: 0
 
         originalImage?.run {
-            for (y in center.y.toInt() until cols() - 1) {
-                if (get(center.x.toInt(), y)[0] < Config.TRESHOLD_RED) {
+            for (y in center.x.toInt() until cols()) {
+                if (get(center.y.toInt(), y)[0] < 150) {
                     borderY = y
                     return@run
                 }
@@ -83,8 +75,8 @@ class FingerDetectionPrecisely @Inject constructor() : ProcessingStep() {
         var borderY = 0
 
         originalImage?.run {
-            for (y in center.y.toInt() downTo 0) {
-                if (get(center.x.toInt(), y)[0] < Config.TRESHOLD_RED) {
+            for (y in center.x.toInt() downTo 0) {
+                if (get(center.y.toInt(), y)[0] < 150) {
                     borderY = y
                     return@run
                 }

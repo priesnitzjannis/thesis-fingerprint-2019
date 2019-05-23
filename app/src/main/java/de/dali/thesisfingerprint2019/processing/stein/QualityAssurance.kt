@@ -84,29 +84,39 @@ class QualityAssurance @Inject constructor() : ProcessingStep() {
     }
 
     private fun fingerIsInROI(originalImage: Mat, pCenter: Point): Boolean {
-        val startX = pCenter.x.toInt()
-        val startY = pCenter.y.toInt()
-        val endX = startX + CENTER_SIZE_X.toInt()
-        val endY = startY + CENTER_SIZE_Y.toInt()
 
-        val lRgb = ArrayList<Mat>(3)
-        split(originalImage, lRgb)
+        val points = mutableListOf(
+            Point(pCenter.x, pCenter.y),
+            Point(pCenter.x, pCenter.y + CENTER_SIZE_Y),
+            Point(pCenter.x + CENTER_SIZE_X, pCenter.y),
+            Point(pCenter.x + CENTER_SIZE_X, pCenter.y + CENTER_SIZE_Y)
+        )
 
-        val imageR =  lRgb[0]
+        val mask = Mat(
+            Size(
+                originalImage.cols().toDouble(),
+                originalImage.rows().toDouble()
+            ),
+            CvType.CV_8UC1
+        )
 
-        var sum = 0.0
+        val matPt = MatOfPoint()
+        matPt.fromList(points)
 
-        for (i in startX until endX) {
-            for (j in startY until endY) {
-             sum += imageR.get(j, i)[0]
-            }
-        }
+        val ppt = ArrayList<MatOfPoint>()
+        ppt.add(matPt)
 
-        val avg = sum/(CENTER_SIZE_X * CENTER_SIZE_Y)
+        fillPoly(mask, ppt, Scalar(255.0), 4, 1)
 
-        Log.e(TAG, "avgRed ---> $avg")
+        val rgb = ArrayList<Mat>(3)
+        split(originalImage, rgb)
 
-        return avg > TRESHOLD_RED
+        val imageR = rgb[0]
+        val average = mean(imageR, mask)
+
+        Log.e(TAG, "avgRed ---> ${average.`val`[0].toInt()}/${average.`val`[1].toInt()}/${average.`val`[2].toInt()}")
+
+        return average.`val`[0] >= TRESHOLD_RED
     }
 
     private fun edgeDensity(processedImage: Mat, pCenter: Point): Double {

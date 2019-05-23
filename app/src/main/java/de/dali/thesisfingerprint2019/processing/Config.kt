@@ -15,7 +15,7 @@ object Config {
     const val SCALE = 1.0
     const val DELTA = 3.0
     const val DDEPTH = CV_16S
-    const val EDGE_DENS_TRESHOLD = 15.0
+    const val EDGE_DENS_TRESHOLD = 10.0
     //endregion
 
     //region FD
@@ -23,8 +23,8 @@ object Config {
     //endregion
 
     //region ALL
-    const val TRESHOLD_RED = 100.0
+    const val TRESHOLD_RED = 200.0
     //endregion
 
-    const val MAX_KERNEL_LENGTH = 31
+    const val MAX_KERNEL_LENGTH = 3
 }

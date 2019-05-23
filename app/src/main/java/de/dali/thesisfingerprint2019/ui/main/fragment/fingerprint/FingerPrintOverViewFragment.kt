@@ -64,9 +64,9 @@ class FingerPrintOverViewFragment : BaseFragment() {
 
         binding.btnAddFingerprint.setOnClickListener {
             val action = FingerPrintOverViewFragmentDirections.toFingerPrintCreateFragment(
-                    null,
-                    fingerPrintOverViewModel.entity
-                )
+                null,
+                fingerPrintOverViewModel.entity
+            )
             NavHostFragment.findNavController(this).navigate(action)
         }
 

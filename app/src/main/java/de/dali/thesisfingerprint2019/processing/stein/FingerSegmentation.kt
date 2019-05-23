@@ -1,6 +1,7 @@
 package de.dali.thesisfingerprint2019.processing.stein
 
 import de.dali.thesisfingerprint2019.processing.ProcessingStep
+import de.dali.thesisfingerprint2019.utils.Utils
 import org.opencv.core.*
 import org.opencv.core.CvType.CV_8UC1
 import org.opencv.imgproc.Imgproc.*
@@ -17,7 +18,7 @@ class FingerSegmentation @Inject constructor() : ProcessingStep() {
 
         Core.split(originalImage, lRgb)
 
-        threshold(lRgb[0], imageThresh, 100.0, 255.0, THRESH_BINARY)
+        threshold(lRgb[0], imageThresh, 200.0, 255.0, THRESH_BINARY)
 
         var largestArea = 0.0
         val contours: List<MatOfPoint> = mutableListOf()
@@ -38,6 +39,9 @@ class FingerSegmentation @Inject constructor() : ProcessingStep() {
         drawContours(mask, wrapper, -1, Scalar(255.0), FILLED)
         val crop = Mat(Size(originalImage.rows().toDouble(), originalImage.cols().toDouble()), CV_8UC1, Scalar(0.0))
         originalImage.copyTo(crop, mask)
+
+        val bmp3 = Utils.convertMatToBitMap(crop)
+
 
         return crop
     }

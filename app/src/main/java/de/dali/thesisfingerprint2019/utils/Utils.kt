@@ -8,12 +8,13 @@ import android.hardware.camera2.CameraManager
 import android.os.Build
 import android.os.Environment
 import android.util.Log
+import org.opencv.core.CvException
 import org.opencv.core.Mat
+import org.opencv.core.Point
+import org.opencv.imgproc.Imgproc
 import java.io.File
 import java.io.FileOutputStream
 import java.util.*
-import org.opencv.core.CvException
-import org.opencv.imgproc.Imgproc
 
 object Utils {
 
@@ -41,6 +42,22 @@ object Utils {
         }
     }
 
+    fun rotateImageByDegree(correctionAngle: Double, originalImage: Mat): Mat {
+        val rotMat: Mat
+        val destination = Mat(originalImage.rows(), originalImage.cols(), originalImage.type())
+        val center = Point((destination.cols() / 2).toDouble(), (destination.rows() / 2).toDouble())
+        rotMat = Imgproc.getRotationMatrix2D(center, correctionAngle, 1.0)
+        Imgproc.warpAffine(originalImage, destination, rotMat, destination.size())
+
+        releaseImage(
+            listOf(
+                rotMat
+            )
+        )
+
+        return destination
+    }
+
     fun toReadableDate(time: Long): Date = Date(time)
 
     fun saveImages(
@@ -49,7 +66,7 @@ object Utils {
         folderFingerprint: String,
         finalBitmaps: List<Bitmap>,
         quality: Int
-    ) : List<String> {
+    ): List<String> {
         val pathname = "${Environment.getExternalStorageDirectory()}/$folderMain/$folderUser/$folderFingerprint"
         val myDir = File(pathname)
 
@@ -99,12 +116,13 @@ object Utils {
     fun convertMatToBitMap(input: Mat): Bitmap? {
         var bmp: Bitmap? = null
         val rgb = Mat()
-        Imgproc.cvtColor(input, rgb, Imgproc.COLOR_BGR2RGB)
+
+        Imgproc.cvtColor(input,rgb, Imgproc.COLOR_RGB2RGBA,4)
 
         try {
             bmp = Bitmap.createBitmap(rgb.cols(), rgb.rows(), Bitmap.Config.ARGB_8888)
 
-            org.opencv.android.Utils.matToBitmap(rgb, bmp)
+            org.opencv.android.Utils.matToBitmap(input, bmp, true)
         } catch (e: CvException) {
             Log.d("Exception", e.message)
         }

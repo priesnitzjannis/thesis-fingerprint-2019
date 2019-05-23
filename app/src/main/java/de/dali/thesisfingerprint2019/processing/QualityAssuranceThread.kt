@@ -5,9 +5,9 @@ import android.os.HandlerThread
 import android.os.Looper
 import android.os.Message
 import android.os.Process.THREAD_PRIORITY_BACKGROUND
-import android.util.Log
 import de.dali.thesisfingerprint2019.processing.stein.QualityAssurance
 import de.dali.thesisfingerprint2019.utils.Utils.releaseImage
+import de.dali.thesisfingerprint2019.utils.Utils.rotateImageByDegree
 import de.dali.thesisfingerprint2019.utils.rotate
 import org.opencv.core.Mat
 
@@ -38,7 +38,7 @@ class QualityAssuranceThread(private val qualityAssurance: QualityAssurance) :
                 super.handleMessage(msg)
                 val image = (msg?.obj as Mat)
                 val processedMat = Mat()
-                val rotatedImage = image.rotate(0.0 - sensorOrientation)
+                val rotatedImage = rotateImageByDegree(0.0 - sensorOrientation, image)
 
                 val result = qualityAssurance.run(rotatedImage)
 
@@ -54,7 +54,7 @@ class QualityAssuranceThread(private val qualityAssurance: QualityAssurance) :
 
                 releaseImage(listOf(image, processedMat, rotatedImage))
 
-                if (imageCounter == 10) {
+                if (imageCounter == 1) {
                     callback(highestEdgeDenseMat)
                 }
 

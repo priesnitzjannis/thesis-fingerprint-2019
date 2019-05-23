@@ -7,7 +7,6 @@ import de.dali.thesisfingerprint2019.utils.Utils
 import org.opencv.core.Mat
 import org.opencv.core.Rect
 import javax.inject.Inject
-import org.opencv.core.Core
 
 class FingerDetectionImprecisely @Inject constructor() : ProcessingStep() {
 
@@ -15,26 +14,16 @@ class FingerDetectionImprecisely @Inject constructor() : ProcessingStep() {
         get() = FingerDetectionImprecisely::class.java.simpleName
 
     override fun run(originalImage: Mat): Mat? {
-        val matR = getRedChannelFromMat(originalImage)
 
-        val xLeft = detectLeft(matR)
-        val xRight = detectRight(matR)
-        val yTop = detectTop(matR)
-        val yBottom = detectBottom(matR)
+        val xLeft = detectLeft(originalImage)
+        val xRight = detectRight(originalImage)
+        val yTop = detectTop(originalImage)
+        val yBottom = detectBottom(originalImage)
+        val roi = Rect(yBottom, xLeft, yTop - yBottom, xRight - xLeft)
 
-        val roi = Rect(xLeft, yBottom, yTop - yBottom,  xRight - xLeft)
-
-        val bmp = Utils.convertMatToBitMap(Mat(originalImage, roi))
-        Utils.saveImages("abc", "abc", "abc", listOf(bmp!!),100)
+        val bmpOrg = Utils.convertMatToBitMap(Mat(originalImage, roi))
 
         return Mat(originalImage, roi)
-    }
-
-    private fun getRedChannelFromMat(originalImage: Mat): Mat{
-        val lRgb = ArrayList<Mat>(3)
-        Core.split(originalImage, lRgb)
-
-        return lRgb[0]
     }
 
     private fun detectLeft(originalImage: Mat?): Int {
@@ -54,7 +43,7 @@ class FingerDetectionImprecisely @Inject constructor() : ProcessingStep() {
     }
 
     private fun detectRight(originalImage: Mat?): Int {
-        var borderX = 0
+        var borderX = originalImage?.rows() ?: 0
 
         originalImage?.run {
             for (x in rows() - 1 downTo 0 step STEP_SIZE) {
@@ -70,10 +59,10 @@ class FingerDetectionImprecisely @Inject constructor() : ProcessingStep() {
     }
 
     private fun detectTop(originalImage: Mat?): Int {
-        var borderY = 0
+        var borderY =  originalImage?.cols() ?: 0
 
         originalImage?.run {
-            for (y in cols() - 1 downTo 0  step STEP_SIZE) {
+            for (y in cols() - 1 downTo 0 step STEP_SIZE) {
                 for (x in 0 until rows() step STEP_SIZE) {
                     if (get(x, y)[0] >= TRESHOLD_RED) {
                         borderY = y
