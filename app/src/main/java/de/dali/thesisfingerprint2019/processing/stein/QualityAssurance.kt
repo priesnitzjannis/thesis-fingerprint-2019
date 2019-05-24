@@ -15,6 +15,7 @@ import de.dali.thesisfingerprint2019.processing.Config.K_SIZE_SOBEL
 import de.dali.thesisfingerprint2019.processing.Config.SCALE
 import de.dali.thesisfingerprint2019.processing.Config.TRESHOLD_RED
 import de.dali.thesisfingerprint2019.processing.ProcessingStep
+import de.dali.thesisfingerprint2019.utils.Utils
 import de.dali.thesisfingerprint2019.utils.Utils.releaseImage
 import org.opencv.core.*
 import org.opencv.core.Core.*
@@ -67,6 +68,7 @@ class QualityAssurance @Inject constructor() : ProcessingStep() {
             Log.e(TAG, "edgeDens -> $edgeDensity")
 
             return if (edgeDensity > EDGE_DENS_TRESHOLD) {
+                val bmpOrg = Utils.convertMatToBitMap(originalImage)
                 originalImage
             } else {
                 null

@@ -168,7 +168,7 @@ class FingerScanningFragment : BaseFragment() {
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER)
         progressDialog.setCancelable(false)
         progressDialog.setTitle("Please Wait..")
-        progressDialog.setMessage("Preparing to download ...")
+        progressDialog.setMessage("Processing the image ...")
         progressDialog.show()
     }
 
