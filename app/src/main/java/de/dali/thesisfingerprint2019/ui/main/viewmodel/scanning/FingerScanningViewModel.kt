@@ -5,6 +5,7 @@ import de.dali.thesisfingerprint2019.data.local.entity.FingerPrintEntity
 import de.dali.thesisfingerprint2019.data.repository.FingerPrintRepository
 import de.dali.thesisfingerprint2019.processing.ProcessingThread
 import de.dali.thesisfingerprint2019.processing.QualityAssuranceThread
+import de.dali.thesisfingerprint2019.processing.stein.RotateFinger
 import de.dali.thesisfingerprint2019.ui.base.BaseViewModel
 import de.dali.thesisfingerprint2019.utils.Constants.NAME_MAIN_FOLDER
 import de.dali.thesisfingerprint2019.utils.Utils
@@ -47,6 +48,10 @@ class FingerScanningViewModel @Inject constructor(
 
         val disposable = Single.fromCallable {
             val bmps = processingThread.process(image)
+
+            entity.correctionDegree = (processingThread.processingSteps[1] as RotateFinger).correctionAngle
+            entity.resolution = "W: ${bmps[0].width} H: ${bmps[0].height}"
+
             val imageList = Utils.saveImages(
                 NAME_MAIN_FOLDER,
                 entity.personID.toString(),
@@ -57,7 +62,7 @@ class FingerScanningViewModel @Inject constructor(
 
             entity.imageList = imageList
 
-            val id = fingerPrintRepository.insert(entity)
+            fingerPrintRepository.update(entity)
 
         }
             .subscribeOn(Schedulers.io())

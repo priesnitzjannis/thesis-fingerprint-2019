@@ -23,7 +23,7 @@ object Config {
     //endregion
 
     //region ALL
-    const val TRESHOLD_RED = 200.0
+    const val TRESHOLD_RED = 100.0
     //endregion
 
     const val MAX_KERNEL_LENGTH = 3

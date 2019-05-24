@@ -31,7 +31,7 @@ class ProcessingModule {
         fingerDetection,
         rotateFinger,
         fingerDetectionPrec,
-        //fingerSegmentation ,
+        fingerSegmentation ,
         enhancement
 
     )

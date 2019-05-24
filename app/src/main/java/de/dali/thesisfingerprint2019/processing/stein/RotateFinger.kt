@@ -15,6 +15,8 @@ import kotlin.math.atan
 import kotlin.math.sqrt
 
 class RotateFinger @Inject constructor() : ProcessingStep() {
+    var correctionAngle = 0.0
+
     override val TAG: String
         get() = RotateFinger::class.java.simpleName
 
@@ -30,7 +32,7 @@ class RotateFinger @Inject constructor() : ProcessingStep() {
         val distanceP2ToContour = euclideanDist(pointPair.second, p2Contour)
 
         val angle = calcAngle(distanceP1P2, distanceP2ToContour, distanceP1ToContour)
-        val correctionAngle = 0.0 - angle
+        correctionAngle = 0.0 - angle
 
         val rotatedImage = rotateImageByDegree(correctionAngle, originalImage)
 

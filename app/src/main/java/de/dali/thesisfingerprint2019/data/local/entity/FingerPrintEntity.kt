@@ -39,7 +39,7 @@ data class FingerPrintEntity(
 
     var resolution: String? = null,
 
-    var correctionDegree: Float? = null,
+    var correctionDegree: Double? = null,
 
     var imageList: List<String>? = null
 

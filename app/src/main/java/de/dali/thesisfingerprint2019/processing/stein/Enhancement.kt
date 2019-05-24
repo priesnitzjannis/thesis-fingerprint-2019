@@ -3,7 +3,9 @@ package de.dali.thesisfingerprint2019.processing.stein
 import de.dali.thesisfingerprint2019.processing.Config.MAX_KERNEL_LENGTH
 import de.dali.thesisfingerprint2019.processing.ProcessingStep
 import de.dali.thesisfingerprint2019.utils.Utils
+import org.opencv.core.Core.subtract
 import org.opencv.core.Mat
+import org.opencv.core.Size
 import org.opencv.imgproc.Imgproc.*
 import javax.inject.Inject
 
@@ -14,9 +16,20 @@ class Enhancement @Inject constructor() : ProcessingStep() {
     override fun run(originalImage: Mat): Mat? {
         cvtColor(originalImage, originalImage, COLOR_BGR2GRAY)
         medianBlur(originalImage, originalImage, MAX_KERNEL_LENGTH)
-        adaptiveThreshold(originalImage, originalImage, 255.0, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, 9, 12.0)
+
+        val g1 = Mat()
+        val g2 = Mat()
+        var dst = Mat()
+
+        GaussianBlur(originalImage, g1, Size(1.0, 1.0), 0.0)
+        GaussianBlur(originalImage, g2, Size(3.0, 3.0), 0.0)
+
+        subtract(g1, g2, dst)
+
+        equalizeHist(dst, dst)
+
         val bmp = Utils.convertMatToBitMap(originalImage)
-        return originalImage
+        return dst
     }
 
 }

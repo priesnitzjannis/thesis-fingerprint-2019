@@ -6,6 +6,9 @@ import org.opencv.core.*
 import org.opencv.core.CvType.CV_8UC1
 import org.opencv.imgproc.Imgproc.*
 import javax.inject.Inject
+import org.opencv.core.Mat
+
+
 
 
 class FingerSegmentation @Inject constructor() : ProcessingStep() {
@@ -18,13 +21,14 @@ class FingerSegmentation @Inject constructor() : ProcessingStep() {
 
         Core.split(originalImage, lRgb)
 
-        threshold(lRgb[0], imageThresh, 200.0, 255.0, THRESH_BINARY)
+        threshold(lRgb[0], imageThresh, 100.0, 255.0, THRESH_BINARY)
 
         var largestArea = 0.0
         val contours: List<MatOfPoint> = mutableListOf()
         var biggestContour = MatOfPoint()
 
-        findContours(imageThresh, contours, null, RETR_TREE, CHAIN_APPROX_SIMPLE)
+        val hierarchy = Mat()
+        findContours(imageThresh, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE)
 
         contours.forEach {
             val area = contourArea(it, false)

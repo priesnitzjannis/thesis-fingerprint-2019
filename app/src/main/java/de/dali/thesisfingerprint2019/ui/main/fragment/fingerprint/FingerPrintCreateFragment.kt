@@ -5,7 +5,9 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.text.SpannableStringBuilder
 import android.util.Log
 import android.view.LayoutInflater
@@ -25,8 +27,11 @@ import de.dali.thesisfingerprint2019.ui.base.BaseFragment
 import de.dali.thesisfingerprint2019.ui.main.viewmodel.fingerprint.FingerPrintCreateViewModel
 import de.dali.thesisfingerprint2019.utils.Utils
 import de.dali.thesisfingerprint2019.utils.update
+import kotlinx.android.synthetic.main.childview_result_imageview.view.*
 import kotlinx.android.synthetic.main.row_multiselect.view.*
+import java.io.File
 import javax.inject.Inject
+import de.dali.thesisfingerprint2019.utils.Constants.NAME_MAIN_FOLDER
 
 class FingerPrintCreateFragment : BaseFragment() {
 
@@ -184,6 +189,11 @@ class FingerPrintCreateFragment : BaseFragment() {
         entity.correctionDegree?.let {
             binding.editCorrectionDegree.setText(SpannableStringBuilder(it.toString()))
             binding.editCorrectionDegree.lock(lockUI)
+        }
+
+        entity.imageList?.let {
+            val imgFile = File("${Environment.getExternalStorageDirectory()}/$NAME_MAIN_FOLDER/${it[0]}")
+            binding.resultImage.ivResult.setImageURI(Uri.fromFile(imgFile))
         }
     }
 

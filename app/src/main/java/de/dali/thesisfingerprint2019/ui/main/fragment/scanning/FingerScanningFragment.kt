@@ -116,6 +116,8 @@ class FingerScanningFragment : BaseFragment() {
 
         binding.javaCamera2View.visibility = VISIBLE
         binding.javaCamera2View.setCvCameraViewListener(listener)
+
+
         binding.buttonFlash.setOnClickListener { javaCamera2View.toggleFlash() }
 
         fingerScanningViewModel.setSensorOrientation(Utils.getSensorOrientation(activity))

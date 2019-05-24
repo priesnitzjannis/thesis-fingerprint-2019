@@ -6,7 +6,7 @@ import de.dali.thesisfingerprint2019.utils.Utils.releaseImage
 import de.dali.thesisfingerprint2019.utils.convertToBitmaps
 import org.opencv.core.Mat
 
-class ProcessingThread(private vararg val processingSteps: ProcessingStep) {
+class ProcessingThread(vararg val processingSteps: ProcessingStep) {
 
     fun process(mat: Mat): List<Bitmap> {
         var image = mat
@@ -23,12 +23,11 @@ class ProcessingThread(private vararg val processingSteps: ProcessingStep) {
             it.addExecutionTimes(endTime - startTime)
 
             result?.let { procMat ->
-                resultImages.add(procMat)
                 image = procMat
             }
         }
 
-        val bmps = resultImages.convertToBitmaps()
+        val bmps = listOf(image).convertToBitmaps()
         releaseImage(resultImages)
 
         return bmps

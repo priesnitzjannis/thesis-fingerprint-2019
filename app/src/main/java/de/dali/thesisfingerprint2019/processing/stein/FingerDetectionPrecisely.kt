@@ -34,7 +34,7 @@ class FingerDetectionPrecisely @Inject constructor() : ProcessingStep() {
 
         originalImage?.run {
             for (y in center.y.toInt() downTo 0) {
-                if (get(y, center.x.toInt())[0] < 150) {
+                if (get(y, center.x.toInt())[0] < 80) {
                     borderX = y
                     return@run
                 }
@@ -48,7 +48,7 @@ class FingerDetectionPrecisely @Inject constructor() : ProcessingStep() {
 
         originalImage?.run {
             for (y in center.y.toInt() until rows()) {
-                if (get(y, center.x.toInt())[0] < 150) {
+                if (get(y, center.x.toInt())[0] < 80) {
                     borderX = y
                     return@run
                 }
@@ -62,7 +62,7 @@ class FingerDetectionPrecisely @Inject constructor() : ProcessingStep() {
 
         originalImage?.run {
             for (y in center.x.toInt() until cols()) {
-                if (get(center.y.toInt(), y)[0] < 150) {
+                if (get(center.y.toInt(), y)[0] < 80) {
                     borderY = y
                     return@run
                 }
@@ -76,7 +76,7 @@ class FingerDetectionPrecisely @Inject constructor() : ProcessingStep() {
 
         originalImage?.run {
             for (y in center.x.toInt() downTo 0) {
-                if (get(center.y.toInt(), y)[0] < 150) {
+                if (get(center.y.toInt(), y)[0] < 80) {
                     borderY = y
                     return@run
                 }
