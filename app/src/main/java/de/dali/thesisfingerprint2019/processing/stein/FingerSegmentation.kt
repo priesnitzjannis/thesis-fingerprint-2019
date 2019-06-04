@@ -6,10 +6,6 @@ import org.opencv.core.*
 import org.opencv.core.CvType.CV_8UC1
 import org.opencv.imgproc.Imgproc.*
 import javax.inject.Inject
-import org.opencv.core.Mat
-
-
-
 
 class FingerSegmentation @Inject constructor() : ProcessingStep() {
     override val TAG: String

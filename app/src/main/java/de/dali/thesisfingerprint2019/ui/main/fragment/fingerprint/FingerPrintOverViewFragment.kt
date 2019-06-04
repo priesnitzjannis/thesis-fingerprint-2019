@@ -20,7 +20,7 @@ import de.dali.thesisfingerprint2019.ui.base.custom.ListWithLoadingSpinner.LIST.
 import de.dali.thesisfingerprint2019.ui.base.custom.ListWithLoadingSpinner.LIST.RESULT
 import de.dali.thesisfingerprint2019.ui.main.viewmodel.fingerprint.FingerPrintOverviewViewModel
 import kotlinx.android.synthetic.main.childview_list.view.*
-import kotlinx.android.synthetic.main.view_list_with_loading_spinner.view.*
+import kotlinx.android.synthetic.main.fragment_finger_selection.view.*
 import javax.inject.Inject
 
 class FingerPrintOverViewFragment : BaseFragment() {

@@ -117,7 +117,7 @@ object Utils {
         var bmp: Bitmap? = null
         val rgb = Mat()
 
-        Imgproc.cvtColor(input,rgb, Imgproc.COLOR_RGB2RGBA,4)
+        Imgproc.cvtColor(input, rgb, Imgproc.COLOR_RGB2RGBA, 4)
 
         try {
             bmp = Bitmap.createBitmap(rgb.cols(), rgb.rows(), Bitmap.Config.ARGB_8888)

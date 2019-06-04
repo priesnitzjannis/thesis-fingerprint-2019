@@ -1,4 +1,4 @@
-package de.dali.thesisfingerprint2019.processing.stein
+package de.dali.thesisfingerprint2019.processing.common
 
 import de.dali.thesisfingerprint2019.processing.Config.MAX_KERNEL_LENGTH
 import de.dali.thesisfingerprint2019.processing.ProcessingStep

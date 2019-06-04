@@ -60,10 +60,11 @@ class FingerScanningFragment : BaseFragment() {
             mRgba = inputFrame.rgba()
 
 
-            if (frameCounter % 10 == 0) {
-                fingerScanningViewModel.sendToPipeline(mRgba)
+            if (frameCounter == 1) {
+                fingerScanningViewModel.processImage(mRgba,{},{})
             }
 
+            /*
             val pX = mRgba.cols() / 2.0
             val pY = mRgba.rows() / 2.0
 
@@ -74,7 +75,7 @@ class FingerScanningFragment : BaseFragment() {
                 Scalar(255.0, 0.0, 0.0, 255.0),
                 3
             )
-
+            */
             return mRgba
         }
 

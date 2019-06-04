@@ -1,25 +1,19 @@
-package de.dali.thesisfingerprint2019.processing.stein
+package de.dali.thesisfingerprint2019.processing.common
 
 import android.util.Log
 import de.dali.thesisfingerprint2019.processing.Config.CENTER_OFFSET_X
 import de.dali.thesisfingerprint2019.processing.Config.CENTER_OFFSET_Y
 import de.dali.thesisfingerprint2019.processing.Config.CENTER_SIZE_X
 import de.dali.thesisfingerprint2019.processing.Config.CENTER_SIZE_Y
-import de.dali.thesisfingerprint2019.processing.Config.DDEPTH
-import de.dali.thesisfingerprint2019.processing.Config.DELTA
 import de.dali.thesisfingerprint2019.processing.Config.EDGE_DENS_TRESHOLD
-import de.dali.thesisfingerprint2019.processing.Config.GRAD_X
-import de.dali.thesisfingerprint2019.processing.Config.GRAD_Y
-import de.dali.thesisfingerprint2019.processing.Config.K_SIZE_GAUS
-import de.dali.thesisfingerprint2019.processing.Config.K_SIZE_SOBEL
-import de.dali.thesisfingerprint2019.processing.Config.SCALE
 import de.dali.thesisfingerprint2019.processing.Config.TRESHOLD_RED
 import de.dali.thesisfingerprint2019.processing.ProcessingStep
+import de.dali.thesisfingerprint2019.processing.Utils.sobel
 import de.dali.thesisfingerprint2019.utils.Utils
-import de.dali.thesisfingerprint2019.utils.Utils.releaseImage
 import org.opencv.core.*
-import org.opencv.core.Core.*
-import org.opencv.imgproc.Imgproc.*
+import org.opencv.core.Core.mean
+import org.opencv.core.Core.split
+import org.opencv.imgproc.Imgproc.fillPoly
 import javax.inject.Inject
 
 class QualityAssurance @Inject constructor() : ProcessingStep() {
@@ -33,48 +27,20 @@ class QualityAssurance @Inject constructor() : ProcessingStep() {
         val point = calcCenterPoint(originalImage)
         val fingerInROI = fingerIsInROI(originalImage, point)
 
-        if (fingerInROI) {
-            val result = Mat.zeros(originalImage.rows(), originalImage.cols(), CvType.CV_64FC1)
-            val blurred = Mat.zeros(originalImage.rows(), originalImage.cols(), CvType.CV_64FC1)
-            val gray = Mat.zeros(originalImage.rows(), originalImage.cols(), CvType.CV_64FC1)
-            val grad_x = Mat.zeros(originalImage.rows(), originalImage.cols(), CvType.CV_64FC1)
-            val grad_y = Mat.zeros(originalImage.rows(), originalImage.cols(), CvType.CV_64FC1)
-            val abs_grad_x = Mat.zeros(originalImage.rows(), originalImage.cols(), CvType.CV_64FC1)
-            val abs_grad_y = Mat.zeros(originalImage.rows(), originalImage.cols(), CvType.CV_64FC1)
-
-            GaussianBlur(originalImage, blurred, Size(K_SIZE_GAUS, K_SIZE_GAUS), 0.0, 0.0, BORDER_DEFAULT)
-            cvtColor(blurred, gray, COLOR_BGR2GRAY)
-            Sobel(gray, grad_x, DDEPTH, 1, 0, K_SIZE_SOBEL, SCALE, DELTA, BORDER_DEFAULT)
-            Sobel(gray, grad_y, DDEPTH, 0, 1, K_SIZE_SOBEL, SCALE, DELTA, BORDER_DEFAULT)
-
-            convertScaleAbs(grad_x, abs_grad_x)
-            convertScaleAbs(grad_y, abs_grad_y)
-
-            addWeighted(abs_grad_x, GRAD_X, abs_grad_y, GRAD_Y, 0.0, result)
-
-            releaseImage(
-                listOf(
-                    blurred,
-                    gray,
-                    grad_x,
-                    grad_y,
-                    abs_grad_x,
-                    abs_grad_y
-                )
-            )
-
+        return if (fingerInROI) {
+            val result = sobel(originalImage)
             edgeDensity = edgeDensity(result, point)
 
             Log.e(TAG, "edgeDens -> $edgeDensity")
 
-            return if (edgeDensity > EDGE_DENS_TRESHOLD) {
+            if (edgeDensity > EDGE_DENS_TRESHOLD) {
                 val bmpOrg = Utils.convertMatToBitMap(originalImage)
                 originalImage
             } else {
                 null
             }
         } else {
-            return null
+            null
         }
     }
 

@@ -4,8 +4,17 @@ import dagger.Module
 import dagger.Provides
 import de.dali.thesisfingerprint2019.processing.ProcessingThread
 import de.dali.thesisfingerprint2019.processing.QualityAssuranceThread
-import de.dali.thesisfingerprint2019.processing.stein.*
+import de.dali.thesisfingerprint2019.processing.common.Enhancement
+import de.dali.thesisfingerprint2019.processing.common.QualityAssurance
+import de.dali.thesisfingerprint2019.processing.common.RotateFinger
+import de.dali.thesisfingerprint2019.processing.dali.FingerBorderDetection
+import de.dali.thesisfingerprint2019.processing.dali.FingerSeparation
+import de.dali.thesisfingerprint2019.processing.dali.MultiFingerDetection
+import de.dali.thesisfingerprint2019.processing.stein.FingerDetectionImprecisely
+import de.dali.thesisfingerprint2019.processing.stein.FingerDetectionPrecisely
+import de.dali.thesisfingerprint2019.processing.stein.FingerSegmentation
 import de.dali.thesisfingerprint2019.ui.main.handler.UIHandler
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
@@ -21,6 +30,7 @@ class ProcessingModule {
 
     @Provides
     @Singleton
+    @Named("pipelineStein")
     fun provideProcessing(
         fingerDetection: FingerDetectionImprecisely,
         rotateFinger: RotateFinger,
@@ -31,9 +41,21 @@ class ProcessingModule {
         fingerDetection,
         rotateFinger,
         fingerDetectionPrec,
-        fingerSegmentation ,
+        fingerSegmentation,
         enhancement
+    )
 
+    @Provides
+    @Singleton
+    @Named("pipelineDali")
+    fun provideNewPipeline(
+        multiFingerDetection: MultiFingerDetection,
+        fingerBorderDetection: FingerBorderDetection,
+        fingerSeparation: FingerSeparation
+    ): ProcessingThread = ProcessingThread(
+        multiFingerDetection,
+        fingerBorderDetection,
+        fingerSeparation
     )
 
 
@@ -65,4 +87,15 @@ class ProcessingModule {
     @Singleton
     fun providesEnhancement(): Enhancement = Enhancement()
 
+    @Provides
+    @Singleton
+    fun provideFingerBorderDetection(): FingerBorderDetection = FingerBorderDetection()
+
+    @Provides
+    @Singleton
+    fun provideFingerSeparation(): FingerSeparation = FingerSeparation()
+
+    @Provides
+    @Singleton
+    fun provideMultiFingerDetection(): MultiFingerDetection = MultiFingerDetection()
 }

@@ -59,7 +59,7 @@ class FingerDetectionImprecisely @Inject constructor() : ProcessingStep() {
     }
 
     private fun detectTop(originalImage: Mat?): Int {
-        var borderY =  originalImage?.cols() ?: 0
+        var borderY = originalImage?.cols() ?: 0
 
         originalImage?.run {
             for (y in cols() - 1 downTo 0 step STEP_SIZE) {

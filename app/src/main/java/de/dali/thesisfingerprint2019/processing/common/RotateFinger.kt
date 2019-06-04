@@ -1,4 +1,4 @@
-package de.dali.thesisfingerprint2019.processing.stein
+package de.dali.thesisfingerprint2019.processing.common
 
 
 import de.dali.thesisfingerprint2019.processing.Config.TRESHOLD_RED
@@ -7,8 +7,6 @@ import de.dali.thesisfingerprint2019.utils.Utils
 import de.dali.thesisfingerprint2019.utils.Utils.rotateImageByDegree
 import org.opencv.core.Mat
 import org.opencv.core.Point
-import org.opencv.imgproc.Imgproc
-import org.opencv.imgproc.Imgproc.getRotationMatrix2D
 import javax.inject.Inject
 import kotlin.math.PI
 import kotlin.math.atan

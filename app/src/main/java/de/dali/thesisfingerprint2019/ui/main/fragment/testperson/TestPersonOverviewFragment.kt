@@ -23,7 +23,7 @@ import de.dali.thesisfingerprint2019.ui.main.viewmodel.testperson.TestPersonOver
 import de.dali.thesisfingerprint2019.utils.Constants
 import de.dali.thesisfingerprint2019.utils.PermissionHandling
 import kotlinx.android.synthetic.main.childview_list.view.*
-import kotlinx.android.synthetic.main.view_list_with_loading_spinner.view.*
+import kotlinx.android.synthetic.main.fragment_finger_selection.view.*
 import javax.inject.Inject
 
 class TestPersonOverviewFragment : BaseFragment() {

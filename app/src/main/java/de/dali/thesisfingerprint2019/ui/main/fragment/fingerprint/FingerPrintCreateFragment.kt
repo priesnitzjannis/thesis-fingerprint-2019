@@ -25,13 +25,13 @@ import de.dali.thesisfingerprint2019.data.local.entity.FingerPrintEntity
 import de.dali.thesisfingerprint2019.databinding.FragmentFingerPrintCreateBinding
 import de.dali.thesisfingerprint2019.ui.base.BaseFragment
 import de.dali.thesisfingerprint2019.ui.main.viewmodel.fingerprint.FingerPrintCreateViewModel
+import de.dali.thesisfingerprint2019.utils.Constants.NAME_MAIN_FOLDER
 import de.dali.thesisfingerprint2019.utils.Utils
 import de.dali.thesisfingerprint2019.utils.update
 import kotlinx.android.synthetic.main.childview_result_imageview.view.*
 import kotlinx.android.synthetic.main.row_multiselect.view.*
 import java.io.File
 import javax.inject.Inject
-import de.dali.thesisfingerprint2019.utils.Constants.NAME_MAIN_FOLDER
 
 class FingerPrintCreateFragment : BaseFragment() {
 

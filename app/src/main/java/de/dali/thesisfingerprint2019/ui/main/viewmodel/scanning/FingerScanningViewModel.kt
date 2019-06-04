@@ -5,7 +5,7 @@ import de.dali.thesisfingerprint2019.data.local.entity.FingerPrintEntity
 import de.dali.thesisfingerprint2019.data.repository.FingerPrintRepository
 import de.dali.thesisfingerprint2019.processing.ProcessingThread
 import de.dali.thesisfingerprint2019.processing.QualityAssuranceThread
-import de.dali.thesisfingerprint2019.processing.stein.RotateFinger
+import de.dali.thesisfingerprint2019.processing.common.RotateFinger
 import de.dali.thesisfingerprint2019.ui.base.BaseViewModel
 import de.dali.thesisfingerprint2019.utils.Constants.NAME_MAIN_FOLDER
 import de.dali.thesisfingerprint2019.utils.Utils
@@ -15,11 +15,12 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import org.opencv.core.Mat
 import javax.inject.Inject
+import javax.inject.Named
 
 class FingerScanningViewModel @Inject constructor(
     private val fingerPrintRepository: FingerPrintRepository,
     private val qualityAssuranceThread: QualityAssuranceThread,
-    private val processingThread: ProcessingThread
+    @Named("pipelineDali") private val processingThread: ProcessingThread
 ) : BaseViewModel() {
 
     lateinit var entity: FingerPrintEntity

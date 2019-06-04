@@ -1,6 +1,5 @@
 package de.dali.thesisfingerprint2019.processing.stein
 
-import de.dali.thesisfingerprint2019.processing.Config
 import de.dali.thesisfingerprint2019.processing.ProcessingStep
 import de.dali.thesisfingerprint2019.utils.Utils
 import org.opencv.core.Mat
