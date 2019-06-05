@@ -10,12 +10,12 @@ object Utils {
 
     fun erode(
         mat: Mat,
-        kernelSize: Size = Size(11.0, 11.0),
+        kernelSize: Size = Size(17.0, 17.0),
         iterations: Int = 2
     ): Mat {
         val anchor = Point(-1.0, -1.0)
 
-        val kernel = Imgproc.getStructuringElement(Imgproc.MORPH_ELLIPSE, kernelSize)
+        val kernel = Imgproc.getStructuringElement(Imgproc.MORPH_CROSS, kernelSize)
         Imgproc.erode(mat, mat, kernel, anchor, iterations)
 
         return mat
@@ -60,8 +60,7 @@ object Utils {
         Imgproc.cvtColor(frame, gray, Imgproc.COLOR_BGR2GRAY)
 
         val blurred = Mat.zeros(frame.rows(), frame.cols(), CvType.CV_64FC1)
-        Imgproc.GaussianBlur(gray, blurred, Size(33.0, 33.0), 0.0, 0.0, Core.BORDER_DEFAULT)
-
+        Imgproc.GaussianBlur(gray, blurred, Size(37.0, 37.0), 0.0, 0.0, Core.BORDER_CONSTANT)
 
         Utils.releaseImage(listOf(gray))
 
