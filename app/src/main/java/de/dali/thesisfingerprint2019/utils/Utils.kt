@@ -7,11 +7,6 @@ import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraManager
 import android.os.Build
 import android.os.Environment
-import android.util.Log
-import org.opencv.core.CvException
-import org.opencv.core.Mat
-import org.opencv.core.Point
-import org.opencv.imgproc.Imgproc
 import java.io.File
 import java.io.FileOutputStream
 import java.util.*
@@ -36,58 +31,22 @@ object Utils {
         return sensorOrientation
     }
 
-    fun releaseImage(mats: List<Mat>) {
-        mats.forEach {
-            it.release()
-        }
-    }
-
-    fun rotateImageByDegree(correctionAngle: Double, originalImage: Mat): Mat {
-        val rotMat: Mat
-        val destination = Mat(originalImage.rows(), originalImage.cols(), originalImage.type())
-        val center = Point((destination.cols() / 2).toDouble(), (destination.rows() / 2).toDouble())
-        rotMat = Imgproc.getRotationMatrix2D(center, correctionAngle, 1.0)
-        Imgproc.warpAffine(originalImage, destination, rotMat, destination.size())
-
-        releaseImage(
-            listOf(
-                rotMat
-            )
-        )
-
-        return destination
-    }
-
     fun toReadableDate(time: Long): Date = Date(time)
 
-    fun saveImages(
-        folderMain: String,
-        folderUser: String,
-        folderFingerprint: String,
-        finalBitmaps: List<Bitmap>,
-        quality: Int
-    ): List<String> {
-        val pathname = "${Environment.getExternalStorageDirectory()}/$folderMain/$folderUser/$folderFingerprint"
+    fun saveImage(pathName: String, bitmap: Bitmap, quality: Int) {
+        val pathname = "${Environment.getExternalStorageDirectory()}/$pathName"
         val myDir = File(pathname)
-
-        val listOfImages = mutableListOf<String>()
 
         if (!myDir.exists()) myDir.mkdirs()
 
-        finalBitmaps.forEach {
-            val name = "${System.currentTimeMillis()}.jpg"
+        val name = "${System.currentTimeMillis()}.jpg"
 
-            val file = File(myDir, name)
-            if (file.exists()) file.delete()
-            val out = FileOutputStream(file)
-            it.compress(Bitmap.CompressFormat.JPEG, quality, out)
-            out.flush()
-            out.close()
-
-            listOfImages.add("$folderUser/$folderFingerprint/$name")
-        }
-
-        return listOfImages
+        val file = File(myDir, name)
+        if (file.exists()) file.delete()
+        val out = FileOutputStream(file)
+        bitmap.compress(Bitmap.CompressFormat.JPEG, quality, out)
+        out.flush()
+        out.close()
     }
 
     fun getDeviceName(): String {
@@ -100,7 +59,6 @@ object Utils {
         }
     }
 
-
     private fun capitalize(s: String?): String {
         if (s == null || s.isEmpty()) {
             return ""
@@ -111,23 +69,6 @@ object Utils {
         } else {
             Character.toUpperCase(first) + s.substring(1)
         }
-    }
-
-    fun convertMatToBitMap(input: Mat): Bitmap? {
-        var bmp: Bitmap? = null
-        val rgb = Mat()
-
-        Imgproc.cvtColor(input, rgb, Imgproc.COLOR_BGR2RGBA, 4)
-
-        try {
-            bmp = Bitmap.createBitmap(rgb.cols(), rgb.rows(), Bitmap.Config.ARGB_8888)
-
-            org.opencv.android.Utils.matToBitmap(input, bmp, true)
-        } catch (e: CvException) {
-            Log.d("Exception", e.message)
-        }
-
-        return bmp
     }
 
 }

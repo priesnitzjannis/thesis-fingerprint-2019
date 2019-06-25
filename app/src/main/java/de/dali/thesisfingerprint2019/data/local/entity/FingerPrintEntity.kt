@@ -11,11 +11,11 @@ import java.io.Serializable
 data class FingerPrintEntity(
     @PrimaryKey(autoGenerate = true)
     @NonNull
-    var id: Long? = null,
+    var fingerPrintId: Long? = null,
 
     @ForeignKey(
         entity = TestPersonEntity::class,
-        parentColumns = ["id"],
+        parentColumns = ["fingerPrintId"],
         childColumns = ["personID"],
         onDelete = CASCADE
     )
@@ -32,17 +32,7 @@ data class FingerPrintEntity(
     var vendor: String,
 
     @NonNull
-    var listOfFingerIds: List<String>,
-
-    @NonNull
-    var timestamp: Long? = null,
-
-    var resolution: String? = null,
-
-    var correctionDegree: Double? = null,
-
-    var imageList: List<String>? = null
-
+    var timestamp: Long? = null
 
 ) : Serializable
 

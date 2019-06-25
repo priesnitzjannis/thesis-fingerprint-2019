@@ -33,9 +33,9 @@ class TestPersonOverviewFragment : BaseFragment() {
 
     lateinit var binding: FragmentTestPersonOverviewBinding
 
-    lateinit var testPersonOverviewViewModel: TestPersonOverviewViewModel
+    private lateinit var testPersonOverviewViewModel: TestPersonOverviewViewModel
 
-    lateinit var adapter: TestPersonOverviewAdapter
+    private lateinit var adapter: TestPersonOverviewAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

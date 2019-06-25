@@ -2,6 +2,7 @@ package de.dali.thesisfingerprint2019.processing.common
 
 import de.dali.thesisfingerprint2019.processing.Config.MAX_KERNEL_LENGTH
 import de.dali.thesisfingerprint2019.processing.ProcessingStep
+import de.dali.thesisfingerprint2019.processing.Utils.convertMatToBitMap
 import de.dali.thesisfingerprint2019.utils.Utils
 import org.opencv.core.Core.subtract
 import org.opencv.core.Mat
@@ -13,7 +14,7 @@ class Enhancement @Inject constructor() : ProcessingStep() {
     override val TAG: String
         get() = Enhancement::class.java.simpleName
 
-    override fun run(originalImage: Mat): Mat? {
+    override fun run(originalImage: Mat): Mat {
         cvtColor(originalImage, originalImage, COLOR_BGR2GRAY)
         medianBlur(originalImage, originalImage, MAX_KERNEL_LENGTH)
 
@@ -28,8 +29,12 @@ class Enhancement @Inject constructor() : ProcessingStep() {
 
         equalizeHist(dst, dst)
 
-        val bmp = Utils.convertMatToBitMap(originalImage)
+        val bmp = convertMatToBitMap(originalImage)
         return dst
+    }
+
+    override fun runReturnMultiple(originalImage: Mat): List<Mat> {
+        throw NotImplementedError("Not implemented for this processing step.")
     }
 
 }

@@ -1,7 +1,8 @@
 package de.dali.thesisfingerprint2019.processing
 
+import android.graphics.Bitmap
+import android.util.Log
 import de.dali.thesisfingerprint2019.processing.Config.K_SIZE_GAUS
-import de.dali.thesisfingerprint2019.utils.Utils
 import org.opencv.core.*
 import org.opencv.imgproc.Imgproc
 
@@ -62,7 +63,7 @@ object Utils {
         val blurred = Mat.zeros(frame.rows(), frame.cols(), CvType.CV_64FC1)
         Imgproc.GaussianBlur(gray, blurred, Size(37.0, 37.0), 0.0, 0.0, Core.BORDER_CONSTANT)
 
-        Utils.releaseImage(listOf(gray))
+        releaseImage(listOf(gray))
 
         Imgproc.Canny(blurred, result, thresh1, thresh2, KERNEL_SIZE, false)
 
@@ -80,7 +81,7 @@ object Utils {
         val gray = Mat.zeros(frame.rows(), frame.cols(), CvType.CV_64FC1)
         Imgproc.cvtColor(blurred, gray, Imgproc.COLOR_BGR2GRAY)
 
-        Utils.releaseImage(listOf(blurred))
+        releaseImage(listOf(blurred))
 
         val grad_x = Mat.zeros(frame.rows(), frame.cols(), CvType.CV_64FC1)
         val grad_y = Mat.zeros(frame.rows(), frame.cols(), CvType.CV_64FC1)
@@ -108,7 +109,7 @@ object Utils {
             Core.BORDER_DEFAULT
         )
 
-        Utils.releaseImage(listOf(gray))
+        releaseImage(listOf(gray))
 
         val abs_grad_x = Mat.zeros(frame.rows(), frame.cols(), CvType.CV_64FC1)
         val abs_grad_y = Mat.zeros(frame.rows(), frame.cols(), CvType.CV_64FC1)
@@ -116,22 +117,60 @@ object Utils {
         Core.convertScaleAbs(grad_x, abs_grad_x)
         Core.convertScaleAbs(grad_y, abs_grad_y)
 
-        Utils.releaseImage(listOf(grad_x, grad_y))
+        releaseImage(listOf(grad_x, grad_y))
 
         val result = Mat.zeros(frame.rows(), frame.cols(), CvType.CV_64FC1)
 
         Core.addWeighted(abs_grad_x, Config.GRAD_X, abs_grad_y, Config.GRAD_Y, 0.0, result)
 
-        Utils.releaseImage(listOf(abs_grad_x, abs_grad_y))
+        releaseImage(listOf(abs_grad_x, abs_grad_y))
 
         return result
 
     }
 
+    fun convertMatToBitMap(input: Mat): Bitmap? {
+        var bmp: Bitmap? = null
+        val rgb = Mat()
+
+        Imgproc.cvtColor(input, rgb, Imgproc.COLOR_BGR2RGBA, 4)
+
+        try {
+            bmp = Bitmap.createBitmap(rgb.cols(), rgb.rows(), Bitmap.Config.ARGB_8888)
+
+            org.opencv.android.Utils.matToBitmap(input, bmp, true)
+        } catch (e: CvException) {
+            Log.d("Exception", e.message)
+        }
+
+        return bmp
+    }
 
     fun getThresholdImage(mat: Mat): Mat {
         val cb = getCbComponent(mat)
         return threshold(cb)
+    }
+
+    fun releaseImage(mats: List<Mat>) {
+        mats.forEach {
+            it.release()
+        }
+    }
+
+    fun rotateImageByDegree(correctionAngle: Double, originalImage: Mat): Mat {
+        val rotMat: Mat
+        val destination = Mat(originalImage.rows(), originalImage.cols(), originalImage.type())
+        val center = Point((destination.cols() / 2).toDouble(), (destination.rows() / 2).toDouble())
+        rotMat = Imgproc.getRotationMatrix2D(center, correctionAngle, 1.0)
+        Imgproc.warpAffine(originalImage, destination, rotMat, destination.size())
+
+        releaseImage(
+            listOf(
+                rotMat
+            )
+        )
+
+        return destination
     }
 
     private fun getCbComponent(mat: Mat): Mat {
@@ -145,8 +184,8 @@ object Utils {
     }
 
     private fun threshold(mat: Mat): Mat {
-        val imageThresh = Mat.zeros(mat.rows(), mat.cols(), CvType.CV_8UC1)
-        Imgproc.threshold(mat, imageThresh, 100.0, 255.0, Imgproc.THRESH_BINARY)
+        val imageThresh = Mat()
+        Imgproc.threshold(mat, imageThresh, 100.0, 255.0, Imgproc.THRESH_BINARY + Imgproc.THRESH_OTSU)
 
         return imageThresh
     }

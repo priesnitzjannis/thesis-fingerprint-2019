@@ -1,6 +1,7 @@
 package de.dali.thesisfingerprint2019.processing.stein
 
 import de.dali.thesisfingerprint2019.processing.ProcessingStep
+import de.dali.thesisfingerprint2019.processing.Utils.convertMatToBitMap
 import de.dali.thesisfingerprint2019.utils.Utils
 import org.opencv.core.*
 import org.opencv.core.CvType.CV_8UC1
@@ -11,7 +12,7 @@ class FingerSegmentation @Inject constructor() : ProcessingStep() {
     override val TAG: String
         get() = FingerSegmentation::class.java.simpleName
 
-    override fun run(originalImage: Mat): Mat? {
+    override fun run(originalImage: Mat): Mat {
         val lRgb = ArrayList<Mat>(3)
         val imageThresh = Mat.zeros(originalImage.rows(), originalImage.cols(), CV_8UC1)
 
@@ -40,10 +41,13 @@ class FingerSegmentation @Inject constructor() : ProcessingStep() {
         val crop = Mat(Size(originalImage.rows().toDouble(), originalImage.cols().toDouble()), CV_8UC1, Scalar(0.0))
         originalImage.copyTo(crop, mask)
 
-        val bmp3 = Utils.convertMatToBitMap(crop)
+        val bmp3 = convertMatToBitMap(crop)
 
 
         return crop
     }
 
+    override fun runReturnMultiple(originalImage: Mat): List<Mat> {
+        throw NotImplementedError("Not implemented for this processing step.")
+    }
 }

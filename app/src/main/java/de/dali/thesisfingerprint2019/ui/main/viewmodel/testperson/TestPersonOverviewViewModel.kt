@@ -10,11 +10,11 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
-class TestPersonOverviewViewModel @Inject constructor(val testPersonRepository: TestPersonRepository) :
+class TestPersonOverviewViewModel @Inject constructor(private val testPersonRepository: TestPersonRepository) :
     BaseViewModel() {
 
     val listOfTestPerson = MutableLiveData<List<TestPersonEntity>>()
-    var compositeDisposable: CompositeDisposable = CompositeDisposable()
+    private var compositeDisposable = CompositeDisposable()
 
     fun loadTestPerson() {
         val fingerprintDisposable = testPersonRepository.getAllTestPerson()
@@ -25,7 +25,7 @@ class TestPersonOverviewViewModel @Inject constructor(val testPersonRepository: 
     }
 
     private fun onError(throwable: Throwable) {
-        Log.d(TAG, throwable.message)
+        Log.d(TAG, throwable.message ?: "Couldn't load test person.")
     }
 
     private fun onFetchComplete(testPerson: List<TestPersonEntity>) {

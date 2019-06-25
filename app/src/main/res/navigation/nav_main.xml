@@ -10,6 +10,7 @@
               tools:layout="@layout/fragment_finger_scanning">
         <argument android:name="fingerPrintEntity"
                   app:argType="de.dali.thesisfingerprint2019.data.local.entity.FingerPrintEntity"/>
+        <argument android:name="listIsoID" app:argType="integer[]"/>
     </fragment>
 
     <fragment android:id="@+id/testPersonOverviewFragment"

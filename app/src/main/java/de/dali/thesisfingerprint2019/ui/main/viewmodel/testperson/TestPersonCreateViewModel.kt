@@ -13,7 +13,7 @@ class TestPersonCreateViewModel @Inject constructor(private val testPersonReposi
     BaseViewModel() {
 
     lateinit var entity: TestPersonEntity
-    var compositeDisposable: CompositeDisposable = CompositeDisposable()
+    private var compositeDisposable = CompositeDisposable()
 
     lateinit var gender: String
     lateinit var color: String

@@ -2,15 +2,13 @@ package de.dali.thesisfingerprint2019.processing
 
 import android.graphics.Bitmap
 import android.util.Log
-import de.dali.thesisfingerprint2019.utils.Utils.releaseImage
-import de.dali.thesisfingerprint2019.utils.convertToBitmaps
+import de.dali.thesisfingerprint2019.processing.Utils.convertMatToBitMap
 import org.opencv.core.Mat
 
 class ProcessingThread(vararg val processingSteps: ProcessingStep) {
 
-    fun process(mat: Mat): List<Bitmap> {
+    fun process(mat: Mat): Bitmap {
         var image = mat
-        val resultImages = mutableListOf<Mat>()
 
         processingSteps.forEach {
             Log.e(TAG, "Processing step ---->${it.TAG}")
@@ -22,15 +20,11 @@ class ProcessingThread(vararg val processingSteps: ProcessingStep) {
             val endTime = System.currentTimeMillis()
             it.addExecutionTimes(endTime - startTime)
 
-            result?.let { procMat ->
+            result.let { procMat ->
                 image = procMat
             }
         }
-
-        val bmps = listOf(image).convertToBitmaps()
-        releaseImage(resultImages)
-
-        return bmps
+        return convertMatToBitMap(image)!!
     }
 
     companion object {

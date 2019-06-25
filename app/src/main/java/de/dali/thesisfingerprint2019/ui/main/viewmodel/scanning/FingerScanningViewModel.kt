@@ -2,7 +2,8 @@ package de.dali.thesisfingerprint2019.ui.main.viewmodel.scanning
 
 
 import de.dali.thesisfingerprint2019.data.local.entity.FingerPrintEntity
-import de.dali.thesisfingerprint2019.data.repository.FingerPrintRepository
+import de.dali.thesisfingerprint2019.data.local.entity.ImageEntity
+import de.dali.thesisfingerprint2019.data.repository.ImageRepository
 import de.dali.thesisfingerprint2019.processing.ProcessingThread
 import de.dali.thesisfingerprint2019.processing.QualityAssuranceThread
 import de.dali.thesisfingerprint2019.processing.common.RotateFinger
@@ -18,14 +19,21 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class FingerScanningViewModel @Inject constructor(
-    private val fingerPrintRepository: FingerPrintRepository,
-    private val qualityAssuranceThread: QualityAssuranceThread,
+    private val imageRepository: ImageRepository,
+    @Named("qualityAssuranceDali") private val qualityAssuranceThread: QualityAssuranceThread,
     @Named("pipelineDali") private val processingThread: ProcessingThread
 ) : BaseViewModel() {
 
+    lateinit var list: List<Int>
     lateinit var entity: FingerPrintEntity
 
-    var compositeDisposable: CompositeDisposable = CompositeDisposable()
+    var amountOfFinger: Int = 0
+        set(value) {
+            field = value
+            qualityAssuranceThread.amountOfFinger = value
+        }
+
+    private var compositeDisposable = CompositeDisposable()
 
     fun startProcessingPipeline() = qualityAssuranceThread.launch()
 
@@ -35,36 +43,41 @@ class FingerScanningViewModel @Inject constructor(
 
     fun sendToPipeline(originalImage: Mat) = qualityAssuranceThread.sendToPipeline(originalImage)
 
-    fun setCallback(callback: (Mat) -> Unit) = qualityAssuranceThread.setCallback(callback)
+    fun setOnSuccess(callback: (List<Pair<Mat, Double>>) -> Unit) = qualityAssuranceThread.setSuccessCallback(callback)
+
+    fun setOnFailure(callback: (String) -> Unit) = qualityAssuranceThread.setFailureCallback(callback)
 
     fun setSensorOrientation(sensorOrientation: Int) {
         qualityAssuranceThread.sensorOrientation = sensorOrientation
     }
 
-    fun processImage(
-        image: Mat,
+    fun processImages(
+        images: List<Pair<Mat, Double>>,
         onSuccess: (Unit) -> Unit,
         onError: (Throwable) -> Unit
     ) {
 
         val disposable = Single.fromCallable {
-            val bmps = processingThread.process(image)
+            images.forEachIndexed { index, pair ->
+                val processedImage = processingThread.process(pair.first)
+                val pathName = "$NAME_MAIN_FOLDER/${entity.personID}/${entity.fingerPrintId}"
+                val correctionDegree = (processingThread.processingSteps[0] as RotateFinger).correctionAngle
 
-            entity.correctionDegree = (processingThread.processingSteps[1] as RotateFinger).correctionAngle
-            entity.resolution = "W: ${bmps[0].width} H: ${bmps[0].height}"
+                Utils.saveImage(pathName, processedImage, 100)
 
-            val imageList = Utils.saveImages(
-                NAME_MAIN_FOLDER,
-                entity.personID.toString(),
-                entity.id.toString(),
-                bmps,
-                100
-            )
+                val imageEntity = ImageEntity(
+                    fingerPrintID = entity.fingerPrintId,
+                    path = pathName,
+                    biometricalID = list[index],
+                    timestamp = System.currentTimeMillis(),
+                    width = processedImage.width,
+                    height = processedImage.height,
+                    edgeDensity = pair.second,
+                    correctionDegree = correctionDegree
+                )
 
-            entity.imageList = imageList
-
-            fingerPrintRepository.update(entity)
-
+                imageRepository.insert(imageEntity)
+            }
         }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())

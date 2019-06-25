@@ -44,7 +44,7 @@ class FingerPrintListAdapter : RecyclerView.Adapter<FingerPrintViewHolder>() {
         list?.let {
             val entity = it[position]
             holder.txtRecordSet.text =
-                holder.itemView.context.getString(R.string.fragment_selection_record_set, entity.id.toString())
+                holder.itemView.context.getString(R.string.fragment_selection_record_set, position.toString())
             holder.txtCreatedOn.text = holder.itemView.context.getString(
                 R.string.fragment_selection_created_on,
                 Utils.toReadableDate(entity.timestamp!!).toString()

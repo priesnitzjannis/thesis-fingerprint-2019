@@ -11,13 +11,13 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
-class FingerPrintOverviewViewModel @Inject constructor(val fingerPrintRepository: FingerPrintRepository) :
+class FingerPrintOverviewViewModel @Inject constructor(private val fingerPrintRepository: FingerPrintRepository) :
     BaseViewModel() {
 
     lateinit var entity: TestPersonEntity
 
     val listOfFingerPrints = MutableLiveData<List<FingerPrintEntity>>()
-    var compositeDisposable: CompositeDisposable = CompositeDisposable()
+    private var compositeDisposable = CompositeDisposable()
 
     fun loadFingerPrints(personID: Long) {
         val fingerprintDisposable = fingerPrintRepository.getAllFingerprintsByTestPerson(personID)
@@ -28,7 +28,7 @@ class FingerPrintOverviewViewModel @Inject constructor(val fingerPrintRepository
     }
 
     private fun onError(throwable: Throwable) {
-        Log.d(TAG, throwable.message)
+        Log.d(TAG, throwable.message ?: "Couldn't load fingerprints.")
     }
 
     private fun onFingerPrintsFetched(fingerprints: List<FingerPrintEntity>) {

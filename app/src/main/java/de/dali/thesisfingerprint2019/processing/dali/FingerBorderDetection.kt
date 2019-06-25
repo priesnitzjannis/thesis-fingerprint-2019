@@ -2,83 +2,111 @@ package de.dali.thesisfingerprint2019.processing.dali
 
 import de.dali.thesisfingerprint2019.processing.ProcessingStep
 import de.dali.thesisfingerprint2019.processing.Utils.canny
+import de.dali.thesisfingerprint2019.processing.Utils.convertMatToBitMap
 import de.dali.thesisfingerprint2019.processing.Utils.dilate
 import de.dali.thesisfingerprint2019.processing.Utils.erode
 import de.dali.thesisfingerprint2019.processing.Utils.getMaskedImage
 import de.dali.thesisfingerprint2019.processing.Utils.getThresholdImage
-import de.dali.thesisfingerprint2019.processing.Utils.sobel
-import de.dali.thesisfingerprint2019.utils.Utils
-import de.dali.thesisfingerprint2019.utils.Utils.releaseImage
+import de.dali.thesisfingerprint2019.processing.Utils.releaseImage
 import org.opencv.core.*
 import org.opencv.imgproc.Imgproc
 import javax.inject.Inject
-import org.opencv.core.Scalar
-import org.opencv.core.CvType
 import org.opencv.core.Mat
-
+import org.opencv.core.RotatedRect
+import org.opencv.imgproc.Imgproc.*
 
 
 class FingerBorderDetection @Inject constructor() : ProcessingStep() {
     override val TAG: String
         get() = FingerBorderDetection::class.java.simpleName
 
-    override fun run(originalImage: Mat): Mat? {
+    var amountOfFinger: Int = 0
 
-        val bmpOrg = Utils.convertMatToBitMap(originalImage)
+    override fun run(originalImage: Mat): Mat {
+        throw NotImplementedError("Not implemented for this processing step.")
+    }
+
+    override fun runReturnMultiple(originalImage: Mat): List<Mat> {
+        val bmpOrg = convertMatToBitMap(originalImage)
 
         val edgeImage = canny(originalImage)
 
-        val bmpOrg0 = Utils.convertMatToBitMap(edgeImage)
+        val bmpOrg0 = convertMatToBitMap(edgeImage)
 
-        val kernel = Mat(Size(37.0, 37.0), CvType.CV_8UC1, Scalar(255.0))
-        var edgesDilated = Mat.zeros(edgeImage.rows(), edgeImage.cols(), CvType.CV_8UC1)
-        Imgproc.morphologyEx(edgeImage, edgesDilated, Imgproc.MORPH_CROSS, kernel)
+        var edgesDilated: Mat
 
-        edgesDilated = erode(edgesDilated)
+        edgesDilated = dilate(edgeImage, Size(37.0, 37.0))
+        edgesDilated = erode(edgesDilated, Size(7.0, 7.0))
 
         val thresholdImage = getThresholdImage(originalImage)
-        val contour = getContour(thresholdImage)[0]
+        val contour = getContour(thresholdImage)
+
+        contour.sortedBy { moments(it).m10 / moments(it).m00 }
+
         val maskImage = getMaskImage(originalImage, contour)
 
-        val bmpOrg11 = Utils.convertMatToBitMap(maskImage)
-        val bmpOrg1 = Utils.convertMatToBitMap(edgesDilated)
+        val bmpOrg11 = convertMatToBitMap(maskImage)
+        val bmpOrg1 = convertMatToBitMap(edgesDilated)
 
         val diffMaskEdge = Mat.zeros(originalImage.rows(), originalImage.cols(), CvType.CV_8UC1)
         Core.subtract(maskImage, edgesDilated, diffMaskEdge)
 
-        releaseImage(listOf(contour, thresholdImage, edgeImage, edgesDilated, maskImage))
-        val bmpOrg2 = Utils.convertMatToBitMap(diffMaskEdge)
+        releaseImage(contour)
+        releaseImage(listOf(thresholdImage, edgeImage, edgesDilated, maskImage))
+        val bmpOrg2 = convertMatToBitMap(diffMaskEdge)
 
-        val sepContours = getContour(diffMaskEdge)
-        val sepContoursImages = sepContours.map { getMaskImage(originalImage, it) }
-        val sepImages = sepContoursImages.mapIndexed{ index, mat ->
-            val m = getMaskedImage(originalImage, mat)
-            val r = Imgproc.boundingRect(sepContoursImages[index])
+        val newImages = cropPalmIfNeeded(originalImage, diffMaskEdge, (originalImage.rows() * 0.5).toInt())
+
+        val sepContours = getContour(newImages!!.second)
+        val sepContoursImages = sepContours.map { getMaskImage(newImages.first, listOf(it)) }
+        val sepImages = sepContoursImages.mapIndexed { index, mat ->
+            val m = getMaskedImage(newImages.first, mat)
+            val r = boundingRect(sepContoursImages[index])
             Mat(m, r)
         }
 
-        val bmpOrg3 = Utils.convertMatToBitMap(sepImages[0])
+        val bmpOrg3 = convertMatToBitMap(sepImages[0])
 
         releaseImage(listOf(edgeImage))
         releaseImage(sepContours)
         releaseImage(sepContoursImages)
 
-        return sepImages[0]
+        return sepImages
+    }
+
+    private fun cropPalmIfNeeded(orig: Mat, mask: Mat,minSize: Int): Pair<Mat, Mat>?{
+        val contour = getContour(mask)
+
+        return if (contour.size == amountOfFinger){
+            Pair(orig, mask)
+        } else {
+            val newWidth = orig.cols()
+            val newHeight = orig.rows() - 100
+
+            if (minSize < newHeight){
+                val rect = Rect(0, 0, newWidth, newHeight )
+
+                val newOrig = Mat(orig, rect)
+                val newMask = Mat(mask, rect)
+                cropPalmIfNeeded(newOrig, newMask, minSize)
+            } else {
+                null
+            }
+        }
     }
 
     private fun getContour(mat: Mat): List<MatOfPoint> {
         val contours: List<MatOfPoint> = mutableListOf()
         val hierarchy = Mat()
 
-        Imgproc.findContours(mat, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE)
+        findContours(mat, contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE)
 
         return contours
     }
 
-    private fun getMaskImage(originalImage: Mat, mat: MatOfPoint): Mat {
+    private fun getMaskImage(originalImage: Mat, mat: List<MatOfPoint>): Mat {
         val mask = Mat.zeros(originalImage.rows(), originalImage.cols(), CvType.CV_8UC1)
-        val wrapper = listOf(mat)
-        Imgproc.drawContours(mask, wrapper, -1, Scalar(255.0), Imgproc.FILLED)
+        drawContours(mask, mat, -1, Scalar(255.0), FILLED)
 
         return mask
     }

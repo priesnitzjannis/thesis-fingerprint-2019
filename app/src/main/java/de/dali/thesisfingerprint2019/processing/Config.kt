@@ -27,4 +27,8 @@ object Config {
     //endregion
 
     const val MAX_KERNEL_LENGTH = 3
+
+    const val GRADIENT_THRESHOLD = 0.3
+    const val AVG_LINE_IDX = 100
+    const val AVG_COLOR_AREA = 50
 }

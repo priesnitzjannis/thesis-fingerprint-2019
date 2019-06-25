@@ -5,13 +5,16 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import de.dali.thesisfingerprint2019.data.local.converter.Converters
 import de.dali.thesisfingerprint2019.data.local.dao.FingerPrintDao
+import de.dali.thesisfingerprint2019.data.local.dao.ImageDao
 import de.dali.thesisfingerprint2019.data.local.dao.TestPersonDao
 import de.dali.thesisfingerprint2019.data.local.entity.FingerPrintEntity
+import de.dali.thesisfingerprint2019.data.local.entity.ImageEntity
 import de.dali.thesisfingerprint2019.data.local.entity.TestPersonEntity
 
 @Database(
     entities = [FingerPrintEntity::class,
-        TestPersonEntity::class],
+        TestPersonEntity::class,
+        ImageEntity::class],
     version = 1,
     exportSchema = false
 )
@@ -22,5 +25,5 @@ abstract class AppDatabase : RoomDatabase() {
 
     abstract fun fingerPrintDao(): FingerPrintDao
     abstract fun testPersonDao(): TestPersonDao
-
+    abstract fun imageDao(): ImageDao
 }

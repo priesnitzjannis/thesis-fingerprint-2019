@@ -1,10 +1,10 @@
 package de.dali.thesisfingerprint2019.processing.common
 
 
-import de.dali.thesisfingerprint2019.processing.Config.TRESHOLD_RED
 import de.dali.thesisfingerprint2019.processing.ProcessingStep
-import de.dali.thesisfingerprint2019.utils.Utils
-import de.dali.thesisfingerprint2019.utils.Utils.rotateImageByDegree
+import de.dali.thesisfingerprint2019.processing.Utils.convertMatToBitMap
+import de.dali.thesisfingerprint2019.processing.Utils.getThresholdImage
+import de.dali.thesisfingerprint2019.processing.Utils.rotateImageByDegree
 import org.opencv.core.Mat
 import org.opencv.core.Point
 import javax.inject.Inject
@@ -18,7 +18,7 @@ class RotateFinger @Inject constructor() : ProcessingStep() {
     override val TAG: String
         get() = RotateFinger::class.java.simpleName
 
-    override fun run(originalImage: Mat): Mat? {
+    override fun run(originalImage: Mat): Mat {
         val middle = calcCenterPointOfMat(originalImage)
         val pointPair = generatePointPair(middle, 20)
 
@@ -30,13 +30,17 @@ class RotateFinger @Inject constructor() : ProcessingStep() {
         val distanceP2ToContour = euclideanDist(pointPair.second, p2Contour)
 
         val angle = calcAngle(distanceP1P2, distanceP2ToContour, distanceP1ToContour)
-        correctionAngle = 0.0 - angle
+        correctionAngle = -(90.0 - angle)
 
         val rotatedImage = rotateImageByDegree(correctionAngle, originalImage)
 
-        val bmpOrg = Utils.convertMatToBitMap(rotatedImage)
+        val bmpOrg = convertMatToBitMap(rotatedImage)
 
         return rotatedImage
+    }
+
+    override fun runReturnMultiple(originalImage: Mat): List<Mat> {
+        throw NotImplementedError("Not implemented for this processing step.")
     }
 
     private fun calcAngle(distanceP1P2: Double, distanceP2ToContour: Double, distanceP1ToContour: Double): Double {
@@ -50,14 +54,15 @@ class RotateFinger @Inject constructor() : ProcessingStep() {
         return sqrt(diff.x * diff.x + diff.y * diff.y)
     }
 
-    private fun calcPointOnContour(first: Point, originalImage: Mat): Point {
+    private fun calcPointOnContour(point: Point, image: Mat): Point {
         var pointOnContour = Point()
+        val imageThresh = getThresholdImage(image)
 
-        for (i in first.x.toInt() downTo 0) {
-            val pixel = originalImage.get(first.y.toInt(), i)
+        for (i in point.x.toInt() until image.cols()) {
+            val pixel = imageThresh.get(point.y.toInt(), i)
 
-            if (pixel[0] < TRESHOLD_RED) {
-                pointOnContour = Point(first.y, i + 1.0)
+            if (pixel[0] == 0.0) {
+                pointOnContour = Point(i.toDouble(), point.y)
                 break
             }
         }
@@ -65,8 +70,9 @@ class RotateFinger @Inject constructor() : ProcessingStep() {
         return pointOnContour
     }
 
+
     private fun generatePointPair(middle: Point, i: Int): Pair<Point, Point> =
-        Pair(Point(middle.x - i, middle.y), Point(middle.x + i, middle.y))
+        Pair(Point(middle.x, middle.y - i), Point(middle.x, middle.y + i))
 
     private fun calcCenterPointOfMat(resultFrame: Mat): Point =
         Point(resultFrame.cols() / 2.0, resultFrame.rows() / 2.0)

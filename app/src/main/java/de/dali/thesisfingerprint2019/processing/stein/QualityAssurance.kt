@@ -1,4 +1,4 @@
-package de.dali.thesisfingerprint2019.processing.common
+package de.dali.thesisfingerprint2019.processing.stein
 
 import android.util.Log
 import de.dali.thesisfingerprint2019.processing.Config.CENTER_OFFSET_X
@@ -9,7 +9,6 @@ import de.dali.thesisfingerprint2019.processing.Config.EDGE_DENS_TRESHOLD
 import de.dali.thesisfingerprint2019.processing.Config.TRESHOLD_RED
 import de.dali.thesisfingerprint2019.processing.ProcessingStep
 import de.dali.thesisfingerprint2019.processing.Utils.sobel
-import de.dali.thesisfingerprint2019.utils.Utils
 import org.opencv.core.*
 import org.opencv.core.Core.mean
 import org.opencv.core.Core.split
@@ -23,7 +22,7 @@ class QualityAssurance @Inject constructor() : ProcessingStep() {
     override val TAG: String
         get() = QualityAssurance::class.java.simpleName
 
-    override fun run(originalImage: Mat): Mat? {
+    override fun run(originalImage: Mat): Mat {
         val point = calcCenterPoint(originalImage)
         val fingerInROI = fingerIsInROI(originalImage, point)
 
@@ -34,14 +33,17 @@ class QualityAssurance @Inject constructor() : ProcessingStep() {
             Log.e(TAG, "edgeDens -> $edgeDensity")
 
             if (edgeDensity > EDGE_DENS_TRESHOLD) {
-                val bmpOrg = Utils.convertMatToBitMap(originalImage)
                 originalImage
             } else {
-                null
+                Mat()
             }
         } else {
-            null
+            Mat()
         }
+    }
+
+    override fun runReturnMultiple(originalImage: Mat): List<Mat> {
+        throw NotImplementedError("Not implemented for this processing step.")
     }
 
     private fun calcCenterPoint(originalImage: Mat): Point {

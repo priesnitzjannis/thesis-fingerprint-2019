@@ -2,6 +2,7 @@ package de.dali.thesisfingerprint2019.ui.main.fragment.scanning
 
 import android.app.ProgressDialog
 import android.os.Bundle
+import android.os.Environment
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +16,7 @@ import de.dali.thesisfingerprint2019.R
 import de.dali.thesisfingerprint2019.databinding.FragmentFingerScanningBinding
 import de.dali.thesisfingerprint2019.ui.base.BaseFragment
 import de.dali.thesisfingerprint2019.ui.main.viewmodel.scanning.FingerScanningViewModel
+import de.dali.thesisfingerprint2019.utils.Constants
 import de.dali.thesisfingerprint2019.utils.Dialogs
 import de.dali.thesisfingerprint2019.utils.Utils
 import kotlinx.android.synthetic.main.fragment_finger_scanning.*
@@ -24,9 +26,7 @@ import org.opencv.android.LoaderCallbackInterface
 import org.opencv.android.OpenCVLoader
 import org.opencv.core.CvType
 import org.opencv.core.Mat
-import org.opencv.core.Point
-import org.opencv.core.Scalar
-import org.opencv.imgproc.Imgproc.rectangle
+import org.opencv.imgcodecs.Imgcodecs
 import javax.inject.Inject
 
 
@@ -61,21 +61,11 @@ class FingerScanningFragment : BaseFragment() {
 
 
             if (frameCounter == 1) {
-                fingerScanningViewModel.processImage(mRgba,{},{})
+                val pathname = "${Environment.getExternalStorageDirectory()}/${Constants.NAME_MAIN_FOLDER}/test/3.jpg"
+                val m = Imgcodecs.imread(pathname)
+                fingerScanningViewModel.sendToPipeline(m)
             }
 
-            /*
-            val pX = mRgba.cols() / 2.0
-            val pY = mRgba.rows() / 2.0
-
-            rectangle(
-                mRgba,
-                Point(pX - 75, pY - 75),
-                Point(pX + 150, pY + 150),
-                Scalar(255.0, 0.0, 0.0, 255.0),
-                3
-            )
-            */
             return mRgba
         }
 
@@ -111,7 +101,11 @@ class FingerScanningFragment : BaseFragment() {
 
         arguments?.let {
             val entity = FingerScanningFragmentArgs.fromBundle(it).fingerPrintEntity
+            val list = FingerScanningFragmentArgs.fromBundle(it).listIsoID.toList()
             fingerScanningViewModel.entity = entity
+            fingerScanningViewModel.list = list
+
+            fingerScanningViewModel.amountOfFinger = list.size
         }
 
 
@@ -122,15 +116,18 @@ class FingerScanningFragment : BaseFragment() {
         binding.buttonFlash.setOnClickListener { javaCamera2View.toggleFlash() }
 
         fingerScanningViewModel.setSensorOrientation(Utils.getSensorOrientation(activity))
-        fingerScanningViewModel.setCallback {
+
+        fingerScanningViewModel.setOnSuccess {
             activity.runOnUiThread {
                 binding.javaCamera2View.disableView()
                 fingerScanningViewModel.stopProcessingPipeline()
-
                 showProgressDialogWithTitle()
-
-                fingerScanningViewModel.processImage(it, { progressDialog.dismiss() }, { Log.e(TAG, it.message) })
+                fingerScanningViewModel.processImages(it, { progressDialog.dismiss() }, { Log.e(TAG, it.message) })
             }
+        }
+
+        fingerScanningViewModel.setOnFailure {
+            Log.e(TAG, it)
         }
 
         initOpenCV()

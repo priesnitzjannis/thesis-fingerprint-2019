@@ -1,7 +1,6 @@
 package de.dali.thesisfingerprint2019.processing.stein
 
 import de.dali.thesisfingerprint2019.processing.ProcessingStep
-import de.dali.thesisfingerprint2019.utils.Utils
 import org.opencv.core.Mat
 import org.opencv.core.Point
 import org.opencv.core.Rect
@@ -12,7 +11,7 @@ class FingerDetectionPrecisely @Inject constructor() : ProcessingStep() {
     override val TAG: String
         get() = FingerDetectionPrecisely::class.java.simpleName
 
-    override fun run(originalImage: Mat): Mat? {
+    override fun run(originalImage: Mat): Mat {
         val center = Point(
             originalImage.cols() / 2.0,
             originalImage.rows() / 2.0
@@ -23,9 +22,11 @@ class FingerDetectionPrecisely @Inject constructor() : ProcessingStep() {
         val yBottom = detectBottom(originalImage, center)
         val roi = Rect(yBottom, xLeft, yTop - yBottom, xRight - xLeft)
 
-        val bmpOrg = Utils.convertMatToBitMap(Mat(originalImage, roi))
-
         return Mat(originalImage, roi)
+    }
+
+    override fun runReturnMultiple(originalImage: Mat): List<Mat> {
+        throw NotImplementedError("Not implemented for this processing step.")
     }
 
     private fun detectLeft(originalImage: Mat?, center: Point): Int {

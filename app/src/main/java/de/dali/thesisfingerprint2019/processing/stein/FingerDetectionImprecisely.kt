@@ -3,6 +3,7 @@ package de.dali.thesisfingerprint2019.processing.stein
 import de.dali.thesisfingerprint2019.processing.Config.STEP_SIZE
 import de.dali.thesisfingerprint2019.processing.Config.TRESHOLD_RED
 import de.dali.thesisfingerprint2019.processing.ProcessingStep
+import de.dali.thesisfingerprint2019.processing.Utils.convertMatToBitMap
 import de.dali.thesisfingerprint2019.utils.Utils
 import org.opencv.core.Mat
 import org.opencv.core.Rect
@@ -13,7 +14,7 @@ class FingerDetectionImprecisely @Inject constructor() : ProcessingStep() {
     override val TAG: String
         get() = FingerDetectionImprecisely::class.java.simpleName
 
-    override fun run(originalImage: Mat): Mat? {
+    override fun run(originalImage: Mat): Mat {
 
         val xLeft = detectLeft(originalImage)
         val xRight = detectRight(originalImage)
@@ -21,9 +22,13 @@ class FingerDetectionImprecisely @Inject constructor() : ProcessingStep() {
         val yBottom = detectBottom(originalImage)
         val roi = Rect(yBottom, xLeft, yTop - yBottom, xRight - xLeft)
 
-        val bmpOrg = Utils.convertMatToBitMap(Mat(originalImage, roi))
+        val bmpOrg = convertMatToBitMap(Mat(originalImage, roi))
 
         return Mat(originalImage, roi)
+    }
+
+    override fun runReturnMultiple(originalImage: Mat): List<Mat> {
+        throw NotImplementedError("Not implemented for this processing step.")
     }
 
     private fun detectLeft(originalImage: Mat?): Int {

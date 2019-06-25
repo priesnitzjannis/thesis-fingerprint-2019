@@ -6,6 +6,7 @@ import dagger.Module
 import dagger.Provides
 import de.dali.thesisfingerprint2019.data.local.AppDatabase
 import de.dali.thesisfingerprint2019.data.local.dao.FingerPrintDao
+import de.dali.thesisfingerprint2019.data.local.dao.ImageDao
 import de.dali.thesisfingerprint2019.data.local.dao.TestPersonDao
 import javax.inject.Singleton
 
@@ -30,6 +31,12 @@ class DbModule {
     @Singleton
     internal fun provideTestPersonDao(appDatabase: AppDatabase): TestPersonDao {
         return appDatabase.testPersonDao()
+    }
+
+    @Provides
+    @Singleton
+    internal fun provideImageDao(appDatabase: AppDatabase): ImageDao {
+        return appDatabase.imageDao()
     }
 
 }

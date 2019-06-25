@@ -6,7 +6,9 @@ abstract class ProcessingStep {
 
     abstract val TAG: String
 
-    abstract fun run(originalImage: Mat): Mat?
+    abstract fun run(originalImage: Mat): Mat
+
+    abstract fun runReturnMultiple(originalImage: Mat): List<Mat>
 
     private val executionTimes: MutableList<Long> = mutableListOf()
 

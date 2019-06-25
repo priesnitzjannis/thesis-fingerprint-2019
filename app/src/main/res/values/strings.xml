@@ -64,6 +64,8 @@
     <string name="fragment_test_person_overview">Testperson #%1$s</string>
     <string name="fragment_test_person_continue">Continue</string>
     <string name="fragment_details_resolution">Resolution:</string>
-    <string name="fragment_details_correction_degree">Correction Degree:</string>
+
+    <string name="fragment_details_id">ISO ID:</string>
+    <string name="fragment_details_correction_degree">Degree:</string>
 
 </resources>
