@@ -1,7 +1,6 @@
 package de.dali.thesisfingerprint2019.processing
 
 import android.graphics.Bitmap
-import android.util.Log
 import de.dali.thesisfingerprint2019.processing.Utils.convertMatToBitMap
 import org.opencv.core.Mat
 
@@ -11,8 +10,6 @@ class ProcessingThread(vararg val processingSteps: ProcessingStep) {
         var image = mat
 
         processingSteps.forEach {
-            Log.e(TAG, "Processing step ---->${it.TAG}")
-
             val startTime = System.currentTimeMillis()
 
             val result = it.run(image)

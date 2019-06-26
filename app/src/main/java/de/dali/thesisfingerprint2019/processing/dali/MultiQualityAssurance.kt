@@ -1,6 +1,5 @@
 package de.dali.thesisfingerprint2019.processing.dali
 
-import android.util.Log
 import de.dali.thesisfingerprint2019.processing.Config.CENTER_OFFSET_X
 import de.dali.thesisfingerprint2019.processing.Config.CENTER_OFFSET_Y
 import de.dali.thesisfingerprint2019.processing.Config.CENTER_SIZE_X
@@ -23,8 +22,6 @@ class MultiQualityAssurance @Inject constructor() : ProcessingStep() {
         val result = sobel(originalImage)
 
         edgeDensity = edgeDensity(result, point)
-
-        Log.e(TAG, "edgeDens -> $edgeDensity")
 
         return originalImage
     }

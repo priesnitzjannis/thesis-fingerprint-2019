@@ -3,7 +3,6 @@ package de.dali.thesisfingerprint2019.processing.common
 import de.dali.thesisfingerprint2019.processing.Config.MAX_KERNEL_LENGTH
 import de.dali.thesisfingerprint2019.processing.ProcessingStep
 import de.dali.thesisfingerprint2019.processing.Utils.convertMatToBitMap
-import de.dali.thesisfingerprint2019.utils.Utils
 import org.opencv.core.Core.subtract
 import org.opencv.core.Mat
 import org.opencv.core.Size
@@ -29,7 +28,7 @@ class Enhancement @Inject constructor() : ProcessingStep() {
 
         equalizeHist(dst, dst)
 
-        val bmp = convertMatToBitMap(originalImage)
+        val bmp = convertMatToBitMap(dst)
         return dst
     }
 

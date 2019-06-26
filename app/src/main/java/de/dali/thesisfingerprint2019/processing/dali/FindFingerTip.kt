@@ -4,9 +4,11 @@ import de.dali.thesisfingerprint2019.processing.Config.AVG_COLOR_AREA
 import de.dali.thesisfingerprint2019.processing.Config.AVG_LINE_IDX
 import de.dali.thesisfingerprint2019.processing.Config.GRADIENT_THRESHOLD
 import de.dali.thesisfingerprint2019.processing.ProcessingStep
+import de.dali.thesisfingerprint2019.processing.Utils
 import org.opencv.core.*
 import org.opencv.imgproc.Imgproc.*
 import javax.inject.Inject
+
 
 class FindFingerTip @Inject constructor() : ProcessingStep() {
     override val TAG: String
@@ -24,10 +26,10 @@ class FindFingerTip @Inject constructor() : ProcessingStep() {
         }
     }
 
-    private val comparatorX = Comparator<Pair<Point, Double>> { p0, p1 ->
+    private val comparatorY = Comparator<Pair<Point, Double>> { p0, p1 ->
         when {
-            p0.first.x > p1.first.x -> 1
-            p0.first.x == p1.first.x -> 0
+            p0.first.y < p1.first.y -> 1
+            p0.first.y == p1.first.y -> 0
             else -> -1
         }
     }
@@ -51,19 +53,19 @@ class FindFingerTip @Inject constructor() : ProcessingStep() {
 
     private fun calcOutline(originalImage: Mat): List<Point> {
         val thresh = Mat(originalImage.cols(), originalImage.rows(), CvType.CV_8UC1)
-        threshold(originalImage, thresh, 1.0, 255.0, THRESH_BINARY)
+        threshold(originalImage, thresh, 1.0, 255.0, THRESH_BINARY + THRESH_OTSU)
 
         val contours = mutableListOf<Point>()
 
-        for (i in 0 until thresh.cols()) {
+        for (i in 0 until thresh.rows()) {
 
             val allPointsInRow = mutableListOf<Point>()
 
-            for (j in 0 until thresh.rows()) {
+            for (j in 0 until thresh.cols()) {
                 val colour = thresh.get(i, j)
 
                 if (colour[0] != 0.0) {
-                    allPointsInRow.add(Point(i.toDouble(), j.toDouble()))
+                    allPointsInRow.add(Point(j.toDouble(), i.toDouble()))
                 }
             }
 
@@ -106,7 +108,7 @@ class FindFingerTip @Inject constructor() : ProcessingStep() {
 
         for (j in AVG_LINE_IDX until (avgLine.size - AVG_LINE_IDX)) {
             for (i in -AVG_COLOR_AREA..AVG_COLOR_AREA) {
-                val colAtPos = temp.get(avgLine[j].x.toInt(), avgLine[j].y.toInt() + i)[0]
+                val colAtPos = temp.get(avgLine[j].y.toInt(), avgLine[j].x.toInt() + i)[0]
                 colorGradientRow.add(colAtPos)
             }
 
@@ -122,11 +124,9 @@ class FindFingerTip @Inject constructor() : ProcessingStep() {
         val min = colorGradient.minWith(comparatorDouble)
         val max = colorGradient.maxWith(comparatorDouble)
 
-        colorGradient.map {
+        return colorGradient.map {
             Pair(it.first, normalizeValue(it.second, min!!.second, max!!.second))
         }
-
-        return colorGradient
     }
 
     private fun findMinimaIndex(colorGradient: List<Pair<Point, Double>>): List<Pair<Point, Double>> {
@@ -152,18 +152,23 @@ class FindFingerTip @Inject constructor() : ProcessingStep() {
         minimaRight = if (indexMinima.isEmpty()) {
             Point(originalImage.cols() * 2.0 / 3.0, 0.0)
         } else {
-            val maxValueColorGradient = indexMinima.maxWith(comparatorX)
+            val maxValueColorGradient = indexMinima.maxWith(comparatorY)
             maxValueColorGradient!!.first
         }
 
         contour.forEach {
-            if (minimaRight.x <= it.x) {
+            if (minimaRight.y >= it.y) {
                 croppedContour.add(it)
             }
         }
 
-        val boundingRect = boundingRect(MatOfPoint(*croppedContour.toTypedArray()))
-        return Mat(originalImage, boundingRect)
+        val boundingRect = boundingRect(MatOfPoint2f(*croppedContour.toTypedArray()))
+
+        val image = Mat(originalImage, boundingRect)
+
+        val bmpResult = Utils.convertMatToBitMap(image)
+
+        return image
     }
 
 }

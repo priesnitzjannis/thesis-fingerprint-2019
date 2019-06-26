@@ -2,15 +2,14 @@ package de.dali.thesisfingerprint2019.processing.common
 
 
 import de.dali.thesisfingerprint2019.processing.ProcessingStep
+import de.dali.thesisfingerprint2019.processing.Utils.calcAngle
 import de.dali.thesisfingerprint2019.processing.Utils.convertMatToBitMap
+import de.dali.thesisfingerprint2019.processing.Utils.euclideanDist
 import de.dali.thesisfingerprint2019.processing.Utils.getThresholdImage
 import de.dali.thesisfingerprint2019.processing.Utils.rotateImageByDegree
 import org.opencv.core.Mat
 import org.opencv.core.Point
 import javax.inject.Inject
-import kotlin.math.PI
-import kotlin.math.atan
-import kotlin.math.sqrt
 
 class RotateFinger @Inject constructor() : ProcessingStep() {
     var correctionAngle = 0.0
@@ -41,17 +40,6 @@ class RotateFinger @Inject constructor() : ProcessingStep() {
 
     override fun runReturnMultiple(originalImage: Mat): List<Mat> {
         throw NotImplementedError("Not implemented for this processing step.")
-    }
-
-    private fun calcAngle(distanceP1P2: Double, distanceP2ToContour: Double, distanceP1ToContour: Double): Double {
-        return atan(distanceP1P2 / (distanceP2ToContour - distanceP1ToContour)) * 180 / PI
-    }
-
-    operator fun Point.minus(p: Point) = Point(this.x - p.x, this.y - p.y)
-
-    private fun euclideanDist(first: Point, second: Point): Double {
-        val diff = first - second
-        return sqrt(diff.x * diff.x + diff.y * diff.y)
     }
 
     private fun calcPointOnContour(point: Point, image: Mat): Point {

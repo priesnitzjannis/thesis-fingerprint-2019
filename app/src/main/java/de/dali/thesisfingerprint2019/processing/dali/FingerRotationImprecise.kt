@@ -3,74 +3,66 @@ package de.dali.thesisfingerprint2019.processing.dali
 import de.dali.thesisfingerprint2019.processing.ProcessingStep
 import de.dali.thesisfingerprint2019.processing.Utils
 import de.dali.thesisfingerprint2019.processing.Utils.getThresholdImage
+import de.dali.thesisfingerprint2019.processing.Utils.releaseImage
 import org.opencv.core.Mat
-import org.opencv.core.MatOfPoint
-import org.opencv.core.MatOfPoint2f
 import org.opencv.core.Point
-import org.opencv.imgproc.Imgproc
 import javax.inject.Inject
-import org.opencv.core.Scalar
-import org.opencv.core.Core
-import org.opencv.imgproc.Imgproc.line
-
 
 class FingerRotationImprecise @Inject constructor() : ProcessingStep() {
+    var correctionAngle = 0.0
+
     override val TAG: String
         get() = FingerRotationImprecise::class.java.simpleName
 
     override fun run(originalImage: Mat): Mat {
         val thresh = getThresholdImage(originalImage)
-        val contour = getFingerContour(thresh)
-        val rotated = rotateImprecise(originalImage, contour)
 
-        Utils.releaseImage(contour)
-        val a = Utils.convertMatToBitMap(rotated)
-        return rotated
+        val pointPair = generatePointPair(thresh, 50)
+
+        releaseImage(listOf(thresh))
+
+        val p1Contour = calcPointOnContour(pointPair.first, originalImage)
+        val p2Contour = calcPointOnContour(pointPair.second, originalImage)
+
+        val distanceP1P2 = Utils.euclideanDist(pointPair.first, pointPair.second)
+        val distanceP1ToContour = Utils.euclideanDist(pointPair.first, p1Contour)
+        val distanceP2ToContour = Utils.euclideanDist(pointPair.second, p2Contour)
+
+        val angle = Utils.calcAngle(distanceP1P2, distanceP2ToContour, distanceP1ToContour)
+        correctionAngle = -angle
+
+        val rotatedImage = Utils.rotateImageByDegree(correctionAngle, originalImage)
+
+        val bmpResult = Utils.convertMatToBitMap(rotatedImage)
+
+        return rotatedImage
     }
 
     override fun runReturnMultiple(originalImage: Mat): List<Mat> {
         throw NotImplementedError("Not implemented for this processing step.")
     }
 
-    private fun rotateImprecise(src: Mat, mops: List<MatOfPoint>) : Mat{
-        val M: Mat
-        val rotated = Mat()
-        val cropped = Mat()
+    private fun generatePointPair(image: Mat, i: Int): Pair<Point, Point> {
+        val colLow = if (image.cols() * 0.1 - i < 0) 0.0 else image.cols() * 0.1 - i
+        val colHigh = image.cols() * 0.1 + i
 
-        val list = mutableListOf<Point>()
-
-        mops.forEach {
-            list.addAll(it.toList())
-        }
-
-        val sourceMat = MatOfPoint2f()
-        sourceMat.fromList(list)
-
-        val rect = Imgproc.minAreaRect(sourceMat)
-        val angle = rect.angle.toFloat()
-
-        M = Imgproc.getRotationMatrix2D(rect.center, angle.toDouble(), 1.0)
-        Imgproc.warpAffine(src, rotated, M, src.size(), Imgproc.INTER_CUBIC)
-        Imgproc.getRectSubPix(rotated, rect.size, rect.center, cropped)
-
-        return cropped
+        return Pair(Point(0.0, colLow), Point(0.0, colHigh))
     }
 
-    private fun getFingerContour(mat: Mat): List<MatOfPoint> {
+    private fun calcPointOnContour(point: Point, image: Mat): Point {
+        var pointOnContour = Point()
+        val imageThresh = getThresholdImage(image)
 
-        val contours: List<MatOfPoint> = mutableListOf()
-        val fingerContours = mutableListOf<MatOfPoint>()
-        val hierarchy = Mat()
+        for (i in point.x.toInt() until image.cols()) {
+            val pixel = imageThresh.get(point.y.toInt(), i)
 
-        Imgproc.findContours(mat, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE)
-
-        contours.forEach {
-            val area = Imgproc.contourArea(it, false)
-            if (area >= 400) {
-                fingerContours.add(it)
+            if (pixel[0] != 0.0) {
+                pointOnContour = Point(i.toDouble(), point.y)
+                break
             }
         }
 
-        return fingerContours
+        return pointOnContour
     }
+
 }

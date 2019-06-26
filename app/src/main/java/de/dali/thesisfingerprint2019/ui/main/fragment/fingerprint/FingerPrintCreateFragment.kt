@@ -87,20 +87,19 @@ class FingerPrintCreateFragment : BaseFragment() {
                 binding.btnScan.visibility = VISIBLE
                 binding.pbLoading.visibility = GONE
 
+                fingerPrintCreateViewModel.selectedFinger.observe(this, Observer {
+                    binding.btnScan.isEnabled = it.isNotEmpty()
+                })
+
                 if (entity != null) {
                     fingerPrintCreateViewModel.fingerPrintEntity = entity
 
-                    updateUI(entity, it, true)
-                    binding.btnScan.isEnabled = it.isEmpty()
+                    updateUI(entity, it, lockUI = true, lockCB = false)
                 } else {
                     setVendor()
                     hideParts()
                     fingerPrintCreateViewModel.personID = personEntity.personID ?: -1
                     sensorManager.registerListener(lightEventListener, lightSensor, SensorManager.SENSOR_DELAY_UI)
-
-                    fingerPrintCreateViewModel.selectedFinger.observe(this, Observer {
-                        binding.btnScan.isEnabled = it.isNotEmpty()
-                    })
                 }
             })
 
@@ -167,7 +166,8 @@ class FingerPrintCreateFragment : BaseFragment() {
     private fun updateUI(
         e: FingerPrintEntity,
         entity: List<ImageEntity>,
-        lockUI: Boolean
+        lockUI: Boolean,
+        lockCB: Boolean
     ) {
 
         val listOfFingerIds = entity.map { it.biometricalID.toString() }
@@ -182,19 +182,19 @@ class FingerPrintCreateFragment : BaseFragment() {
         binding.editVendor.lock(lockUI)
 
         binding.multiSelect.fingerSelectionThumb.update(listOfFingerIds)
-        binding.multiSelect.fingerSelectionThumb.lock(lockUI)
+        binding.multiSelect.fingerSelectionThumb.lock(lockCB)
 
         binding.multiSelect.fingerSelectionIndexFinger.update(listOfFingerIds)
-        binding.multiSelect.fingerSelectionIndexFinger.lock(lockUI)
+        binding.multiSelect.fingerSelectionIndexFinger.lock(lockCB)
 
         binding.multiSelect.fingerSelectionMiddleFinger.update(listOfFingerIds)
-        binding.multiSelect.fingerSelectionMiddleFinger.lock(lockUI)
+        binding.multiSelect.fingerSelectionMiddleFinger.lock(lockCB)
 
         binding.multiSelect.fingerSelectionRingFinger.update(listOfFingerIds)
-        binding.multiSelect.fingerSelectionRingFinger.lock(lockUI)
+        binding.multiSelect.fingerSelectionRingFinger.lock(lockCB)
 
         binding.multiSelect.fingerSelectionLittleFinger.update(listOfFingerIds)
-        binding.multiSelect.fingerSelectionLittleFinger.lock(lockUI)
+        binding.multiSelect.fingerSelectionLittleFinger.lock(lockCB)
     }
 
     private fun hideParts() {

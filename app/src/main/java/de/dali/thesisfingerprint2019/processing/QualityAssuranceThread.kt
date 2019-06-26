@@ -7,7 +7,6 @@ import android.os.Message
 import android.os.Process.THREAD_PRIORITY_BACKGROUND
 import android.util.Log
 import de.dali.thesisfingerprint2019.processing.Utils.releaseImage
-import de.dali.thesisfingerprint2019.processing.Utils.rotateImageByDegree
 import de.dali.thesisfingerprint2019.processing.dali.FingerBorderDetection
 import de.dali.thesisfingerprint2019.processing.dali.FingerRotationImprecise
 import de.dali.thesisfingerprint2019.processing.dali.MultiFingerDetection
@@ -49,7 +48,7 @@ class QualityAssuranceThread(private vararg val processingStep: ProcessingStep) 
                 totalImages++
 
                 val processedMat = Mat()
-                val rotatedImage = rotateImageByDegree(0.0 - sensorOrientation, image)
+                val rotatedImage = image //rotateImageByDegree(0.0 - sensorOrientation, image)
 
                 val multiFingerImage = (processingStep[0] as MultiFingerDetection).run(rotatedImage)
 

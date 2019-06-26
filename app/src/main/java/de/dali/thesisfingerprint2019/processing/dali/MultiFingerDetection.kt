@@ -17,26 +17,22 @@ class MultiFingerDetection @Inject constructor() : ProcessingStep() {
     override fun run(originalImage: Mat): Mat {
 
         val imageThresh = getThresholdImage(originalImage)
-        val bmpOrg1 = convertMatToBitMap(imageThresh)
-
         val fingerContours = getFingerContour(imageThresh)
 
         releaseImage(listOf(imageThresh))
 
         val maskImage = getMaskImage(originalImage, fingerContours)
-        val bmpOrg2 = convertMatToBitMap(maskImage)
-
         val imageWithOutBackground = getMaskedImage(originalImage, maskImage)
         val rect = Imgproc.boundingRect(fingerContours.toMat())
-        val bmpOrg3 = convertMatToBitMap(imageWithOutBackground)
 
         releaseImage(fingerContours)
+        releaseImage(listOf(maskImage))
 
         val croppedImage = Mat(imageWithOutBackground, rect)
-        val bmpOrg4 = convertMatToBitMap(croppedImage)
 
         releaseImage(listOf(imageWithOutBackground))
 
+        val bmpResult = convertMatToBitMap(croppedImage)
         return croppedImage
 
     }
@@ -45,7 +41,7 @@ class MultiFingerDetection @Inject constructor() : ProcessingStep() {
         throw NotImplementedError("Not implemented for this processing step.")
     }
 
-    private fun List<MatOfPoint>.toMat(): Mat {
+    fun List<MatOfPoint>.toMat(): Mat {
         val list = mutableListOf<Point>()
 
         this.forEach {

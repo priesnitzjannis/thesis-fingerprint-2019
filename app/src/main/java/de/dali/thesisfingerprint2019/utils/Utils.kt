@@ -2,7 +2,6 @@ package de.dali.thesisfingerprint2019.utils
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.hardware.camera2.CameraAccessException
 import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraManager
 import android.os.Build
@@ -24,7 +23,7 @@ object Utils {
                     sensorOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION) ?: 0
                 }
             }
-        } catch (e: CameraAccessException) {
+        } catch (e: Throwable) {
             e.printStackTrace()
         }
 

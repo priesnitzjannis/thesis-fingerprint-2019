@@ -19,9 +19,9 @@ interface ImageDao {
     @Query("DELETE FROM images")
     fun deleteAll()
 
-    @Query("SELECT * from images")
+    @Query("SELECT * FROM images")
     fun getAllImages(): Single<List<ImageEntity>>
 
-    @Query("SELECT * from images WHERE fingerPrintID = :id")
+    @Query("SELECT * FROM images WHERE fingerPrintID = :id")
     fun getAllImagesByFingerprints(id: Long): Single<List<ImageEntity>>
 }
