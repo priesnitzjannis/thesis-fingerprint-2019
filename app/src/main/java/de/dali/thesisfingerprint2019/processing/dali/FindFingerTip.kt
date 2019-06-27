@@ -28,7 +28,7 @@ class FindFingerTip @Inject constructor() : ProcessingStep() {
 
     private val comparatorY = Comparator<Pair<Point, Double>> { p0, p1 ->
         when {
-            p0.first.y < p1.first.y -> 1
+            p0.first.y > p1.first.y -> 1
             p0.first.y == p1.first.y -> 0
             else -> -1
         }
@@ -152,7 +152,7 @@ class FindFingerTip @Inject constructor() : ProcessingStep() {
         minimaRight = if (indexMinima.isEmpty()) {
             Point(originalImage.cols() * 2.0 / 3.0, 0.0)
         } else {
-            val maxValueColorGradient = indexMinima.maxWith(comparatorY)
+            val maxValueColorGradient = indexMinima.minWith(comparatorY)
             maxValueColorGradient!!.first
         }
 

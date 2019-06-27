@@ -1,6 +1,7 @@
 package de.dali.thesisfingerprint2019.processing.dali
 
 import de.dali.thesisfingerprint2019.processing.ProcessingStep
+import de.dali.thesisfingerprint2019.processing.Utils.adaptiveThresh
 import de.dali.thesisfingerprint2019.processing.Utils.canny
 import de.dali.thesisfingerprint2019.processing.Utils.convertMatToBitMap
 import de.dali.thesisfingerprint2019.processing.Utils.dilate
@@ -24,9 +25,10 @@ class FingerBorderDetection @Inject constructor() : ProcessingStep() {
     }
 
     override fun runReturnMultiple(originalImage: Mat): List<Mat> {
-        val edgeImage = canny(originalImage)
-        var edgesDilated = dilate(edgeImage, Size(17.0, 17.0))
-        edgesDilated = erode(edgesDilated, Size(13.0, 13.0))
+        val edgeImage = adaptiveThresh(originalImage)//canny(originalImage)
+        var edgesDilated = dilate(edgeImage, Size(27.0, 27.0))
+        edgesDilated = erode(edgesDilated, Size(23.0, 23.0))
+
 
         val thresholdImage = getThresholdImage(originalImage)
         val contour = getContour(thresholdImage)
@@ -36,6 +38,8 @@ class FingerBorderDetection @Inject constructor() : ProcessingStep() {
         val maskImage = getMaskImage(originalImage, contour)
         val diffMaskEdge = Mat.zeros(originalImage.rows(), originalImage.cols(), CvType.CV_8UC1)
         Core.subtract(maskImage, edgesDilated, diffMaskEdge)
+
+        val bmpResultABC = convertMatToBitMap(diffMaskEdge)
 
         releaseImage(contour)
         releaseImage(listOf(thresholdImage, edgeImage, edgesDilated, maskImage))

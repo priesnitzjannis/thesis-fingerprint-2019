@@ -55,6 +55,19 @@ object Utils {
         return maskedImage
     }
 
+    fun adaptiveThresh(mat: Mat): Mat{
+        val cb = getCbComponent(mat)
+        val result = Mat()
+
+        val blurred = Mat.zeros(mat.rows(), mat.cols(), CvType.CV_64FC1)
+        Imgproc.GaussianBlur(cb, blurred, Size(3.0, 3.0), 0.0, 0.0, Core.BORDER_CONSTANT)
+
+        Imgproc.adaptiveThreshold(blurred, result, 100.0, Imgproc.ADAPTIVE_THRESH_MEAN_C, Imgproc.THRESH_BINARY_INV, 21, 12.0)
+        Imgproc.threshold(result, result, 1.0, 255.0, Imgproc.THRESH_BINARY)
+
+        return result
+    }
+
     fun canny(frame: Mat): Mat {
         val result = Mat.zeros(frame.rows(), frame.cols(), CvType.CV_64FC1)
         val thresh1 = 15.0

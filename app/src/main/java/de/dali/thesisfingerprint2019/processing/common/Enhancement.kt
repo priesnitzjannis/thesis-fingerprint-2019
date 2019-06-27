@@ -3,6 +3,7 @@ package de.dali.thesisfingerprint2019.processing.common
 import de.dali.thesisfingerprint2019.processing.Config.MAX_KERNEL_LENGTH
 import de.dali.thesisfingerprint2019.processing.ProcessingStep
 import de.dali.thesisfingerprint2019.processing.Utils.convertMatToBitMap
+import org.opencv.core.Core
 import org.opencv.core.Core.subtract
 import org.opencv.core.Mat
 import org.opencv.core.Size
@@ -19,14 +20,16 @@ class Enhancement @Inject constructor() : ProcessingStep() {
 
         val g1 = Mat()
         val g2 = Mat()
-        var dst = Mat()
+        val dst = Mat()
 
-        GaussianBlur(originalImage, g1, Size(1.0, 1.0), 0.0)
-        GaussianBlur(originalImage, g2, Size(3.0, 3.0), 0.0)
+        GaussianBlur(originalImage, g1, Size(3.0, 3.0), 0.0)
+        GaussianBlur(originalImage, g2, Size(11.0, 11.0), 0.0)
 
         subtract(g1, g2, dst)
 
         equalizeHist(dst, dst)
+
+        Core.bitwise_not( dst, dst )
 
         val bmp = convertMatToBitMap(dst)
         return dst

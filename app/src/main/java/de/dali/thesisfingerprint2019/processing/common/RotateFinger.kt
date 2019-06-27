@@ -29,7 +29,7 @@ class RotateFinger @Inject constructor() : ProcessingStep() {
         val distanceP2ToContour = euclideanDist(pointPair.second, p2Contour)
 
         val angle = calcAngle(distanceP1P2, distanceP2ToContour, distanceP1ToContour)
-        correctionAngle = -(90.0 - angle)
+        correctionAngle = angle - 90
 
         val rotatedImage = rotateImageByDegree(correctionAngle, originalImage)
 
