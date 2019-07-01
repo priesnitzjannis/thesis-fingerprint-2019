@@ -61,13 +61,14 @@ class FingerScanningViewModel @Inject constructor(
             images.forEachIndexed { index, pair ->
                 val processedImage = processingThread.process(pair.first)
                 val pathName = "$NAME_MAIN_FOLDER/${entity.personID}/${entity.fingerPrintId}"
+                val fileName = "${System.currentTimeMillis()}.jpg"
                 val correctionDegree = (processingThread.processingSteps[0] as RotateFinger).correctionAngle
 
-                Utils.saveImage(pathName, processedImage, 100)
+                Utils.saveImage(pathName, fileName, processedImage, 100)
 
                 val imageEntity = ImageEntity(
                     fingerPrintID = entity.fingerPrintId,
-                    path = pathName,
+                    path = "$pathName/$fileName",
                     biometricalID = list[index],
                     timestamp = System.currentTimeMillis(),
                     width = processedImage.width,

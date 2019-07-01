@@ -59,11 +59,10 @@ class FingerScanningFragment : BaseFragment() {
             frameCounter++
             mRgba = inputFrame.rgba()
 
-
-            if (frameCounter == 1) {
-                val pathname = "${Environment.getExternalStorageDirectory()}/${Constants.NAME_MAIN_FOLDER}/test/3.jpg"
-                val m = Imgcodecs.imread(pathname)
-                fingerScanningViewModel.sendToPipeline(m)
+            if (frameCounter % 10 == 0) {
+                //val pathname = "${Environment.getExternalStorageDirectory()}/${Constants.NAME_MAIN_FOLDER}/test/$frameCounter.jpg"
+                //val m = Imgcodecs.imread(pathname)
+                fingerScanningViewModel.sendToPipeline(mRgba)
             }
 
             return mRgba

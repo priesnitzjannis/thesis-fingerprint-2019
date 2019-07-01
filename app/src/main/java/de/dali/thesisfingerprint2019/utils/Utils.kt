@@ -32,15 +32,13 @@ object Utils {
 
     fun toReadableDate(time: Long): Date = Date(time)
 
-    fun saveImage(pathName: String, bitmap: Bitmap, quality: Int) {
+    fun saveImage(pathName: String, fileName: String, bitmap: Bitmap, quality: Int) {
         val pathname = "${Environment.getExternalStorageDirectory()}/$pathName"
         val myDir = File(pathname)
 
         if (!myDir.exists()) myDir.mkdirs()
 
-        val name = "${System.currentTimeMillis()}.jpg"
-
-        val file = File(myDir, name)
+        val file = File(myDir, fileName)
         if (file.exists()) file.delete()
         val out = FileOutputStream(file)
         bitmap.compress(Bitmap.CompressFormat.JPEG, quality, out)

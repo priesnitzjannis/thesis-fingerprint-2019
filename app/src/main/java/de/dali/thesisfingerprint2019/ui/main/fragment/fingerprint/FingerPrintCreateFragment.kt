@@ -87,14 +87,14 @@ class FingerPrintCreateFragment : BaseFragment() {
                 binding.btnScan.visibility = VISIBLE
                 binding.pbLoading.visibility = GONE
 
-                fingerPrintCreateViewModel.selectedFinger.observe(this, Observer {
-                    binding.btnScan.isEnabled = it.isNotEmpty()
+                fingerPrintCreateViewModel.selectedFinger.observe(this, Observer { fingers ->
+                    binding.btnScan.isEnabled = fingers.isNotEmpty()
                 })
 
                 if (entity != null) {
                     fingerPrintCreateViewModel.fingerPrintEntity = entity
-
                     updateUI(entity, it, lockUI = true, lockCB = false)
+                    adapter.listOfFingerPrints = it
                 } else {
                     setVendor()
                     hideParts()
@@ -103,7 +103,7 @@ class FingerPrintCreateFragment : BaseFragment() {
                 }
             })
 
-            fingerPrintCreateViewModel.loadImages(personEntity.personID!!)
+            fingerPrintCreateViewModel.loadImages(entity?.fingerPrintId ?: -1)
         }
     }
 

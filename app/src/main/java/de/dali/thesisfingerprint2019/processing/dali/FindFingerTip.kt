@@ -36,7 +36,7 @@ class FindFingerTip @Inject constructor() : ProcessingStep() {
 
     override fun run(originalImage: Mat): Mat {
         val tmp = Mat(originalImage.cols(), originalImage.rows(), CvType.CV_8UC1)
-        cvtColor(originalImage, tmp, COLOR_RGB2GRAY)
+        cvtColor(originalImage, tmp, COLOR_BGR2GRAY)
 
         val outline = calcOutline(tmp)
         val pointPair = createContourPairs(outline)
@@ -53,7 +53,7 @@ class FindFingerTip @Inject constructor() : ProcessingStep() {
 
     private fun calcOutline(originalImage: Mat): List<Point> {
         val thresh = Mat(originalImage.cols(), originalImage.rows(), CvType.CV_8UC1)
-        threshold(originalImage, thresh, 1.0, 255.0, THRESH_BINARY + THRESH_OTSU)
+        threshold(originalImage, thresh, 1.0, 255.0, THRESH_BINARY)
 
         val contours = mutableListOf<Point>()
 
@@ -129,17 +129,10 @@ class FindFingerTip @Inject constructor() : ProcessingStep() {
         }
     }
 
-    private fun findMinimaIndex(colorGradient: List<Pair<Point, Double>>): List<Pair<Point, Double>> {
-        val indexMin = mutableListOf<Pair<Point, Double>>()
-
-        colorGradient.forEach {
-            if (it.second < GRADIENT_THRESHOLD) {
-                indexMin.add(it)
-            }
+    private fun findMinimaIndex(colorGradient: List<Pair<Point, Double>>): List<Pair<Point, Double>> =
+        colorGradient.filter {
+            it.second < GRADIENT_THRESHOLD
         }
-
-        return indexMin
-    }
 
     private fun normalizeValue(value: Double, minValue: Double, maxValue: Double): Double {
         return (2.0 * ((value - minValue) / (maxValue - minValue)) - 1.0)
@@ -150,7 +143,7 @@ class FindFingerTip @Inject constructor() : ProcessingStep() {
         val minimaRight: Point
 
         minimaRight = if (indexMinima.isEmpty()) {
-            Point(originalImage.cols() * 2.0 / 3.0, 0.0)
+            Point(originalImage.cols() * (2.0 / 3.0), 0.0)
         } else {
             val maxValueColorGradient = indexMinima.minWith(comparatorY)
             maxValueColorGradient!!.first

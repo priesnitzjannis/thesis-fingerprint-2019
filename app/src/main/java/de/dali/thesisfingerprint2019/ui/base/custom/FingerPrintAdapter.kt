@@ -18,7 +18,7 @@ import java.io.File
 class FingerPrintAdapter(context: Context?) : RecyclerView.Adapter<FingerPrintAdapter.ViewHolder>() {
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
 
-    var listOfFingerPrints = mutableListOf<ImageEntity>()
+    var listOfFingerPrints = listOf<ImageEntity>()
         set(value) {
             field = value
             notifyDataSetChanged()
@@ -31,10 +31,7 @@ class FingerPrintAdapter(context: Context?) : RecyclerView.Adapter<FingerPrintAd
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val imgFile =
-            File("${Environment.getExternalStorageDirectory()}/${Constants.NAME_MAIN_FOLDER}/${listOfFingerPrints[position].path}")
-        holder.imageFingerprint.setImageURI(Uri.fromFile(imgFile))
-
+        val imgFile = File("${Environment.getExternalStorageDirectory()}/" + listOfFingerPrints[position].path)
         holder.imageFingerprint.setImageURI(Uri.fromFile(imgFile))
         holder.textID.text = listOfFingerPrints[position].biometricalID.toString()
         holder.textDegree.text = listOfFingerPrints[position].correctionDegree.toString()

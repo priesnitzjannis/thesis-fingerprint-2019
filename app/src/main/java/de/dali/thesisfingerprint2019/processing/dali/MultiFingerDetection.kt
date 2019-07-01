@@ -1,13 +1,16 @@
 package de.dali.thesisfingerprint2019.processing.dali
 
+import de.dali.thesisfingerprint2019.processing.Config.MIN_AREA_SIZE
 import de.dali.thesisfingerprint2019.processing.ProcessingStep
 import de.dali.thesisfingerprint2019.processing.Utils.convertMatToBitMap
+import de.dali.thesisfingerprint2019.processing.Utils.getMaskImage
 import de.dali.thesisfingerprint2019.processing.Utils.getMaskedImage
 import de.dali.thesisfingerprint2019.processing.Utils.getThresholdImage
 import de.dali.thesisfingerprint2019.processing.Utils.releaseImage
-import org.opencv.core.*
+import de.dali.thesisfingerprint2019.processing.toMat
+import org.opencv.core.Mat
+import org.opencv.core.MatOfPoint
 import org.opencv.imgproc.Imgproc
-import org.opencv.utils.Converters.vector_Point_to_Mat
 import javax.inject.Inject
 
 class MultiFingerDetection @Inject constructor() : ProcessingStep() {
@@ -23,14 +26,23 @@ class MultiFingerDetection @Inject constructor() : ProcessingStep() {
 
         val maskImage = getMaskImage(originalImage, fingerContours)
         val imageWithOutBackground = getMaskedImage(originalImage, maskImage)
-        val rect = Imgproc.boundingRect(fingerContours.toMat())
 
-        releaseImage(fingerContours)
-        releaseImage(listOf(maskImage))
+        val bmpResultABC = convertMatToBitMap(imageWithOutBackground)
+        val bmpResultAC = convertMatToBitMap(maskImage)
 
-        val croppedImage = Mat(imageWithOutBackground, rect)
+        var croppedImage = Mat()
 
-        releaseImage(listOf(imageWithOutBackground))
+        if (fingerContours.isNotEmpty()) {
+            val rect = Imgproc.boundingRect(fingerContours.toMat())
+
+            releaseImage(fingerContours)
+            releaseImage(listOf(maskImage))
+
+            croppedImage = Mat(imageWithOutBackground, rect)
+
+            releaseImage(listOf(imageWithOutBackground))
+
+        }
 
         val bmpResult = convertMatToBitMap(croppedImage)
         return croppedImage
@@ -41,38 +53,16 @@ class MultiFingerDetection @Inject constructor() : ProcessingStep() {
         throw NotImplementedError("Not implemented for this processing step.")
     }
 
-    fun List<MatOfPoint>.toMat(): Mat {
-        val list = mutableListOf<Point>()
-
-        this.forEach {
-            list.addAll(it.toList())
-        }
-
-        return vector_Point_to_Mat(list)
-    }
-
     private fun getFingerContour(mat: Mat): List<MatOfPoint> {
 
         val contours: List<MatOfPoint> = mutableListOf()
-        val fingerContours = mutableListOf<MatOfPoint>()
         val hierarchy = Mat()
 
         Imgproc.findContours(mat, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE)
 
-        contours.forEach {
+        return contours.filter {
             val area = Imgproc.contourArea(it, false)
-            if (area >= 400) {
-                fingerContours.add(it)
-            }
+            area >= MIN_AREA_SIZE
         }
-
-        return fingerContours
-    }
-
-    private fun getMaskImage(originalImage: Mat, mat: List<MatOfPoint>): Mat {
-        val mask = Mat.zeros(originalImage.rows(), originalImage.cols(), CvType.CV_8UC1)
-        Imgproc.drawContours(mask, mat, -1, Scalar(255.0), Imgproc.FILLED)
-
-        return mask
     }
 }

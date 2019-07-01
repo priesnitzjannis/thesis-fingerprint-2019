@@ -1,11 +1,16 @@
 package de.dali.thesisfingerprint2019.processing.dali
 
+import de.dali.thesisfingerprint2019.processing.Config.DILATE_ITERATIONS
+import de.dali.thesisfingerprint2019.processing.Config.DILATE_KERNEL_SIZE
+import de.dali.thesisfingerprint2019.processing.Config.ERODE_ITERATIONS
+import de.dali.thesisfingerprint2019.processing.Config.ERODE_KERNEL_SIZE
+import de.dali.thesisfingerprint2019.processing.Config.PIXEL_TO_CROP
 import de.dali.thesisfingerprint2019.processing.ProcessingStep
 import de.dali.thesisfingerprint2019.processing.Utils.adaptiveThresh
-import de.dali.thesisfingerprint2019.processing.Utils.canny
 import de.dali.thesisfingerprint2019.processing.Utils.convertMatToBitMap
 import de.dali.thesisfingerprint2019.processing.Utils.dilate
 import de.dali.thesisfingerprint2019.processing.Utils.erode
+import de.dali.thesisfingerprint2019.processing.Utils.getMaskImage
 import de.dali.thesisfingerprint2019.processing.Utils.getMaskedImage
 import de.dali.thesisfingerprint2019.processing.Utils.getThresholdImage
 import de.dali.thesisfingerprint2019.processing.Utils.releaseImage
@@ -25,10 +30,9 @@ class FingerBorderDetection @Inject constructor() : ProcessingStep() {
     }
 
     override fun runReturnMultiple(originalImage: Mat): List<Mat> {
-        val edgeImage = adaptiveThresh(originalImage)//canny(originalImage)
-        var edgesDilated = dilate(edgeImage, Size(27.0, 27.0))
-        edgesDilated = erode(edgesDilated, Size(23.0, 23.0))
-
+        val edgeImage = adaptiveThresh(originalImage)
+        var edgesDilated = dilate(edgeImage)
+        edgesDilated = erode(edgesDilated)
 
         val thresholdImage = getThresholdImage(originalImage)
         val contour = getContour(thresholdImage)
@@ -39,26 +43,32 @@ class FingerBorderDetection @Inject constructor() : ProcessingStep() {
         val diffMaskEdge = Mat.zeros(originalImage.rows(), originalImage.cols(), CvType.CV_8UC1)
         Core.subtract(maskImage, edgesDilated, diffMaskEdge)
 
-        val bmpResultABC = convertMatToBitMap(diffMaskEdge)
+        val bmpResult = convertMatToBitMap(diffMaskEdge)
 
         releaseImage(contour)
         releaseImage(listOf(thresholdImage, edgeImage, edgesDilated, maskImage))
 
         val newImages = cropPalmIfNeeded(originalImage, diffMaskEdge, (originalImage.rows() * 0.5).toInt())
 
-        val sepContours = getContour(newImages!!.second)
-        val sepContoursImages = sepContours.map { getMaskImage(newImages.first, listOf(it)) }
-        val sepImages = sepContoursImages.mapIndexed { index, mat ->
-            val m = getMaskedImage(newImages.first, mat)
-            val r = boundingRect(sepContoursImages[index])
-            Mat(m, r)
+        var sepImages = emptyList<Mat>()
+
+        if (newImages != null) {
+            val sepContours = getContour(newImages.second)
+            val sepContoursImages = sepContours.map { getMaskImage(newImages.first, listOf(it)) }
+            sepImages = sepContoursImages.mapIndexed { index, mat ->
+                val m = getMaskedImage(newImages.first, mat)
+                val r = boundingRect(sepContoursImages[index])
+                Mat(m, r)
+            }
+
+            releaseImage(sepContours)
+            releaseImage(sepContoursImages)
+
+            val bmpResult = convertMatToBitMap(sepImages[0])
         }
 
         releaseImage(listOf(edgeImage))
-        releaseImage(sepContours)
-        releaseImage(sepContoursImages)
 
-        val bmpResult = convertMatToBitMap(sepImages[0])
         return sepImages
     }
 
@@ -69,7 +79,7 @@ class FingerBorderDetection @Inject constructor() : ProcessingStep() {
             Pair(orig, mask)
         } else {
             val newWidth = orig.cols()
-            val newHeight = orig.rows() - 100
+            val newHeight = orig.rows() - PIXEL_TO_CROP
 
             if (minSize < newHeight) {
                 val rect = Rect(0, 0, newWidth, newHeight)
@@ -92,12 +102,5 @@ class FingerBorderDetection @Inject constructor() : ProcessingStep() {
         contours = contours.filter { contourArea(it) != 0.0 }
 
         return contours
-    }
-
-    private fun getMaskImage(originalImage: Mat, mat: List<MatOfPoint>): Mat {
-        val mask = Mat.zeros(originalImage.rows(), originalImage.cols(), CvType.CV_8UC1)
-        drawContours(mask, mat, -1, Scalar(255.0), FILLED)
-
-        return mask
     }
 }

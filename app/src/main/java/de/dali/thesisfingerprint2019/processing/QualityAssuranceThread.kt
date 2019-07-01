@@ -7,6 +7,7 @@ import android.os.Message
 import android.os.Process.THREAD_PRIORITY_BACKGROUND
 import android.util.Log
 import de.dali.thesisfingerprint2019.processing.Utils.releaseImage
+import de.dali.thesisfingerprint2019.processing.Utils.rotateImageByDegree
 import de.dali.thesisfingerprint2019.processing.dali.FingerBorderDetection
 import de.dali.thesisfingerprint2019.processing.dali.FingerRotationImprecise
 import de.dali.thesisfingerprint2019.processing.dali.MultiFingerDetection
@@ -48,7 +49,7 @@ class QualityAssuranceThread(private vararg val processingStep: ProcessingStep) 
                 totalImages++
 
                 val processedMat = Mat()
-                val rotatedImage = image //rotateImageByDegree(0.0 - sensorOrientation, image)
+                val rotatedImage = rotateImageByDegree(0.0 - sensorOrientation, image)
 
                 val multiFingerImage = (processingStep[0] as MultiFingerDetection).run(rotatedImage)
 
@@ -64,6 +65,9 @@ class QualityAssuranceThread(private vararg val processingStep: ProcessingStep) 
                         separatedFingers.forEach {
                             val qualityCheckedImage = (processingStep[3] as MultiQualityAssurance).run(it)
                             val edgeDens = (processingStep[3] as MultiQualityAssurance).edgeDensity
+
+                            Log.e(TAG, "Edge Dens : $edgeDens")
+
                             qualityCheckedImages.add(Pair(qualityCheckedImage, edgeDens))
                         }
 
@@ -73,10 +77,12 @@ class QualityAssuranceThread(private vararg val processingStep: ProcessingStep) 
                             highestEdgeDenseMats.mapInPlace(qualityCheckedImages)
                         }
 
+                        Log.e(TAG, "Processed Image")
+
                         processedImages++
 
                         releaseImage(listOf(image, processedMat, rotatedImage))
-                        if (processedImages == 1) onSuccess(highestEdgeDenseMats)
+                        if (processedImages == 5) onSuccess(highestEdgeDenseMats)
 
                     } else {
                         releaseImage(listOf(image, processedMat, rotatedImage))
@@ -85,7 +91,7 @@ class QualityAssuranceThread(private vararg val processingStep: ProcessingStep) 
                     }
                 } else {
                     releaseImage(listOf(image, processedMat, rotatedImage))
-                    Log.e(TAG, "FingerBorderDetection couldn't split Fingers")
+                    Log.e(TAG, "MultiFingerDetection couldn't detect Fingers")
                     onFailure("")
                 }
             }

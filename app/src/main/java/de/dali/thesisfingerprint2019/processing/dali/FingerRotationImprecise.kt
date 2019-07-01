@@ -34,7 +34,6 @@ class FingerRotationImprecise @Inject constructor() : ProcessingStep() {
         val rotatedImage = Utils.rotateImageByDegree(correctionAngle, originalImage)
 
         val bmpResult = Utils.convertMatToBitMap(rotatedImage)
-
         return rotatedImage
     }
 

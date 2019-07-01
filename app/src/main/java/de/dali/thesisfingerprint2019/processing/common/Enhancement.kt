@@ -20,16 +20,16 @@ class Enhancement @Inject constructor() : ProcessingStep() {
 
         val g1 = Mat()
         val g2 = Mat()
-        val dst = Mat()
+        var dst = Mat()
 
-        GaussianBlur(originalImage, g1, Size(3.0, 3.0), 0.0)
-        GaussianBlur(originalImage, g2, Size(11.0, 11.0), 0.0)
+        GaussianBlur(originalImage, g1, Size(1.0, 1.0), 0.0)
+        GaussianBlur(originalImage, g2, Size(7.0, 7.0), 0.0)
 
         subtract(g1, g2, dst)
 
         equalizeHist(dst, dst)
 
-        Core.bitwise_not( dst, dst )
+        Core.bitwise_not(dst, dst)
 
         val bmp = convertMatToBitMap(dst)
         return dst

@@ -2,98 +2,49 @@ package de.dali.thesisfingerprint2019.processing
 
 import android.graphics.Bitmap
 import android.util.Log
-import de.dali.thesisfingerprint2019.processing.Config.K_SIZE_GAUS
+import de.dali.thesisfingerprint2019.processing.Config.BLOCKSIZE
+import de.dali.thesisfingerprint2019.processing.Config.DDEPTH
+import de.dali.thesisfingerprint2019.processing.Config.DELTA
+import de.dali.thesisfingerprint2019.processing.Config.DILATE_ITERATIONS
+import de.dali.thesisfingerprint2019.processing.Config.DILATE_KERNEL_SIZE
+import de.dali.thesisfingerprint2019.processing.Config.ERODE_ITERATIONS
+import de.dali.thesisfingerprint2019.processing.Config.ERODE_KERNEL_SIZE
+import de.dali.thesisfingerprint2019.processing.Config.GRAD_X
+import de.dali.thesisfingerprint2019.processing.Config.GRAD_Y
+import de.dali.thesisfingerprint2019.processing.Config.KERNEL_SIZE_BLUR
+import de.dali.thesisfingerprint2019.processing.Config.KERNEL_SIZE_GAUS
+import de.dali.thesisfingerprint2019.processing.Config.K_SIZE_SOBEL
+import de.dali.thesisfingerprint2019.processing.Config.SCALE
+import de.dali.thesisfingerprint2019.processing.Config.THRESHOLD_MAX
 import org.opencv.core.*
 import org.opencv.imgproc.Imgproc
-import org.opencv.utils.Converters
 import kotlin.math.PI
 import kotlin.math.atan
 import kotlin.math.sqrt
 
-
 object Utils {
 
-    fun erode(
-        mat: Mat,
-        kernelSize: Size = Size(17.0, 17.0),
-        iterations: Int = 2
-    ): Mat {
+    fun erode(mat: Mat): Mat {
         val anchor = Point(-1.0, -1.0)
 
-        val kernel = Imgproc.getStructuringElement(Imgproc.MORPH_CROSS, kernelSize)
-        Imgproc.erode(mat, mat, kernel, anchor, iterations)
+        val kernel = Imgproc.getStructuringElement(Imgproc.MORPH_CROSS, ERODE_KERNEL_SIZE)
+        Imgproc.erode(mat, mat, kernel, anchor, ERODE_ITERATIONS)
 
         return mat
     }
 
-    fun dilate(
-        mat: Mat,
-        kernelSize: Size = Size(11.0, 11.0),
-        iterations: Int = 2
-    ): Mat {
+    fun dilate(mat: Mat): Mat {
         val anchor = Point(-1.0, -1.0)
 
-        val kernel = Imgproc.getStructuringElement(Imgproc.MORPH_ELLIPSE, kernelSize)
-        Imgproc.dilate(mat, mat, kernel, anchor, iterations)
+        val kernel = Imgproc.getStructuringElement(Imgproc.MORPH_ELLIPSE, DILATE_KERNEL_SIZE)
+        Imgproc.dilate(mat, mat, kernel, anchor, DILATE_ITERATIONS)
 
         return mat
     }
 
-
-    fun getMaskedImage(originalImage: Mat, mask: Mat): Mat {
-        val maskedImage = Mat(
-            Size(
-                originalImage.rows().toDouble(),
-                originalImage.cols().toDouble()
-            ),
-            CvType.CV_8UC1,
-            Scalar(0.0)
-        )
-
-        originalImage.copyTo(maskedImage, mask)
-
-        return maskedImage
-    }
-
-    fun adaptiveThresh(mat: Mat): Mat{
-        val cb = getCbComponent(mat)
-        val result = Mat()
-
-        val blurred = Mat.zeros(mat.rows(), mat.cols(), CvType.CV_64FC1)
-        Imgproc.GaussianBlur(cb, blurred, Size(3.0, 3.0), 0.0, 0.0, Core.BORDER_CONSTANT)
-
-        Imgproc.adaptiveThreshold(blurred, result, 100.0, Imgproc.ADAPTIVE_THRESH_MEAN_C, Imgproc.THRESH_BINARY_INV, 21, 12.0)
-        Imgproc.threshold(result, result, 1.0, 255.0, Imgproc.THRESH_BINARY)
-
-        return result
-    }
-
-    fun canny(frame: Mat): Mat {
-        val result = Mat.zeros(frame.rows(), frame.cols(), CvType.CV_64FC1)
-        val thresh1 = 15.0
-        val thresh2 = 25.0
-        val KERNEL_SIZE = 3
-
-        val gray = Mat.zeros(frame.rows(), frame.cols(), CvType.CV_64FC1)
-        Imgproc.cvtColor(frame, gray, Imgproc.COLOR_BGR2GRAY)
-
+    fun sobel(frame: Mat): Mat {
         val blurred = Mat.zeros(frame.rows(), frame.cols(), CvType.CV_64FC1)
-        Imgproc.GaussianBlur(gray, blurred, Size(13.0, 13.0), 0.0, 0.0, Core.BORDER_CONSTANT)
-
-        releaseImage(listOf(gray))
-
-        Imgproc.Canny(blurred, result, thresh1, thresh2, KERNEL_SIZE, true)
-
-        return result
-    }
-
-    fun sobel(
-        frame: Mat,
-        kernelSize: Size? = Size(K_SIZE_GAUS, K_SIZE_GAUS)
-    ): Mat {
-
-        val blurred = Mat.zeros(frame.rows(), frame.cols(), CvType.CV_64FC1)
-        Imgproc.GaussianBlur(frame, blurred, kernelSize, 0.0, 0.0, Core.BORDER_DEFAULT)
+        Imgproc.GaussianBlur(frame, blurred, KERNEL_SIZE_GAUS, 0.0, 0.0, Core.BORDER_DEFAULT)
 
         val gray = Mat.zeros(frame.rows(), frame.cols(), CvType.CV_64FC1)
         Imgproc.cvtColor(blurred, gray, Imgproc.COLOR_BGR2GRAY)
@@ -106,23 +57,24 @@ object Utils {
         Imgproc.Sobel(
             gray,
             grad_x,
-            Config.DDEPTH,
+            DDEPTH,
             1,
             0,
-            Config.K_SIZE_SOBEL,
-            Config.SCALE,
-            Config.DELTA,
+            K_SIZE_SOBEL,
+            SCALE,
+            DELTA,
             Core.BORDER_DEFAULT
         )
+
         Imgproc.Sobel(
             gray,
             grad_y,
-            Config.DDEPTH,
+            DDEPTH,
             0,
             1,
-            Config.K_SIZE_SOBEL,
-            Config.SCALE,
-            Config.DELTA,
+            K_SIZE_SOBEL,
+            SCALE,
+            DELTA,
             Core.BORDER_DEFAULT
         )
 
@@ -138,12 +90,58 @@ object Utils {
 
         val result = Mat.zeros(frame.rows(), frame.cols(), CvType.CV_64FC1)
 
-        Core.addWeighted(abs_grad_x, Config.GRAD_X, abs_grad_y, Config.GRAD_Y, 0.0, result)
+        Core.addWeighted(abs_grad_x, GRAD_X, abs_grad_y, GRAD_Y, 0.0, result)
 
         releaseImage(listOf(abs_grad_x, abs_grad_y))
 
         return result
 
+    }
+
+    fun adaptiveThresh(mat: Mat): Mat {
+        val cb = getCbComponent(mat)
+        val result = Mat()
+
+        val blurred = Mat.zeros(mat.rows(), mat.cols(), CvType.CV_64FC1)
+        Imgproc.GaussianBlur(cb, blurred, KERNEL_SIZE_BLUR, 0.0, 0.0, Core.BORDER_CONSTANT)
+
+        Imgproc.adaptiveThreshold(
+            blurred,
+            result,
+            THRESHOLD_MAX,
+            Imgproc.ADAPTIVE_THRESH_MEAN_C,
+            Imgproc.THRESH_BINARY_INV,
+            BLOCKSIZE,
+            12.0
+        )
+
+        Imgproc.threshold(result, result, 1.0, 255.0, Imgproc.THRESH_BINARY)
+
+        releaseImage(listOf(cb, blurred))
+
+        return result
+    }
+
+    fun getMaskImage(originalImage: Mat, mat: List<MatOfPoint>): Mat {
+        val mask = Mat.zeros(originalImage.rows(), originalImage.cols(), CvType.CV_8UC1)
+        Imgproc.drawContours(mask, mat, -1, Scalar(255.0), Imgproc.FILLED)
+
+        return mask
+    }
+
+    fun getMaskedImage(originalImage: Mat, mask: Mat): Mat {
+        val maskedImage = Mat(
+            Size(
+                originalImage.rows().toDouble(),
+                originalImage.cols().toDouble()
+            ),
+            CvType.CV_8UC1,
+            Scalar(0.0)
+        )
+
+        originalImage.copyTo(maskedImage, mask)
+
+        return maskedImage
     }
 
     fun convertMatToBitMap(input: Mat): Bitmap? {
@@ -168,14 +166,6 @@ object Utils {
         return threshold(cb)
     }
 
-    fun Mat.cropToMinArea(): Mat {
-        val thresh = getThresholdImage(this)
-        val contour = getContour(thresh)
-        val rect = Imgproc.boundingRect(contour.toMat())
-
-        return Mat(this, rect)
-    }
-
     fun releaseImage(mats: List<Mat>) {
         mats.forEach {
             it.release()
@@ -186,28 +176,9 @@ object Utils {
         return atan(distanceP1P2 / (distanceP2ToContour - distanceP1ToContour)) * 180 / PI
     }
 
-    operator fun Point.minus(p: Point) = Point(this.x - p.x, this.y - p.y)
-
     fun euclideanDist(first: Point, second: Point): Double {
         val diff = first - second
         return sqrt(diff.x * diff.x + diff.y * diff.y)
-    }
-
-    fun List<MatOfPoint>.toMat(): Mat {
-        val list = mutableListOf<Point>()
-
-        this.forEach {
-            list.addAll(it.toList())
-        }
-
-        return Converters.vector_Point_to_Mat(list)
-    }
-
-    fun calcCenterPoint(originalImage: Mat): Point {
-        val pY = originalImage.cols() / 2 - Config.CENTER_OFFSET_X
-        val pX = originalImage.rows() / 2 - Config.CENTER_OFFSET_Y
-
-        return Point(pX, pY)
     }
 
     fun rotateImageByDegree(correctionAngle: Double, originalImage: Mat): Mat {
@@ -230,7 +201,7 @@ object Utils {
         return destMat.cropToMinArea()
     }
 
-    private fun getContour(mat: Mat): List<MatOfPoint> {
+    fun getContour(mat: Mat): List<MatOfPoint> {
         val contours: List<MatOfPoint> = mutableListOf()
         val hierarchy = Mat()
 
@@ -243,7 +214,7 @@ object Utils {
         val ycrcb = Mat(mat.rows(), mat.cols(), CvType.CV_8UC3)
         val lYCrCb = ArrayList<Mat>(3)
 
-        Imgproc.cvtColor(mat, ycrcb, Imgproc.COLOR_RGB2YCrCb)
+        Imgproc.cvtColor(mat, ycrcb, Imgproc.COLOR_BGR2YCrCb)
         Core.split(mat, lYCrCb)
 
         return lYCrCb[2]
@@ -251,7 +222,7 @@ object Utils {
 
     private fun threshold(mat: Mat): Mat {
         val imageThresh = Mat()
-        Imgproc.threshold(mat, imageThresh, 100.0, 255.0, Imgproc.THRESH_BINARY + Imgproc.THRESH_OTSU)
+        Imgproc.threshold(mat, imageThresh, 100.0, 255.0, Imgproc.THRESH_BINARY)
 
         return imageThresh
     }
