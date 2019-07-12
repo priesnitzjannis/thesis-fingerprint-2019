@@ -1,22 +1,26 @@
 package de.dali.thesisfingerprint2019.processing.dali
 
-import de.dali.thesisfingerprint2019.processing.Config.DILATE_ITERATIONS
-import de.dali.thesisfingerprint2019.processing.Config.DILATE_KERNEL_SIZE
-import de.dali.thesisfingerprint2019.processing.Config.ERODE_ITERATIONS
-import de.dali.thesisfingerprint2019.processing.Config.ERODE_KERNEL_SIZE
 import de.dali.thesisfingerprint2019.processing.Config.PIXEL_TO_CROP
 import de.dali.thesisfingerprint2019.processing.ProcessingStep
 import de.dali.thesisfingerprint2019.processing.Utils.adaptiveThresh
 import de.dali.thesisfingerprint2019.processing.Utils.convertMatToBitMap
 import de.dali.thesisfingerprint2019.processing.Utils.dilate
 import de.dali.thesisfingerprint2019.processing.Utils.erode
+import de.dali.thesisfingerprint2019.processing.Utils.getFingerContour
 import de.dali.thesisfingerprint2019.processing.Utils.getMaskImage
 import de.dali.thesisfingerprint2019.processing.Utils.getMaskedImage
 import de.dali.thesisfingerprint2019.processing.Utils.getThresholdImage
 import de.dali.thesisfingerprint2019.processing.Utils.releaseImage
+import de.dali.thesisfingerprint2019.processing.toMatOfPoint
 import org.opencv.core.*
+import org.opencv.core.CvType.CV_8UC1
+import org.opencv.core.CvType.CV_8UC3
 import org.opencv.imgproc.Imgproc.*
 import javax.inject.Inject
+import org.opencv.core.Scalar
+import org.opencv.imgproc.Imgproc
+
+
 
 
 class FingerBorderDetection @Inject constructor() : ProcessingStep() {
@@ -35,9 +39,7 @@ class FingerBorderDetection @Inject constructor() : ProcessingStep() {
         edgesDilated = erode(edgesDilated)
 
         val thresholdImage = getThresholdImage(originalImage)
-        val contour = getContour(thresholdImage)
-
-        contour.sortedBy { moments(it).m10 / moments(it).m00 }
+        val contour = getFingerContour(thresholdImage)
 
         val maskImage = getMaskImage(originalImage, contour)
         val diffMaskEdge = Mat.zeros(originalImage.rows(), originalImage.cols(), CvType.CV_8UC1)
@@ -53,16 +55,17 @@ class FingerBorderDetection @Inject constructor() : ProcessingStep() {
         var sepImages = emptyList<Mat>()
 
         if (newImages != null) {
-            val sepContours = getContour(newImages.second)
-            val sepContoursImages = sepContours.map { getMaskImage(newImages.first, listOf(it)) }
-            sepImages = sepContoursImages.mapIndexed { index, mat ->
+            val sepContours = getFingerContour(newImages.second).sortedByDescending { moments(it).m10 / moments(it).m00 }
+            val sepCntFixed = sepContours.map { fixPossibleDefects(it, newImages.first) }
+
+            sepImages = sepCntFixed.mapIndexed { index, mat ->
                 val m = getMaskedImage(newImages.first, mat)
-                val r = boundingRect(sepContoursImages[index])
+                val r = boundingRect(sepCntFixed[index])
                 Mat(m, r)
             }
 
             releaseImage(sepContours)
-            releaseImage(sepContoursImages)
+            releaseImage(sepCntFixed)
 
             val bmpResult = convertMatToBitMap(sepImages[0])
         }
@@ -72,8 +75,23 @@ class FingerBorderDetection @Inject constructor() : ProcessingStep() {
         return sepImages
     }
 
+    private fun fixPossibleDefects(contour: MatOfPoint, mat: Mat): Mat{
+        val hulls = mutableListOf<MatOfPoint>()
+
+        val hull = MatOfInt()
+        convexHull(contour, hull, true)
+        hulls.add(hull.toMatOfPoint(contour))
+
+        val result = Mat.zeros(mat.rows(), mat.cols(), CV_8UC1)
+        hulls.forEachIndexed { index, _ ->
+            drawContours(result, hulls, index, Scalar(255.0, 255.0, 255.0), -1)
+        }
+
+        return result
+    }
+
     private fun cropPalmIfNeeded(orig: Mat, mask: Mat, minSize: Int): Pair<Mat, Mat>? {
-        val contour = getContour(mask)
+        val contour = getFingerContour(mask)
 
         return if (contour.size == amountOfFinger) {
             Pair(orig, mask)
@@ -91,16 +109,5 @@ class FingerBorderDetection @Inject constructor() : ProcessingStep() {
                 null
             }
         }
-    }
-
-    private fun getContour(mat: Mat): List<MatOfPoint> {
-        var contours: List<MatOfPoint> = mutableListOf()
-        val hierarchy = Mat()
-
-        findContours(mat, contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE)
-
-        contours = contours.filter { contourArea(it) != 0.0 }
-
-        return contours
     }
 }

@@ -11,7 +11,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import de.dali.thesisfingerprint2019.R
 import de.dali.thesisfingerprint2019.data.local.entity.ImageEntity
-import de.dali.thesisfingerprint2019.utils.Constants
 import java.io.File
 
 

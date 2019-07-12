@@ -1,7 +1,5 @@
 package de.dali.thesisfingerprint2019.processing.dali
 
-import android.nfc.Tag
-import android.util.Log
 import de.dali.thesisfingerprint2019.processing.Config.CENTER_OFFSET_X
 import de.dali.thesisfingerprint2019.processing.Config.CENTER_OFFSET_Y
 import de.dali.thesisfingerprint2019.processing.Config.CENTER_SIZE_X
@@ -44,8 +42,10 @@ class MultiQualityAssurance @Inject constructor() : ProcessingStep() {
 
         val startX = pCenter.x.toInt()
         val startY = pCenter.y.toInt()
-        val endX = if (startX + CENTER_SIZE_X.toInt() > processedImage.rows()) processedImage.rows() else startX + CENTER_SIZE_X.toInt()
-        val endY = if(startY + CENTER_SIZE_Y.toInt() > processedImage.cols())  processedImage.cols() else startY + CENTER_SIZE_Y.toInt()
+        val endX =
+            if (startX + CENTER_SIZE_X.toInt() > processedImage.rows()) processedImage.rows() else startX + CENTER_SIZE_X.toInt()
+        val endY =
+            if (startY + CENTER_SIZE_Y.toInt() > processedImage.cols()) processedImage.cols() else startY + CENTER_SIZE_Y.toInt()
 
         for (i in startX until endX) {
             for (j in startY until endY) {

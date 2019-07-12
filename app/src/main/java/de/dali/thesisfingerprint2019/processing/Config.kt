@@ -5,7 +5,7 @@ import org.opencv.core.Size
 
 object Config {
     //region MultiFingerDetection
-    const val MIN_AREA_SIZE = 30000
+    const val MIN_AREA_SIZE = 60000
     //endregion
 
     //region FingerBorderDetection
@@ -19,7 +19,7 @@ object Config {
 
     val KERNEL_SIZE_BLUR = Size(7.0, 7.0)
     const val THRESHOLD_MAX = 120.0
-    const val BLOCKSIZE = 29
+    const val BLOCKSIZE = 31
     //endregion
 
 

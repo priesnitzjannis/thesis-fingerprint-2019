@@ -3,6 +3,7 @@ package de.dali.thesisfingerprint2019.processing.dali
 import de.dali.thesisfingerprint2019.processing.Config.MIN_AREA_SIZE
 import de.dali.thesisfingerprint2019.processing.ProcessingStep
 import de.dali.thesisfingerprint2019.processing.Utils.convertMatToBitMap
+import de.dali.thesisfingerprint2019.processing.Utils.getFingerContour
 import de.dali.thesisfingerprint2019.processing.Utils.getMaskImage
 import de.dali.thesisfingerprint2019.processing.Utils.getMaskedImage
 import de.dali.thesisfingerprint2019.processing.Utils.getThresholdImage
@@ -51,18 +52,5 @@ class MultiFingerDetection @Inject constructor() : ProcessingStep() {
 
     override fun runReturnMultiple(originalImage: Mat): List<Mat> {
         throw NotImplementedError("Not implemented for this processing step.")
-    }
-
-    private fun getFingerContour(mat: Mat): List<MatOfPoint> {
-
-        val contours: List<MatOfPoint> = mutableListOf()
-        val hierarchy = Mat()
-
-        Imgproc.findContours(mat, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE)
-
-        return contours.filter {
-            val area = Imgproc.contourArea(it, false)
-            area >= MIN_AREA_SIZE
-        }
     }
 }

@@ -152,8 +152,8 @@ class FingerSelectionRow @JvmOverloads constructor(
     }
 
     fun lock(lockUI: Boolean) {
-        cbRight.isEnabled = !lockUI
-        cbLeft.isEnabled = !lockUI
+        cbRight.isEnabled = lockUI
+        cbLeft.isEnabled = lockUI
     }
 
 }

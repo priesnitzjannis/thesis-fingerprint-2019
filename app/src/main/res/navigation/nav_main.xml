@@ -11,6 +11,8 @@
         <argument android:name="fingerPrintEntity"
                   app:argType="de.dali.thesisfingerprint2019.data.local.entity.FingerPrintEntity"/>
         <argument android:name="listIsoID" app:argType="integer[]"/>
+        <action android:id="@+id/toFingerPrintOverViewFragment2"
+                app:destination="@id/fingerPrintOverViewFragment"/>
     </fragment>
 
     <fragment android:id="@+id/testPersonOverviewFragment"
@@ -46,7 +48,8 @@
               android:label="fragment_finger_print_create" tools:layout="@layout/fragment_finger_print_create">
         <action android:id="@+id/toFingerScanningFragment"
                 app:destination="@id/fingerScanningFragment" app:enterAnim="@anim/nav_default_enter_anim"
-                app:exitAnim="@anim/nav_default_exit_anim"/>
+                app:exitAnim="@anim/nav_default_exit_anim" app:popUpTo="@+id/fingerPrintCreateFragment"
+                app:popUpToInclusive="true"/>
         <argument android:name="fingerPrintEntity"
                   app:argType="de.dali.thesisfingerprint2019.data.local.entity.FingerPrintEntity" app:nullable="true"
         />

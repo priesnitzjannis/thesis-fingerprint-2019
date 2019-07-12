@@ -19,7 +19,7 @@ class RotateFinger @Inject constructor() : ProcessingStep() {
 
     override fun run(originalImage: Mat): Mat {
         val middle = calcCenterPointOfMat(originalImage)
-        val pointPair = generatePointPair(middle, 20)
+        val pointPair = generatePointPair(middle, 50)
 
         val p1Contour = calcPointOnContour(pointPair.first, originalImage)
         val p2Contour = calcPointOnContour(pointPair.second, originalImage)
@@ -29,7 +29,7 @@ class RotateFinger @Inject constructor() : ProcessingStep() {
         val distanceP2ToContour = euclideanDist(pointPair.second, p2Contour)
 
         val angle = calcAngle(distanceP1P2, distanceP2ToContour, distanceP1ToContour)
-        correctionAngle = angle - 90
+        correctionAngle = -(90 - angle)
 
         val rotatedImage = rotateImageByDegree(correctionAngle, originalImage)
 

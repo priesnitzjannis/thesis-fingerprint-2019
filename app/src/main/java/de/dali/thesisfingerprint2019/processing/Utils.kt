@@ -122,6 +122,19 @@ object Utils {
         return result
     }
 
+    fun getFingerContour(mat: Mat): List<MatOfPoint> {
+
+        val contours: List<MatOfPoint> = mutableListOf()
+        val hierarchy = Mat()
+
+        Imgproc.findContours(mat, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE)
+
+        return contours.filter {
+            val area = Imgproc.contourArea(it, false)
+            area >= Config.MIN_AREA_SIZE
+        }
+    }
+
     fun getMaskImage(originalImage: Mat, mat: List<MatOfPoint>): Mat {
         val mask = Mat.zeros(originalImage.rows(), originalImage.cols(), CvType.CV_8UC1)
         Imgproc.drawContours(mask, mat, -1, Scalar(255.0), Imgproc.FILLED)
@@ -199,15 +212,6 @@ object Utils {
         )
 
         return destMat.cropToMinArea()
-    }
-
-    fun getContour(mat: Mat): List<MatOfPoint> {
-        val contours: List<MatOfPoint> = mutableListOf()
-        val hierarchy = Mat()
-
-        Imgproc.findContours(mat, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE)
-
-        return contours
     }
 
     private fun getCbComponent(mat: Mat): Mat {

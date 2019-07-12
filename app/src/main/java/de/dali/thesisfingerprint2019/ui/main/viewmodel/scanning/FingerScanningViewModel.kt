@@ -2,6 +2,7 @@ package de.dali.thesisfingerprint2019.ui.main.viewmodel.scanning
 
 
 import de.dali.thesisfingerprint2019.data.local.entity.FingerPrintEntity
+import de.dali.thesisfingerprint2019.data.local.entity.FingerPrintIntermediateEntity
 import de.dali.thesisfingerprint2019.data.local.entity.ImageEntity
 import de.dali.thesisfingerprint2019.data.repository.ImageRepository
 import de.dali.thesisfingerprint2019.processing.ProcessingThread
@@ -43,7 +44,7 @@ class FingerScanningViewModel @Inject constructor(
 
     fun sendToPipeline(originalImage: Mat) = qualityAssuranceThread.sendToPipeline(originalImage)
 
-    fun setOnSuccess(callback: (List<Pair<Mat, Double>>) -> Unit) = qualityAssuranceThread.setSuccessCallback(callback)
+    fun setOnSuccess(callback: (List<FingerPrintIntermediateEntity>) -> Unit) = qualityAssuranceThread.setSuccessCallback(callback)
 
     fun setOnFailure(callback: (String) -> Unit) = qualityAssuranceThread.setFailureCallback(callback)
 
@@ -52,14 +53,14 @@ class FingerScanningViewModel @Inject constructor(
     }
 
     fun processImages(
-        images: List<Pair<Mat, Double>>,
+        images: List<FingerPrintIntermediateEntity>,
         onSuccess: (Unit) -> Unit,
         onError: (Throwable) -> Unit
     ) {
 
         val disposable = Single.fromCallable {
             images.forEachIndexed { index, pair ->
-                val processedImage = processingThread.process(pair.first)
+                val processedImage = processingThread.process(pair.mat)
                 val pathName = "$NAME_MAIN_FOLDER/${entity.personID}/${entity.fingerPrintId}"
                 val fileName = "${System.currentTimeMillis()}.jpg"
                 val correctionDegree = (processingThread.processingSteps[0] as RotateFinger).correctionAngle
@@ -73,8 +74,8 @@ class FingerScanningViewModel @Inject constructor(
                     timestamp = System.currentTimeMillis(),
                     width = processedImage.width,
                     height = processedImage.height,
-                    edgeDensity = pair.second,
-                    correctionDegree = correctionDegree
+                    edgeDensity = pair.edgeDens,
+                    correctionDegree = pair.correctionDegreeImprecise + correctionDegree
                 )
 
                 imageRepository.insert(imageEntity)

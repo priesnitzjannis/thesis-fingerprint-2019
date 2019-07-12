@@ -19,7 +19,6 @@ class ProcessingModule {
 
     //region QUALITY ASSURANCE STEIN
     @Provides
-    @Singleton
     @Named("qualityAssuranceStein")
     fun provideQualityAssurance(
         qualityAssurance: QualityAssurance
@@ -34,7 +33,6 @@ class ProcessingModule {
 
     //region PROCESSING STEIN
     @Provides
-    @Singleton
     @Named("pipelineStein")
     fun provideProcessing(
         fingerDetection: FingerDetectionImprecisely,
@@ -66,7 +64,6 @@ class ProcessingModule {
 
     //region QUALITY ASSURANCE DALI
     @Provides
-    @Singleton
     @Named("qualityAssuranceDali")
     fun provideNewQualityAssurance(
         multiFingerDetection: MultiFingerDetection,
@@ -100,7 +97,6 @@ class ProcessingModule {
 
     //region PROCESSING DALI
     @Provides
-    @Singleton
     @Named("pipelineDali")
     fun provideNewProcessing(
         rotateFinger: RotateFinger,
