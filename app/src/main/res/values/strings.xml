@@ -16,6 +16,7 @@
     <string name="dialog_button_quit">Quit</string>
 
     <string name="fragment_details_gender">Gender:</string>
+    <string name="fragment_details_Name">Name:</string>
     <string name="fragment_details_age">Age:</string>
     <string name="fragment_details_skin_color">Skin Color:</string>
     <string name="fragment_details_location">Location:</string>

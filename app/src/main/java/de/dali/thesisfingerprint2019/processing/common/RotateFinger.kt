@@ -2,7 +2,9 @@ package de.dali.thesisfingerprint2019.processing.common
 
 
 import de.dali.thesisfingerprint2019.processing.ProcessingStep
+import de.dali.thesisfingerprint2019.processing.Utils.HAND.NOT_SPECIFIED
 import de.dali.thesisfingerprint2019.processing.Utils.calcAngle
+import de.dali.thesisfingerprint2019.processing.Utils.conditionalPointOnContour
 import de.dali.thesisfingerprint2019.processing.Utils.convertMatToBitMap
 import de.dali.thesisfingerprint2019.processing.Utils.euclideanDist
 import de.dali.thesisfingerprint2019.processing.Utils.getThresholdImage
@@ -46,18 +48,19 @@ class RotateFinger @Inject constructor() : ProcessingStep() {
         var pointOnContour = Point()
         val imageThresh = getThresholdImage(image)
 
-        for (i in point.x.toInt() until image.cols()) {
+        conditionalPointOnContour(NOT_SPECIFIED, point, image) { i ->
             val pixel = imageThresh.get(point.y.toInt(), i)
 
             if (pixel[0] == 0.0) {
                 pointOnContour = Point(i.toDouble(), point.y)
-                break
+                true
+            } else {
+                false
             }
         }
 
         return pointOnContour
     }
-
 
     private fun generatePointPair(middle: Point, i: Int): Pair<Point, Point> =
         Pair(Point(middle.x, middle.y - i), Point(middle.x, middle.y + i))

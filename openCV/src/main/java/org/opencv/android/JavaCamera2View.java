@@ -19,6 +19,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.Size;
 import android.view.Surface;
 import android.view.ViewGroup.LayoutParams;
 
@@ -277,6 +278,14 @@ public class JavaCamera2View extends CameraBridgeViewBase {
         }
     }
 
+    public static int find(android.util.Size[] a, android.util.Size target) {
+        for (int i = 0; i < a.length; i++)
+            if (a[i].equals(target)) {
+                return i;
+            }
+        return -1;
+    }
+
     boolean calcPreviewSize(final int width, final int height) {
         Log.i(LOGTAG, "calcPreviewSize: " + width + "x" + height);
         if (mCameraID == null) {
@@ -290,8 +299,13 @@ public class JavaCamera2View extends CameraBridgeViewBase {
             int bestWidth = 0, bestHeight = 0;
             float aspect = (float) width / height;
             android.util.Size[] sizes = map.getOutputSizes(ImageReader.class);
-            bestWidth = sizes[7].getWidth();
-            bestHeight = sizes[7].getHeight();
+
+            int desiredIdx = find(sizes, new Size(1920, 1080));
+            desiredIdx = desiredIdx != -1 ? desiredIdx : 7;
+
+            bestWidth = sizes[desiredIdx].getWidth();
+            bestHeight = sizes[desiredIdx].getHeight();
+            /*
             for (android.util.Size sz : sizes) {
                 int w = sz.getWidth(), h = sz.getHeight();
                 Log.d(LOGTAG, "trying size: " + w + "x" + h);
@@ -301,8 +315,11 @@ public class JavaCamera2View extends CameraBridgeViewBase {
                     bestHeight = h;
                 }
             }
+
+           */
             Log.i(LOGTAG, "best size: " + bestWidth + "x" + bestHeight);
             assert(!(bestWidth == 0 || bestHeight == 0));
+
             if (mPreviewSize.getWidth() == bestWidth && mPreviewSize.getHeight() == bestHeight)
                 return false;
             else {

@@ -12,6 +12,9 @@ data class TestPersonEntity(
     var personID: Long? = null,
 
     @NonNull
+    var name: String,
+
+    @NonNull
     var gender: String,
 
     @NonNull

@@ -7,6 +7,9 @@ import de.dali.thesisfingerprint2019.data.local.entity.ImageEntity
 import de.dali.thesisfingerprint2019.data.repository.ImageRepository
 import de.dali.thesisfingerprint2019.processing.ProcessingThread
 import de.dali.thesisfingerprint2019.processing.QualityAssuranceThread
+import de.dali.thesisfingerprint2019.processing.Utils.HAND
+import de.dali.thesisfingerprint2019.processing.Utils.HAND.NOT_SPECIFIED
+import de.dali.thesisfingerprint2019.processing.Utils.convertMatToBitMap
 import de.dali.thesisfingerprint2019.processing.common.RotateFinger
 import de.dali.thesisfingerprint2019.ui.base.BaseViewModel
 import de.dali.thesisfingerprint2019.utils.Constants.NAME_MAIN_FOLDER
@@ -28,10 +31,21 @@ class FingerScanningViewModel @Inject constructor(
     lateinit var list: List<Int>
     lateinit var entity: FingerPrintEntity
 
+    var frameCounter: Int = 0
+
+    var record: Boolean = false
+
     var amountOfFinger: Int = 0
         set(value) {
             field = value
             qualityAssuranceThread.amountOfFinger = value
+        }
+
+    var hand: HAND =
+        NOT_SPECIFIED
+        set(value) {
+            field = value
+            qualityAssuranceThread.hand = value
         }
 
     private var compositeDisposable = CompositeDisposable()
@@ -44,7 +58,8 @@ class FingerScanningViewModel @Inject constructor(
 
     fun sendToPipeline(originalImage: Mat) = qualityAssuranceThread.sendToPipeline(originalImage)
 
-    fun setOnSuccess(callback: (List<FingerPrintIntermediateEntity>) -> Unit) = qualityAssuranceThread.setSuccessCallback(callback)
+    fun setOnSuccess(callback: (List<FingerPrintIntermediateEntity>) -> Unit) =
+        qualityAssuranceThread.setSuccessCallback(callback)
 
     fun setOnFailure(callback: (String) -> Unit) = qualityAssuranceThread.setFailureCallback(callback)
 
@@ -60,9 +75,14 @@ class FingerScanningViewModel @Inject constructor(
 
         val disposable = Single.fromCallable {
             images.forEachIndexed { index, pair ->
-                val processedImage = processingThread.process(pair.mat)
                 val pathName = "$NAME_MAIN_FOLDER/${entity.personID}/${entity.fingerPrintId}"
-                val fileName = "${System.currentTimeMillis()}.jpg"
+                val timestamp = System.currentTimeMillis()
+                val fileName = "${timestamp}.jpg"
+                val fileNameOriginal = "${timestamp}_orig.jpg"
+
+                Utils.saveImage(pathName, fileNameOriginal, convertMatToBitMap(pair.mat)!!, 100)
+
+                val processedImage = processingThread.process(pair.mat)
                 val correctionDegree = (processingThread.processingSteps[0] as RotateFinger).correctionAngle
 
                 Utils.saveImage(pathName, fileName, processedImage, 100)
@@ -71,7 +91,7 @@ class FingerScanningViewModel @Inject constructor(
                     fingerPrintID = entity.fingerPrintId,
                     path = "$pathName/$fileName",
                     biometricalID = list[index],
-                    timestamp = System.currentTimeMillis(),
+                    timestamp = timestamp,
                     width = processedImage.width,
                     height = processedImage.height,
                     edgeDensity = pair.edgeDens,

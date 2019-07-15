@@ -1,16 +1,15 @@
 package de.dali.thesisfingerprint2019.processing.dali
 
-import de.dali.thesisfingerprint2019.processing.Config.MIN_AREA_SIZE
 import de.dali.thesisfingerprint2019.processing.ProcessingStep
 import de.dali.thesisfingerprint2019.processing.Utils.convertMatToBitMap
 import de.dali.thesisfingerprint2019.processing.Utils.getFingerContour
 import de.dali.thesisfingerprint2019.processing.Utils.getMaskImage
 import de.dali.thesisfingerprint2019.processing.Utils.getMaskedImage
 import de.dali.thesisfingerprint2019.processing.Utils.getThresholdImage
+import de.dali.thesisfingerprint2019.processing.Utils.getThresholdImageNew
 import de.dali.thesisfingerprint2019.processing.Utils.releaseImage
 import de.dali.thesisfingerprint2019.processing.toMat
 import org.opencv.core.Mat
-import org.opencv.core.MatOfPoint
 import org.opencv.imgproc.Imgproc
 import javax.inject.Inject
 
@@ -20,7 +19,7 @@ class MultiFingerDetection @Inject constructor() : ProcessingStep() {
 
     override fun run(originalImage: Mat): Mat {
 
-        val imageThresh = getThresholdImage(originalImage)
+        val imageThresh = getThresholdImageNew(originalImage)
         val fingerContours = getFingerContour(imageThresh)
 
         releaseImage(listOf(imageThresh))
@@ -42,11 +41,10 @@ class MultiFingerDetection @Inject constructor() : ProcessingStep() {
             croppedImage = Mat(imageWithOutBackground, rect)
 
             releaseImage(listOf(imageWithOutBackground))
-
         }
 
         val bmpResult = convertMatToBitMap(croppedImage)
-        return croppedImage
+         return croppedImage
 
     }
 

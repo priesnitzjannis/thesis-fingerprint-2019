@@ -14,7 +14,10 @@ class FindFingerTip @Inject constructor() : ProcessingStep() {
 
     override fun run(originalImage: Mat): Mat {
         val cols = originalImage.cols()
-        val newRows = ceil(cols * 1.5).toInt()
+        var newRows = ceil(cols * 1.5).toInt()
+
+        newRows = if (newRows > originalImage.rows()) originalImage.rows() else newRows
+
         val rect = Rect(0, 0, cols, newRows)
 
         val result = Mat(originalImage, rect)

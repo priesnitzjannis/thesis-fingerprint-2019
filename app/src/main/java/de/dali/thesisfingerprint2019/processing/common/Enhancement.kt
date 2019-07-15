@@ -7,6 +7,7 @@ import org.opencv.core.Core
 import org.opencv.core.Core.subtract
 import org.opencv.core.Mat
 import org.opencv.core.Size
+import org.opencv.imgproc.Imgproc
 import org.opencv.imgproc.Imgproc.*
 import javax.inject.Inject
 
@@ -16,13 +17,19 @@ class Enhancement @Inject constructor() : ProcessingStep() {
 
     override fun run(originalImage: Mat): Mat {
         cvtColor(originalImage, originalImage, COLOR_BGR2GRAY)
-        medianBlur(originalImage, originalImage, MAX_KERNEL_LENGTH)
+
+        val listOfKernelSizes = listOf(64.0,32.0,16.0,8.0,4.0,2.0)
+
+        for (i in 0..5) {
+            val clahe = createCLAHE(2.0, Size(listOfKernelSizes[i], listOfKernelSizes[i]))
+            clahe.apply(originalImage, originalImage)
+        }
 
         val g1 = Mat()
         val g2 = Mat()
-        var dst = Mat()
+        val dst = Mat()
 
-        GaussianBlur(originalImage, g1, Size(1.0, 1.0), 0.0)
+        GaussianBlur(originalImage, g1, Size(3.0, 3.0), 0.0)
         GaussianBlur(originalImage, g2, Size(7.0, 7.0), 0.0)
 
         subtract(g1, g2, dst)

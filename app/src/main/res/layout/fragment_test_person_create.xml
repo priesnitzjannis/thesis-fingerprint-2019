@@ -15,6 +15,16 @@
                           android:layout_height="wrap_content"
                           android:orientation="vertical">
 
+                <de.dali.thesisfingerprint2019.ui.base.custom.EditTextWithTitle
+                        android:id="@+id/editName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="8dp"
+                        android:paddingEnd="8dp"
+                        app:inputType="text"
+                        app:enabled="true"
+                        app:title="@string/fragment_details_Name"/>
+
                 <de.dali.thesisfingerprint2019.ui.base.custom.SpinnerWithTitle
                         android:id="@+id/spinnerGender"
                         android:layout_width="match_parent"

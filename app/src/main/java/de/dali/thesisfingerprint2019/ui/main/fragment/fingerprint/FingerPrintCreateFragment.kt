@@ -93,7 +93,7 @@ class FingerPrintCreateFragment : BaseFragment() {
 
                 if (entity != null) {
                     fingerPrintCreateViewModel.fingerPrintEntity = entity
-                    updateUI(entity, it, lockUI = true, lockCB = false)
+                    updateUI(entity, it, lockUI = true, lockCB = it.isEmpty())
                     adapter.listOfFingerPrints = it
                 } else {
                     setVendor()
@@ -128,7 +128,7 @@ class FingerPrintCreateFragment : BaseFragment() {
 
     private fun initOnChange() {
         binding.editIllumination.setCallback {
-            fingerPrintCreateViewModel.illumination = it
+            fingerPrintCreateViewModel.illumination = it.toFloat()
         }
 
         binding.spinnerLocation.setCallback {

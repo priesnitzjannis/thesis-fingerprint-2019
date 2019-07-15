@@ -15,9 +15,10 @@ class TestPersonCreateViewModel @Inject constructor(private val testPersonReposi
     lateinit var entity: TestPersonEntity
     private var compositeDisposable = CompositeDisposable()
 
+    var name: String = ""
     lateinit var gender: String
     lateinit var color: String
-    var age: Int = 0
+    var age: Int = -1
 
     fun insertTestPerson(
         person: TestPersonEntity,
@@ -35,6 +36,7 @@ class TestPersonCreateViewModel @Inject constructor(private val testPersonReposi
 
     fun generateTestPerson() {
         entity = TestPersonEntity(
+            name = name,
             gender = gender,
             age = age,
             skinColor = color,

@@ -14,8 +14,9 @@ import androidx.navigation.fragment.NavHostFragment
 import dagger.android.support.AndroidSupportInjection
 import de.dali.thesisfingerprint2019.R
 import de.dali.thesisfingerprint2019.databinding.FragmentFingerScanningBinding
+import de.dali.thesisfingerprint2019.processing.Utils.HAND.LEFT
+import de.dali.thesisfingerprint2019.processing.Utils.HAND.RIGHT
 import de.dali.thesisfingerprint2019.ui.base.BaseFragment
-import de.dali.thesisfingerprint2019.ui.main.fragment.fingerprint.FingerPrintCreateFragmentDirections
 import de.dali.thesisfingerprint2019.ui.main.viewmodel.scanning.FingerScanningViewModel
 import de.dali.thesisfingerprint2019.utils.Dialogs
 import de.dali.thesisfingerprint2019.utils.Utils
@@ -27,7 +28,6 @@ import org.opencv.android.OpenCVLoader
 import org.opencv.core.CvType
 import org.opencv.core.Mat
 import javax.inject.Inject
-
 
 class FingerScanningFragment : BaseFragment() {
 
@@ -42,10 +42,6 @@ class FingerScanningFragment : BaseFragment() {
 
     lateinit var mRgba: Mat
 
-    var frameCounter = 0
-
-    var record = false
-
     private var listener = object : CameraBridgeViewBase.CvCameraViewListener2 {
 
         override fun onCameraViewStarted(width: Int, height: Int) {
@@ -57,10 +53,10 @@ class FingerScanningFragment : BaseFragment() {
         }
 
         override fun onCameraFrame(inputFrame: CameraBridgeViewBase.CvCameraViewFrame): Mat {
-            frameCounter++
+            fingerScanningViewModel.frameCounter++
             mRgba = inputFrame.rgba()
 
-            if (record && frameCounter % 5 == 0) {
+            if (fingerScanningViewModel.record && fingerScanningViewModel.frameCounter % 10 == 0) {
                 fingerScanningViewModel.sendToPipeline(mRgba)
             }
 
@@ -104,6 +100,7 @@ class FingerScanningFragment : BaseFragment() {
             fingerScanningViewModel.list = list
 
             fingerScanningViewModel.amountOfFinger = list.size
+            fingerScanningViewModel.hand = if (list.any { it <= 5 }) RIGHT else LEFT
         }
 
 
@@ -113,7 +110,7 @@ class FingerScanningFragment : BaseFragment() {
         binding.buttonFlash.setOnClickListener { javaCamera2View.toggleFlash() }
 
         binding.button.setOnClickListener {
-            record = true
+            fingerScanningViewModel.record = true
             binding.button.isEnabled = false
         }
 
@@ -122,18 +119,18 @@ class FingerScanningFragment : BaseFragment() {
         fingerScanningViewModel.setOnSuccess {
             activity.runOnUiThread {
                 binding.javaCamera2View.disableView()
-                fingerScanningViewModel.stopProcessingPipeline()
                 showProgressDialogWithTitle()
                 fingerScanningViewModel.processImages(it, {
-                    fingerScanningViewModel.stopProcessingPipeline()
                     progressDialog.dismiss()
                     NavHostFragment.findNavController(this).navigateUp()
-                }, { Log.e(TAG, it.message) })
+                }, {
+                    Log.e(TAG, it.message)
+                })
             }
         }
 
         fingerScanningViewModel.setOnFailure {
-            Log.e(TAG, it)
+            binding.textView2.text = it
         }
 
         initOpenCV()
@@ -170,10 +167,6 @@ class FingerScanningFragment : BaseFragment() {
         progressDialog.setTitle("Please Wait..")
         progressDialog.setMessage("Processing the image ...")
         progressDialog.show()
-    }
-
-    private fun dismissDialog() {
-        progressDialog.dismiss()
     }
 
     companion object {

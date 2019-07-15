@@ -66,15 +66,23 @@ class TestPersonCreateFragment : BaseFragment() {
     }
 
     private fun initOnChange() {
+        binding.editName.setCallback {
+            testPersonCreateViewModel.name = it
+            binding.btnContinue.isEnabled = testPersonCreateViewModel.age != -1 && testPersonCreateViewModel.name != ""
+        }
+
         binding.editAge.setCallback {
-            testPersonCreateViewModel.age = it.toInt()
-            binding.btnContinue.isEnabled = it != -1F
+            testPersonCreateViewModel.age = (if (it == "") -1 else it.toInt()).toInt()
+            binding.btnContinue.isEnabled = testPersonCreateViewModel.age != -1 && testPersonCreateViewModel.name != ""
         }
         binding.spinnerGender.setCallback { testPersonCreateViewModel.gender = it }
         binding.spinnerColor.setCallback { testPersonCreateViewModel.color = it }
     }
 
     private fun updateUI(entity: TestPersonEntity, lockUI: Boolean) {
+        binding.editName.setText(SpannableStringBuilder(entity.name))
+        binding.editName.lock(lockUI)
+
         binding.spinnerGender.setSelectedItem(entity.gender)
         binding.spinnerGender.lock(lockUI)
 

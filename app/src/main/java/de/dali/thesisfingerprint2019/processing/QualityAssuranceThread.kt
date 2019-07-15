@@ -7,6 +7,8 @@ import android.os.Message
 import android.os.Process.THREAD_PRIORITY_BACKGROUND
 import android.util.Log
 import de.dali.thesisfingerprint2019.data.local.entity.FingerPrintIntermediateEntity
+import de.dali.thesisfingerprint2019.processing.Utils.HAND
+import de.dali.thesisfingerprint2019.processing.Utils.HAND.NOT_SPECIFIED
 import de.dali.thesisfingerprint2019.processing.Utils.releaseImage
 import de.dali.thesisfingerprint2019.processing.Utils.rotateImageByDegree
 import de.dali.thesisfingerprint2019.processing.dali.FingerBorderDetection
@@ -28,6 +30,12 @@ class QualityAssuranceThread(private vararg val processingStep: ProcessingStep) 
         set(value) {
             field = value
             (processingStep[2] as FingerBorderDetection).amountOfFinger = value
+        }
+
+    var hand: HAND = NOT_SPECIFIED
+        set(value) {
+            field = value
+            (processingStep[1] as FingerRotationImprecise).hand = value
         }
 
     lateinit var onSuccess: (List<FingerPrintIntermediateEntity>) -> Unit
@@ -67,7 +75,8 @@ class QualityAssuranceThread(private vararg val processingStep: ProcessingStep) 
                             val qualityCheckedImage = (processingStep[3] as MultiQualityAssurance).run(it)
                             val edgeDens = (processingStep[3] as MultiQualityAssurance).edgeDensity
 
-                            val fingerPrintIntermediate = FingerPrintIntermediateEntity(qualityCheckedImage, edgeDens, degreeImprecise)
+                            val fingerPrintIntermediate =
+                                FingerPrintIntermediateEntity(qualityCheckedImage, edgeDens, degreeImprecise)
                             Log.e(TAG, "Edge Dens : $edgeDens")
 
                             qualityCheckedImages.add(fingerPrintIntermediate)
@@ -86,6 +95,7 @@ class QualityAssuranceThread(private vararg val processingStep: ProcessingStep) 
                         releaseImage(listOf(image, processedMat, rotatedImage))
                         if (processedImages == 5) {
                             clearQueue()
+                            quit()
                             onSuccess(highestEdgeDenseMats)
                         }
                     } else {

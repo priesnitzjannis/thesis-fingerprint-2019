@@ -6,8 +6,6 @@ import org.opencv.core.MatOfPoint
 import org.opencv.core.Point
 import org.opencv.imgproc.Imgproc
 import org.opencv.utils.Converters
-import java.nio.file.Files.size
-
 
 
 fun List<MatOfPoint>.toMat(): Mat {
@@ -20,7 +18,7 @@ fun List<MatOfPoint>.toMat(): Mat {
     return Converters.vector_Point_to_Mat(list)
 }
 
-fun MatOfInt.toMatOfPoint(contour: MatOfPoint): MatOfPoint{
+fun MatOfInt.toMatOfPoint(contour: MatOfPoint): MatOfPoint {
     val arrIndex = this.toArray()
     val arrContour = contour.toArray()
     val arrPoints = arrayOfNulls<Point>(arrIndex.size)

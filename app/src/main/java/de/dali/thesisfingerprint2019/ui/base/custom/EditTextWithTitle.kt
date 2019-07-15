@@ -43,10 +43,10 @@ class EditTextWithTitle @JvmOverloads constructor(
 
     }
 
-    fun setCallback(onChange: (Float) -> Unit) {
+    fun setCallback(onChange: (String) -> Unit) {
         editText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable) {
-                val number = if (s.toString() == "") -1F else s.toString().toFloat()
+                val number = s.toString()
                 onChange(number)
             }
 
