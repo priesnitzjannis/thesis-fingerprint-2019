@@ -49,7 +49,7 @@ class MultiQualityAssurance @Inject constructor() : ProcessingStep() {
 
         for (i in startX until endX) {
             for (j in startY until endY) {
-                sum += processedImage.get(i, j)[0]
+                sum += processedImage.get(j, i)[0]
             }
         }
 

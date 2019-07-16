@@ -1,10 +1,9 @@
 package de.dali.thesisfingerprint2019.ui.main.fragment.testperson
 
+import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -32,6 +31,8 @@ class TestPersonOverviewFragment : BaseFragment() {
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
     lateinit var binding: FragmentTestPersonOverviewBinding
+
+    private lateinit var progressDialog: ProgressDialog
 
     private lateinit var testPersonOverviewViewModel: TestPersonOverviewViewModel
 
@@ -80,6 +81,21 @@ class TestPersonOverviewFragment : BaseFragment() {
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_main, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId){
+            R.id.menu_main_export -> {
+                showProgressDialogWithTitle()
+                testPersonOverviewViewModel.exportDB(activity, { this.hideProgressDialog() }, {})
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
     private fun initialiseViewModel() {
         testPersonOverviewViewModel = ViewModelProviders
             .of(this, viewModelFactory)
@@ -109,6 +125,20 @@ class TestPersonOverviewFragment : BaseFragment() {
             }
         }
     }
+
+    private fun showProgressDialogWithTitle() {
+        progressDialog = ProgressDialog(context)
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER)
+        progressDialog.setCancelable(false)
+        progressDialog.setTitle("Please Wait..")
+        progressDialog.setMessage("Exporting DB ...")
+        progressDialog.show()
+    }
+
+    private fun hideProgressDialog(){
+        progressDialog.dismiss()
+    }
+
 
     companion object {
         val TAG = TestPersonOverviewFragment::class.java.simpleName

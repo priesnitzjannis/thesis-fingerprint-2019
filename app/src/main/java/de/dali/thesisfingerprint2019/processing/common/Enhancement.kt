@@ -16,8 +16,6 @@ class Enhancement @Inject constructor() : ProcessingStep() {
         get() = Enhancement::class.java.simpleName
 
     override fun run(originalImage: Mat): Mat {
-        cvtColor(originalImage, originalImage, COLOR_BGR2GRAY)
-
         val listOfKernelSizes = listOf(64.0,32.0,16.0,8.0,4.0,2.0)
 
         for (i in 0..5) {

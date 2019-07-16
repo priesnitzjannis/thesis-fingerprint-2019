@@ -4,11 +4,16 @@ import android.graphics.Bitmap
 import android.util.Log
 import de.dali.thesisfingerprint2019.processing.Utils.convertMatToBitMap
 import org.opencv.core.Mat
+import org.opencv.imgproc.Imgproc
 
 class ProcessingThread(vararg val processingSteps: ProcessingStep) {
 
+    lateinit var grayMat: Mat
+
     fun process(mat: Mat): Bitmap {
-        var image = mat
+        Imgproc.cvtColor(mat, grayMat, Imgproc.COLOR_BGR2GRAY)
+
+        var image = grayMat
 
         processingSteps.forEach {
             Log.e(TAG, it.TAG)

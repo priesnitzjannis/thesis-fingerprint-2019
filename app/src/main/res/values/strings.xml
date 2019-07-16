@@ -68,5 +68,6 @@
 
     <string name="fragment_details_id">ISO ID:</string>
     <string name="fragment_details_correction_degree">Degree:</string>
+    <string name="export_db">Export DB</string>
 
 </resources>

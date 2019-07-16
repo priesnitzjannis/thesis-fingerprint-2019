@@ -11,14 +11,12 @@ import de.dali.thesisfingerprint2019.processing.Utils.HAND
 import de.dali.thesisfingerprint2019.processing.Utils.HAND.NOT_SPECIFIED
 import de.dali.thesisfingerprint2019.processing.Utils.releaseImage
 import de.dali.thesisfingerprint2019.processing.Utils.rotateImageByDegree
-import de.dali.thesisfingerprint2019.processing.dali.FingerBorderDetection
-import de.dali.thesisfingerprint2019.processing.dali.FingerRotationImprecise
-import de.dali.thesisfingerprint2019.processing.dali.MultiFingerDetection
-import de.dali.thesisfingerprint2019.processing.dali.MultiQualityAssurance
+import de.dali.thesisfingerprint2019.processing.common.RotateFinger
+import de.dali.thesisfingerprint2019.processing.dali.*
 import org.opencv.core.Mat
 
 
-class QualityAssuranceThread(private vararg val processingStep: ProcessingStep) :
+class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
     HandlerThread(TAG, THREAD_PRIORITY_BACKGROUND) {
 
     var sensorOrientation: Int = 0
@@ -69,11 +67,15 @@ class QualityAssuranceThread(private vararg val processingStep: ProcessingStep) 
                     val separatedFingers = (processingStep[2] as FingerBorderDetection).runReturnMultiple(rotatedFinger)
 
                     if (separatedFingers.isNotEmpty()) {
+
+                        val rotatedFingers = separatedFingers.map { (processingStep[3] as RotateFinger).run(it) }
+                        val fingertips = rotatedFingers.map { (processingStep[4] as FindFingerTip).run(it)  }
+
                         val qualityCheckedImages = mutableListOf<FingerPrintIntermediateEntity>()
 
-                        separatedFingers.forEach {
-                            val qualityCheckedImage = (processingStep[3] as MultiQualityAssurance).run(it)
-                            val edgeDens = (processingStep[3] as MultiQualityAssurance).edgeDensity
+                        fingertips.forEach {
+                            val qualityCheckedImage = (processingStep[5] as MultiQualityAssurance).run(it)
+                            val edgeDens = (processingStep[5] as MultiQualityAssurance).edgeDensity
 
                             val fingerPrintIntermediate =
                                 FingerPrintIntermediateEntity(qualityCheckedImage, edgeDens, degreeImprecise)
@@ -89,7 +91,7 @@ class QualityAssuranceThread(private vararg val processingStep: ProcessingStep) 
                         }
 
                         Log.e(TAG, "Processed Image")
-
+9
                         processedImages++
 
                         releaseImage(listOf(image, processedMat, rotatedImage))

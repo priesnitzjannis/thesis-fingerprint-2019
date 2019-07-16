@@ -6,11 +6,17 @@ import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraManager
 import android.os.Build
 import android.os.Environment
+import android.util.Log
+import de.dali.thesisfingerprint2019.utils.Constants.NAME_MAIN_FOLDER
 import java.io.File
 import java.io.FileOutputStream
 import java.util.*
+import java.io.FileInputStream
+
 
 object Utils {
+
+    val TAG = Utils::class.java.simpleName
 
     fun getSensorOrientation(context: Context): Int {
         val manager = context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
@@ -44,6 +50,31 @@ object Utils {
         bitmap.compress(Bitmap.CompressFormat.JPEG, quality, out)
         out.flush()
         out.close()
+    }
+
+    fun exportDB(context: Context) {
+        try {
+            val sd = Environment.getExternalStorageDirectory()
+
+            if (sd.canWrite()) {
+                val currentDBPath = context.filesDir.path + context.packageName + "/databases/fingerprint-database.db"
+                val backupDBPath = "$sd/$NAME_MAIN_FOLDER/database/fingerprint-database.db"
+                val currentDB = File(currentDBPath)
+                val backupDB = File(sd, backupDBPath)
+
+                if (currentDB.exists()) {
+                    val src = FileInputStream(currentDB).channel
+                    val dst = FileOutputStream(backupDB).channel
+                    dst.transferFrom(src, 0, src.size())
+                    src.close()
+                    dst.close()
+                }
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, e.message)
+        }
+
+
     }
 
     fun getDeviceName(): String {

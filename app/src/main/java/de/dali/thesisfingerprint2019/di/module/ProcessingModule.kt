@@ -69,11 +69,15 @@ class ProcessingModule {
         multiFingerDetection: MultiFingerDetection,
         fingerRotationImprecise: FingerRotationImprecise,
         fingerBorderDetection: FingerBorderDetection,
+        rotateFinger: RotateFinger,
+        findFingerTip: FindFingerTip,
         multiQualityAssurance: MultiQualityAssurance
     ): QualityAssuranceThread = QualityAssuranceThread(
         multiFingerDetection,
         fingerRotationImprecise,
         fingerBorderDetection,
+        rotateFinger,
+        findFingerTip,
         multiQualityAssurance
     )
 
@@ -99,12 +103,8 @@ class ProcessingModule {
     @Provides
     @Named("pipelineDali")
     fun provideNewProcessing(
-        rotateFinger: RotateFinger,
-        findFingerTip: FindFingerTip,
         enhancement: Enhancement
     ): ProcessingThread = ProcessingThread(
-        rotateFinger,
-        findFingerTip,
         enhancement
     )
 

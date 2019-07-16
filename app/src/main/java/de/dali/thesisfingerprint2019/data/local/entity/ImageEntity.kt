@@ -21,7 +21,13 @@ data class ImageEntity(
     var fingerPrintID: Long? = null,
 
     @NonNull
-    var path: String? = null,
+    var pathEnhanced: String? = null,
+
+    @NonNull
+    var pathGray: String? = null,
+
+    @NonNull
+    var pathRGB: String? = null,
 
     @NonNull
     var biometricalID: Int? = null,
