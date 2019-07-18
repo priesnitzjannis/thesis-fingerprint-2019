@@ -189,22 +189,21 @@ object Utils {
         val kernel = Mat(Size(3.0, 3.0), CvType.CV_8UC1, Scalar(255.0))
 
         Imgproc.cvtColor(mat, img_hsv, Imgproc.COLOR_RGB2HSV)
-        Core.inRange(img_hsv, Scalar(0.0, 40.0, 0.0, 0.0), Scalar(25.0, 255.0, 255.0, 0.0), img_mask_hsv)
-        Imgproc.morphologyEx(img_mask_hsv, img_mask_hsv, Imgproc.MORPH_OPEN, kernel);
+        Core.inRange(img_hsv, Scalar(0.0, 10.0, 60.0), Scalar(20.0, 150.0, 255.0), img_mask_hsv)
+        Imgproc.morphologyEx(img_mask_hsv, img_mask_hsv, Imgproc.MORPH_OPEN, kernel)
 
         val img_ycrcb = Mat(mat.rows(), mat.cols(), CvType.CV_8UC3)
         val img_mask_ycrcb = Mat(mat.rows(), mat.cols(), CvType.CV_8UC1)
 
         Imgproc.cvtColor(mat, img_ycrcb, Imgproc.COLOR_RGB2YCrCb)
-        Core.inRange(img_ycrcb, Scalar(0.0, 138.0,67.0, 0.0), Scalar(255.0, 173.0,133.0, 0.0), img_mask_ycrcb)
-        Imgproc.morphologyEx(img_mask_ycrcb, img_mask_ycrcb, Imgproc.MORPH_OPEN, kernel);
+        Core.inRange(img_ycrcb, Scalar(0.0, 133.0,77.0, 0.0), Scalar(255.0, 173.0,127.0, 0.0), img_mask_ycrcb)
+        Imgproc.morphologyEx(img_mask_ycrcb, img_mask_ycrcb, Imgproc.MORPH_OPEN, kernel)
 
 
         val img_and = Mat(mat.rows(), mat.cols(), CvType.CV_8UC3)
-        val kernel_and = Mat(Size(11.0, 11.0), CvType.CV_8UC1, Scalar(255.0))
+        val kernel_and = Mat(Size(21.0, 21.0), CvType.CV_8UC1, Scalar(255.0))
         Core.bitwise_and(img_mask_hsv, img_mask_ycrcb, img_and)
-        Imgproc.medianBlur(img_and, img_and, 3)
-        Imgproc.morphologyEx(img_and, img_and, Imgproc.MORPH_OPEN, kernel_and);
+        Imgproc.morphologyEx(img_and, img_and, Imgproc.MORPH_CLOSE, kernel_and)
 
         return img_and
     }

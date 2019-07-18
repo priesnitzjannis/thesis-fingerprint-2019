@@ -3,6 +3,7 @@ package de.dali.thesisfingerprint2019.processing.dali
 import de.dali.thesisfingerprint2019.processing.ProcessingStep
 import de.dali.thesisfingerprint2019.processing.Utils.HAND
 import de.dali.thesisfingerprint2019.processing.Utils.HAND.NOT_SPECIFIED
+import de.dali.thesisfingerprint2019.processing.Utils.HAND.RIGHT
 import de.dali.thesisfingerprint2019.processing.Utils.calcAngle
 import de.dali.thesisfingerprint2019.processing.Utils.conditionalPointOnContour
 import de.dali.thesisfingerprint2019.processing.Utils.convertMatToBitMap
@@ -50,10 +51,12 @@ class FingerRotationImprecise @Inject constructor() : ProcessingStep() {
     }
 
     private fun generatePointPair(image: Mat, i: Int): Pair<Point, Point> {
-        val colLow = if (image.cols() * 0.1 - i < 0) 0.0 else image.cols() * 0.1 - i
-        val colHigh = image.cols() * 0.1 + i
+        val colLow = if (image.rows() * 0.1 - i < 0) 0.0 else image.rows() * 0.1 - i
+        val colHigh = image.rows() * 0.1 + i
 
-        return Pair(Point(0.0, colLow), Point(0.0, colHigh))
+        val x = if (hand == RIGHT) image.cols().toDouble() else 0.0
+
+        return Pair(Point(x, colLow), Point(x, colHigh))
     }
 
     private fun calcPointOnContour(point: Point, image: Mat): Point {
@@ -61,7 +64,7 @@ class FingerRotationImprecise @Inject constructor() : ProcessingStep() {
         val imageThresh = getThresholdImage(image)
 
         conditionalPointOnContour(hand, point, image) { i ->
-            val pixel = imageThresh.get(point.y.toInt(), i)
+            val pixel = imageThresh.get(i, point.y.toInt())
 
             if (pixel[0] != 0.0) {
                 pointOnContour = Point(i.toDouble(), point.y)

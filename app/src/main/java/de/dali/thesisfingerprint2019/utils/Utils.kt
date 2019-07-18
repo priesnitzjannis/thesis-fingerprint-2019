@@ -58,7 +58,7 @@ object Utils {
 
             if (sd.canWrite()) {
                 val currentDBPath = context.filesDir.path + context.packageName + "/databases/fingerprint-database.db"
-                val backupDBPath = "$sd/$NAME_MAIN_FOLDER/database/fingerprint-database.db"
+                val backupDBPath = "$sd/$NAME_MAIN_FOLDER/fingerprint-database.db"
                 val currentDB = File(currentDBPath)
                 val backupDB = File(sd, backupDBPath)
 

@@ -79,7 +79,7 @@ class FingerPrintCreateFragment : BaseFragment() {
 
             adapter = FingerPrintAdapter(context)
 
-            resultImage.layoutManager = GridLayoutManager(context, 3)
+            resultImage.layoutManager = GridLayoutManager(context, 1)
             resultImage.adapter = adapter
 
             fingerPrintCreateViewModel.listOfImages.observe(this, Observer {

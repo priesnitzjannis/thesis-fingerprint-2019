@@ -30,8 +30,15 @@ class FingerPrintAdapter(context: Context?) : RecyclerView.Adapter<FingerPrintAd
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val imgFile = File("${Environment.getExternalStorageDirectory()}/" + listOfFingerPrints[position].path)
-        holder.imageFingerprint.setImageURI(Uri.fromFile(imgFile))
+        val imgFileOrig = File("${Environment.getExternalStorageDirectory()}/" + listOfFingerPrints[position].pathRGB)
+        holder.ivFingerprintOrig.setImageURI(Uri.fromFile(imgFileOrig))
+
+        val imgFileGray = File("${Environment.getExternalStorageDirectory()}/" + listOfFingerPrints[position].pathGray)
+        holder.ivFingerprintGray.setImageURI(Uri.fromFile(imgFileGray))
+
+        val imgFileEnhanced = File("${Environment.getExternalStorageDirectory()}/" + listOfFingerPrints[position].pathEnhanced)
+        holder.ivFingerprintEnhanced.setImageURI(Uri.fromFile(imgFileEnhanced))
+
         holder.textID.text = listOfFingerPrints[position].biometricalID.toString()
         holder.textDegree.text = listOfFingerPrints[position].correctionDegree.toString()
     }
@@ -41,7 +48,9 @@ class FingerPrintAdapter(context: Context?) : RecyclerView.Adapter<FingerPrintAd
     }
 
     inner class ViewHolder internal constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var imageFingerprint: ImageView = itemView.findViewById(R.id.ivFingerprint)
+        var ivFingerprintEnhanced: ImageView = itemView.findViewById(R.id.ivFingerprintEnhanced)
+        var ivFingerprintGray: ImageView = itemView.findViewById(R.id.ivFingerprintGray)
+        var ivFingerprintOrig: ImageView = itemView.findViewById(R.id.ivFingerprintOrig)
         var textID: TextView = itemView.findViewById(R.id.tvID)
         var textDegree: TextView = itemView.findViewById(R.id.tvDegree)
     }
