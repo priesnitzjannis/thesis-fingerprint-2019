@@ -86,7 +86,7 @@ class TestPersonOverviewFragment : BaseFragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId){
+        return when (item.itemId) {
             R.id.menu_main_export -> {
                 showProgressDialogWithTitle()
                 testPersonOverviewViewModel.exportDB(activity, { this.hideProgressDialog() }, {})
@@ -135,7 +135,7 @@ class TestPersonOverviewFragment : BaseFragment() {
         progressDialog.show()
     }
 
-    private fun hideProgressDialog(){
+    private fun hideProgressDialog() {
         progressDialog.dismiss()
     }
 

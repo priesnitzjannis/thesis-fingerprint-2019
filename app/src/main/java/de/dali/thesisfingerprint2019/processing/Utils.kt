@@ -19,8 +19,7 @@ import de.dali.thesisfingerprint2019.processing.Config.THRESHOLD_MAX
 import de.dali.thesisfingerprint2019.processing.Utils.HAND.*
 import org.opencv.core.*
 import org.opencv.imgproc.Imgproc
-import org.opencv.imgproc.Imgproc.THRESH_BINARY
-import org.opencv.imgproc.Imgproc.THRESH_OTSU
+import org.opencv.imgproc.Imgproc.*
 import kotlin.math.PI
 import kotlin.math.atan
 import kotlin.math.sqrt
@@ -36,8 +35,8 @@ object Utils {
     fun erode(mat: Mat): Mat {
         val anchor = Point(-1.0, -1.0)
 
-        val kernel = Imgproc.getStructuringElement(Imgproc.MORPH_CROSS, ERODE_KERNEL_SIZE)
-        Imgproc.erode(mat, mat, kernel, anchor, ERODE_ITERATIONS)
+        val kernel = getStructuringElement(MORPH_CROSS, ERODE_KERNEL_SIZE)
+        erode(mat, mat, kernel, anchor, ERODE_ITERATIONS)
 
         return mat
     }
@@ -45,25 +44,25 @@ object Utils {
     fun dilate(mat: Mat): Mat {
         val anchor = Point(-1.0, -1.0)
 
-        val kernel = Imgproc.getStructuringElement(Imgproc.MORPH_ELLIPSE, DILATE_KERNEL_SIZE)
-        Imgproc.dilate(mat, mat, kernel, anchor, DILATE_ITERATIONS)
+        val kernel = getStructuringElement(MORPH_ELLIPSE, DILATE_KERNEL_SIZE)
+        dilate(mat, mat, kernel, anchor, DILATE_ITERATIONS)
 
         return mat
     }
 
     fun sobel(frame: Mat): Mat {
         val blurred = Mat.zeros(frame.rows(), frame.cols(), CvType.CV_64FC1)
-        Imgproc.GaussianBlur(frame, blurred, KERNEL_SIZE_GAUS, 0.0, 0.0, Core.BORDER_DEFAULT)
+        GaussianBlur(frame, blurred, KERNEL_SIZE_GAUS, 0.0, 0.0, Core.BORDER_DEFAULT)
 
         val gray = Mat.zeros(frame.rows(), frame.cols(), CvType.CV_64FC1)
-        Imgproc.cvtColor(blurred, gray, Imgproc.COLOR_RGB2GRAY)
+        cvtColor(blurred, gray, COLOR_RGB2GRAY)
 
         releaseImage(listOf(blurred))
 
         val grad_x = Mat.zeros(frame.rows(), frame.cols(), CvType.CV_64FC1)
         val grad_y = Mat.zeros(frame.rows(), frame.cols(), CvType.CV_64FC1)
 
-        Imgproc.Sobel(
+        Sobel(
             gray,
             grad_x,
             DDEPTH,
@@ -75,7 +74,7 @@ object Utils {
             Core.BORDER_DEFAULT
         )
 
-        Imgproc.Sobel(
+        Sobel(
             gray,
             grad_y,
             DDEPTH,
@@ -108,25 +107,32 @@ object Utils {
     }
 
     fun adaptiveThresh(mat: Mat): Mat {
-        val cb = getCbComponent(mat)
+        val ycrcb = Mat(mat.rows(), mat.cols(), CvType.CV_8UC3)
+        val lYCrCb = ArrayList<Mat>(3)
+
+        cvtColor(mat, ycrcb, COLOR_BGR2YCrCb)
+        Core.split(mat, lYCrCb)
+
+        val y = lYCrCb[0]
+
         val result = Mat()
 
         val blurred = Mat.zeros(mat.rows(), mat.cols(), CvType.CV_64FC1)
-        Imgproc.GaussianBlur(cb, blurred, KERNEL_SIZE_BLUR, 0.0, 0.0, Core.BORDER_CONSTANT)
+        GaussianBlur(y, blurred, KERNEL_SIZE_BLUR, 0.0, 0.0, Core.BORDER_CONSTANT)
 
-        Imgproc.adaptiveThreshold(
+        adaptiveThreshold(
             blurred,
             result,
             THRESHOLD_MAX,
-            Imgproc.ADAPTIVE_THRESH_MEAN_C,
-            Imgproc.THRESH_BINARY_INV,
+            ADAPTIVE_THRESH_MEAN_C,
+            THRESH_BINARY_INV,
             BLOCKSIZE,
             12.0
         )
 
-        Imgproc.threshold(result, result, 1.0, 255.0, Imgproc.THRESH_BINARY)
+        threshold(result, result, 1.0, 255.0, THRESH_BINARY + THRESH_OTSU)
 
-        releaseImage(listOf(cb, blurred))
+        releaseImage(listOf(y, blurred))
 
         return result
     }
@@ -136,17 +142,17 @@ object Utils {
         val contours: List<MatOfPoint> = mutableListOf()
         val hierarchy = Mat()
 
-        Imgproc.findContours(mat, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE)
+        findContours(mat, contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE)
 
         return contours.filter {
-            val area = Imgproc.contourArea(it, false)
+            val area = contourArea(it, false)
             area >= Config.MIN_AREA_SIZE
         }
     }
 
     fun getMaskImage(originalImage: Mat, mat: List<MatOfPoint>): Mat {
         val mask = Mat.zeros(originalImage.rows(), originalImage.cols(), CvType.CV_8UC1)
-        Imgproc.drawContours(mask, mat, -1, Scalar(255.0), Imgproc.FILLED)
+        drawContours(mask, mat, -1, Scalar(255.0), FILLED)
 
         return mask
     }
@@ -170,7 +176,7 @@ object Utils {
         var bmp: Bitmap? = null
         val rgb = Mat()
 
-        Imgproc.cvtColor(input, rgb, Imgproc.COLOR_BGR2RGBA, 4)
+        cvtColor(input, rgb, COLOR_BGR2RGBA, 4)
 
         try {
             bmp = Bitmap.createBitmap(rgb.cols(), rgb.rows(), Bitmap.Config.ARGB_8888)
@@ -183,27 +189,27 @@ object Utils {
         return bmp
     }
 
-    fun getThresholdImageNew(mat: Mat): Mat{
+    fun getThresholdImageNew(mat: Mat): Mat {
         val img_hsv = Mat(mat.rows(), mat.cols(), CvType.CV_8UC3)
         val img_mask_hsv = Mat(mat.rows(), mat.cols(), CvType.CV_8UC1)
-        val kernel = Mat(Size(3.0, 3.0), CvType.CV_8UC1, Scalar(255.0))
+        val kernel = getStructuringElement(MORPH_RECT, Size(9.0, 9.0))
 
-        Imgproc.cvtColor(mat, img_hsv, Imgproc.COLOR_RGB2HSV)
+        cvtColor(mat, img_hsv, COLOR_RGB2HSV)
         Core.inRange(img_hsv, Scalar(0.0, 10.0, 60.0), Scalar(20.0, 150.0, 255.0), img_mask_hsv)
-        Imgproc.morphologyEx(img_mask_hsv, img_mask_hsv, Imgproc.MORPH_OPEN, kernel)
+        morphologyEx(img_mask_hsv, img_mask_hsv, MORPH_OPEN, kernel)
 
         val img_ycrcb = Mat(mat.rows(), mat.cols(), CvType.CV_8UC3)
         val img_mask_ycrcb = Mat(mat.rows(), mat.cols(), CvType.CV_8UC1)
 
-        Imgproc.cvtColor(mat, img_ycrcb, Imgproc.COLOR_RGB2YCrCb)
-        Core.inRange(img_ycrcb, Scalar(0.0, 133.0,77.0, 0.0), Scalar(255.0, 173.0,127.0, 0.0), img_mask_ycrcb)
-        Imgproc.morphologyEx(img_mask_ycrcb, img_mask_ycrcb, Imgproc.MORPH_OPEN, kernel)
+        cvtColor(mat, img_ycrcb, COLOR_RGB2YCrCb)
+        Core.inRange(img_ycrcb, Scalar(0.0, 133.0, 77.0, 0.0), Scalar(255.0, 173.0, 127.0, 0.0), img_mask_ycrcb)
+        morphologyEx(img_mask_ycrcb, img_mask_ycrcb, MORPH_OPEN, kernel)
 
 
         val img_and = Mat(mat.rows(), mat.cols(), CvType.CV_8UC3)
-        val kernel_and = Mat(Size(21.0, 21.0), CvType.CV_8UC1, Scalar(255.0))
+        val kernel_and = getStructuringElement(MORPH_RECT, Size(17.0, 17.0))
         Core.bitwise_and(img_mask_hsv, img_mask_ycrcb, img_and)
-        Imgproc.morphologyEx(img_and, img_and, Imgproc.MORPH_CLOSE, kernel_and)
+        morphologyEx(img_and, img_and, MORPH_CLOSE, kernel_and)
 
         return img_and
     }
@@ -212,12 +218,12 @@ object Utils {
         val hulls = mutableListOf<MatOfPoint>()
 
         val hull = MatOfInt()
-        Imgproc.convexHull(contour, hull, true)
+        convexHull(contour, hull, true)
         hulls.add(hull.toMatOfPoint(contour))
 
         val result = Mat.zeros(mat.rows(), mat.cols(), CvType.CV_8UC1)
         hulls.forEachIndexed { index, _ ->
-            Imgproc.drawContours(result, hulls, index, Scalar(255.0), Imgproc.FILLED)
+            drawContours(result, hulls, index, Scalar(255.0), FILLED)
         }
 
         return result
@@ -245,14 +251,14 @@ object Utils {
 
     fun rotateImageByDegree(correctionAngle: Double, originalImage: Mat): Mat {
         val center = Point((originalImage.cols() - 1.0) / 2.0, (originalImage.rows() - 1.0) / 2.0)
-        val rot = Imgproc.getRotationMatrix2D(center, correctionAngle, 1.0)
+        val rot = getRotationMatrix2D(center, correctionAngle, 1.0)
         val bbox = RotatedRect(Point(), originalImage.size(), correctionAngle).boundingRect()
 
         rot.put(0, 2, rot.get(0, 2)[0] + bbox.width / 2.0 - originalImage.cols() / 2.0)
         rot.put(1, 2, rot.get(1, 2)[0] + bbox.height / 2.0 - originalImage.rows() / 2.0)
 
         val destMat = Mat()
-        Imgproc.warpAffine(originalImage, destMat, rot, bbox.size())
+        warpAffine(originalImage, destMat, rot, bbox.size())
 
         releaseImage(
             listOf(
@@ -263,10 +269,14 @@ object Utils {
         return destMat.cropToMinArea()
     }
 
-    fun conditionalPointOnContour(hand: HAND,point: Point, mat: Mat, operator:(i : Int)-> Boolean){
-        when(hand){
-            NOT_SPECIFIED, LEFT -> for (i in point.x.toInt() until mat.cols()) { if (operator (i)) break }
-            RIGHT -> for (i in point.x.toInt() downTo 0) { if (operator (i)) break }
+    fun conditionalPointOnContour(hand: HAND, point: Point, mat: Mat, operator: (i: Int) -> Boolean) {
+        when (hand) {
+            NOT_SPECIFIED, LEFT -> for (i in point.x.toInt() downTo 1) {
+                if (operator(i)) break
+            }
+            RIGHT -> for (i in point.x.toInt() until mat.cols()) {
+                if (operator(i)) break
+            }
         }
     }
 
@@ -274,7 +284,7 @@ object Utils {
         val ycrcb = Mat(mat.rows(), mat.cols(), CvType.CV_8UC3)
         val lYCrCb = ArrayList<Mat>(3)
 
-        Imgproc.cvtColor(mat, ycrcb, Imgproc.COLOR_BGR2YCrCb)
+        cvtColor(mat, ycrcb, COLOR_BGR2YCrCb)
         Core.split(mat, lYCrCb)
 
         return lYCrCb[2]
@@ -282,7 +292,7 @@ object Utils {
 
     private fun threshold(mat: Mat): Mat {
         val imageThresh = Mat()
-        Imgproc.threshold(mat, imageThresh, 100.0, 255.0, THRESH_BINARY + THRESH_OTSU)
+        threshold(mat, imageThresh, 100.0, 255.0, THRESH_BINARY + THRESH_OTSU)
 
         return imageThresh
     }

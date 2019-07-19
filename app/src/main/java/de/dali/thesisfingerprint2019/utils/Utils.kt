@@ -9,9 +9,9 @@ import android.os.Environment
 import android.util.Log
 import de.dali.thesisfingerprint2019.utils.Constants.NAME_MAIN_FOLDER
 import java.io.File
+import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.util.*
-import java.io.FileInputStream
 
 
 object Utils {

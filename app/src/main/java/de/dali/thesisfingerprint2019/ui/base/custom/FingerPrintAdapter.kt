@@ -36,7 +36,8 @@ class FingerPrintAdapter(context: Context?) : RecyclerView.Adapter<FingerPrintAd
         val imgFileGray = File("${Environment.getExternalStorageDirectory()}/" + listOfFingerPrints[position].pathGray)
         holder.ivFingerprintGray.setImageURI(Uri.fromFile(imgFileGray))
 
-        val imgFileEnhanced = File("${Environment.getExternalStorageDirectory()}/" + listOfFingerPrints[position].pathEnhanced)
+        val imgFileEnhanced =
+            File("${Environment.getExternalStorageDirectory()}/" + listOfFingerPrints[position].pathEnhanced)
         holder.ivFingerprintEnhanced.setImageURI(Uri.fromFile(imgFileEnhanced))
 
         holder.textID.text = listOfFingerPrints[position].biometricalID.toString()

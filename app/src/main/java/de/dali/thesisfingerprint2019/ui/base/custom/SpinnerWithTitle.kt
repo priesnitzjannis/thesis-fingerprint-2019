@@ -41,7 +41,9 @@ class SpinnerWithTitle @JvmOverloads constructor(
 
     fun setCallback(callback: (String) -> Unit) {
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onNothingSelected(parent: AdapterView<*>?) { return }
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                return
+            }
 
             override fun onItemSelected(adapterView: AdapterView<*>, view: View?, i: Int, l: Long) {
                 val selected = array[i].toString()

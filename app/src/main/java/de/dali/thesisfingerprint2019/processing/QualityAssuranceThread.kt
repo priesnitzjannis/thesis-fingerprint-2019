@@ -34,6 +34,7 @@ class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
         set(value) {
             field = value
             (processingStep[1] as FingerRotationImprecise).hand = value
+            (processingStep[3] as RotateFinger).hand = value
         }
 
     lateinit var onSuccess: (List<FingerPrintIntermediateEntity>) -> Unit
@@ -69,7 +70,7 @@ class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
                     if (separatedFingers.isNotEmpty()) {
 
                         val rotatedFingers = separatedFingers.map { (processingStep[3] as RotateFinger).run(it) }
-                        val fingertips = rotatedFingers.map { (processingStep[4] as FindFingerTip).run(it)  }
+                        val fingertips = rotatedFingers.map { (processingStep[4] as FindFingerTip).run(it) }
 
                         val qualityCheckedImages = mutableListOf<FingerPrintIntermediateEntity>()
 
@@ -91,7 +92,7 @@ class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
                         }
 
                         Log.e(TAG, "Processed Image")
-9
+
                         processedImages++
 
                         releaseImage(listOf(image, processedMat, rotatedImage))
@@ -103,12 +104,12 @@ class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
                     } else {
                         releaseImage(listOf(image, processedMat, rotatedImage))
                         Log.e(TAG, "FingerBorderDetection couldn't split Fingers")
-                        onFailure("")
+                        onFailure("FingerBorderDetection couldn't split Fingers")
                     }
                 } else {
                     releaseImage(listOf(image, processedMat, rotatedImage))
                     Log.e(TAG, "MultiFingerDetection couldn't detect Fingers")
-                    onFailure("")
+                    onFailure("MultiFingerDetection couldn't detect Fingers")
                 }
             }
         }

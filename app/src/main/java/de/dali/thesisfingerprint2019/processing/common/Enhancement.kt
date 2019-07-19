@@ -1,13 +1,11 @@
 package de.dali.thesisfingerprint2019.processing.common
 
-import de.dali.thesisfingerprint2019.processing.Config.MAX_KERNEL_LENGTH
 import de.dali.thesisfingerprint2019.processing.ProcessingStep
 import de.dali.thesisfingerprint2019.processing.Utils.convertMatToBitMap
 import org.opencv.core.Core
 import org.opencv.core.Core.subtract
 import org.opencv.core.Mat
 import org.opencv.core.Size
-import org.opencv.imgproc.Imgproc
 import org.opencv.imgproc.Imgproc.*
 import javax.inject.Inject
 
@@ -16,7 +14,7 @@ class Enhancement @Inject constructor() : ProcessingStep() {
         get() = Enhancement::class.java.simpleName
 
     override fun run(originalImage: Mat): Mat {
-        val listOfKernelSizes = listOf(64.0,32.0,16.0,8.0,4.0,2.0)
+        val listOfKernelSizes = listOf(64.0, 32.0, 16.0, 8.0, 4.0, 2.0)
 
         for (i in 0..5) {
             val clahe = createCLAHE(2.0, Size(listOfKernelSizes[i], listOfKernelSizes[i]))

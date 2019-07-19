@@ -15,6 +15,7 @@ import org.opencv.core.Mat
 import org.opencv.core.Point
 import javax.inject.Inject
 
+
 class FingerRotationImprecise @Inject constructor() : ProcessingStep() {
     var correctionAngle = 0.0
 
@@ -33,12 +34,13 @@ class FingerRotationImprecise @Inject constructor() : ProcessingStep() {
         val p1Contour = calcPointOnContour(pointPair.first, originalImage)
         val p2Contour = calcPointOnContour(pointPair.second, originalImage)
 
+
         val distanceP1P2 = euclideanDist(pointPair.first, pointPair.second)
         val distanceP1ToContour = euclideanDist(pointPair.first, p1Contour)
         val distanceP2ToContour = euclideanDist(pointPair.second, p2Contour)
 
         val angle = calcAngle(distanceP1P2, distanceP2ToContour, distanceP1ToContour)
-        correctionAngle = -angle
+        correctionAngle = if (hand == RIGHT) angle else -angle
 
         val rotatedImage = rotateImageByDegree(correctionAngle, originalImage)
 
@@ -51,20 +53,21 @@ class FingerRotationImprecise @Inject constructor() : ProcessingStep() {
     }
 
     private fun generatePointPair(image: Mat, i: Int): Pair<Point, Point> {
-        val colLow = if (image.rows() * 0.1 - i < 0) 0.0 else image.rows() * 0.1 - i
-        val colHigh = image.rows() * 0.1 + i
+        val rowLow = if (image.rows() * 0.9 + i > image.rows()) image.rows().toDouble() else image.rows() * 0.9 + i
+        val rowHigh = image.rows() * 0.9 - i
 
-        val x = if (hand == RIGHT) image.cols().toDouble() else 0.0
+        val x = if (hand == RIGHT) 0.0 else image.cols().toDouble()
 
-        return Pair(Point(x, colLow), Point(x, colHigh))
+        return Pair(Point(x, rowLow), Point(x, rowHigh))
     }
 
     private fun calcPointOnContour(point: Point, image: Mat): Point {
         var pointOnContour = Point()
         val imageThresh = getThresholdImage(image)
 
+
         conditionalPointOnContour(hand, point, image) { i ->
-            val pixel = imageThresh.get(i, point.y.toInt())
+            val pixel = imageThresh.get(point.y.toInt(), i - 1)
 
             if (pixel[0] != 0.0) {
                 pointOnContour = Point(i.toDouble(), point.y)

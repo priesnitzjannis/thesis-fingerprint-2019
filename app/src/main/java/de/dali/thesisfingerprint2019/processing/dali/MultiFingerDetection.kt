@@ -44,7 +44,7 @@ class MultiFingerDetection @Inject constructor() : ProcessingStep() {
         }
 
         val bmpResult = convertMatToBitMap(croppedImage)
-         return croppedImage
+        return croppedImage
 
     }
 

@@ -18,7 +18,6 @@ import de.dali.thesisfingerprint2019.data.local.entity.TestPersonEntity
 import de.dali.thesisfingerprint2019.databinding.FragmentTestPersonCreateBinding
 import de.dali.thesisfingerprint2019.ui.base.BaseFragment
 import de.dali.thesisfingerprint2019.ui.main.viewmodel.testperson.TestPersonCreateViewModel
-import kotlinx.android.synthetic.main.fragment_test_person_create.view.*
 import javax.inject.Inject
 
 class TestPersonCreateFragment : BaseFragment() {

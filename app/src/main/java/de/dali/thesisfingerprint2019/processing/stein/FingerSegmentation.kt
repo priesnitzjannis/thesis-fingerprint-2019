@@ -17,7 +17,7 @@ class FingerSegmentation @Inject constructor() : ProcessingStep() {
 
         Core.split(originalImage, lRgb)
 
-        threshold(lRgb[0], imageThresh, 100.0, 255.0, THRESH_BINARY)
+        threshold(lRgb[0], imageThresh, 100.0, 255.0, THRESH_BINARY + THRESH_OTSU)
 
         var largestArea = 0.0
         val contours: List<MatOfPoint> = mutableListOf()

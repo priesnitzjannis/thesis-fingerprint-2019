@@ -120,6 +120,7 @@ class FingerScanningFragment : BaseFragment() {
             activity.runOnUiThread {
                 binding.javaCamera2View.disableView()
                 showProgressDialogWithTitle()
+
                 fingerScanningViewModel.processImages(it, {
                     progressDialog.dismiss()
                     NavHostFragment.findNavController(this).navigateUp()

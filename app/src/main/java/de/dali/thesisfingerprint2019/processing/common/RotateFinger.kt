@@ -3,6 +3,7 @@ package de.dali.thesisfingerprint2019.processing.common
 
 import de.dali.thesisfingerprint2019.processing.ProcessingStep
 import de.dali.thesisfingerprint2019.processing.Utils.HAND.NOT_SPECIFIED
+import de.dali.thesisfingerprint2019.processing.Utils.HAND.RIGHT
 import de.dali.thesisfingerprint2019.processing.Utils.calcAngle
 import de.dali.thesisfingerprint2019.processing.Utils.conditionalPointOnContour
 import de.dali.thesisfingerprint2019.processing.Utils.convertMatToBitMap
@@ -15,6 +16,8 @@ import javax.inject.Inject
 
 class RotateFinger @Inject constructor() : ProcessingStep() {
     var correctionAngle = 0.0
+
+    var hand = NOT_SPECIFIED
 
     override val TAG: String
         get() = RotateFinger::class.java.simpleName
@@ -31,7 +34,7 @@ class RotateFinger @Inject constructor() : ProcessingStep() {
         val distanceP2ToContour = euclideanDist(pointPair.second, p2Contour)
 
         val angle = calcAngle(distanceP1P2, distanceP2ToContour, distanceP1ToContour)
-        correctionAngle = -(90 - angle)
+        correctionAngle = if (hand == RIGHT) 90 - angle else -(90 + angle)
 
         val rotatedImage = rotateImageByDegree(correctionAngle, originalImage)
 
