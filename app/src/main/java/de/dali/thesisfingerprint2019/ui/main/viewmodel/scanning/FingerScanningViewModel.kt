@@ -7,6 +7,7 @@ import de.dali.thesisfingerprint2019.data.local.entity.ImageEntity
 import de.dali.thesisfingerprint2019.data.repository.ImageRepository
 import de.dali.thesisfingerprint2019.processing.ProcessingThread
 import de.dali.thesisfingerprint2019.processing.QualityAssuranceThread
+import de.dali.thesisfingerprint2019.processing.QualityAssuranceThread.*
 import de.dali.thesisfingerprint2019.processing.Utils.HAND
 import de.dali.thesisfingerprint2019.processing.Utils.HAND.NOT_SPECIFIED
 import de.dali.thesisfingerprint2019.processing.Utils.convertMatToBitMap
@@ -61,7 +62,7 @@ class FingerScanningViewModel @Inject constructor(
     fun setOnSuccess(callback: (List<FingerPrintIntermediateEntity>) -> Unit) =
         qualityAssuranceThread.setSuccessCallback(callback)
 
-    fun setOnFailure(callback: (String) -> Unit) = qualityAssuranceThread.setFailureCallback(callback)
+    fun setOnUpdate(callback: (IntermediateResults, String, Int) -> Unit) = qualityAssuranceThread.setUpdateCallback(callback)
 
     fun setSensorOrientation(sensorOrientation: Int) {
         qualityAssuranceThread.sensorOrientation = sensorOrientation

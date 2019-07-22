@@ -30,25 +30,59 @@
                 android:layout_marginEnd="24dp"/>
 
         <Button
-                android:text="Record"
+                android:text="@string/fragment_finger_scanning_record"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/button"
                 android:layout_centerHorizontal="true"
                 android:layout_alignParentBottom="true"
                 android:layout_marginBottom="48dp"/>
+
         <TextView
+                android:text="@string/fragment_finger_scanning_last_frame"
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:paddingTop="8dp"
+                android:layout_alignParentTop="true"
+                android:textColor="@android:color/holo_red_dark"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_above="@id/buttonFlash"
-                android:layout_marginBottom="24dp"
-                android:layout_marginStart="24dp"
-                android:layout_marginEnd="24dp"
-                android:lines="1"
-                android:ellipsize="end"
-                android:textSize="24sp"
+                android:id="@+id/txtLastFrameInfo"/>
+
+        <TextView
                 android:textColor="@android:color/holo_red_dark"
-                android:id="@+id/textView2"/>
+                android:textSize="14sp"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/txtLastFrameInfo"
+                android:id="@+id/txtLastFrame"/>
+        <TextView
+                android:text="@string/fragment_finger_scanning_frame_text"
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:textColor="@android:color/holo_red_dark"
+                android:layout_below="@id/txtLastFrame"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/txtSuccessfulFramesInfo"/>
+
+        <TextView
+                android:text="@string/fragment_finger_scanning_frame_counter"
+                android:textColor="@android:color/holo_red_dark"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:layout_below="@id/txtSuccessfulFramesInfo"
+                android:textSize="14sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/txtSuccessfulFrames"/>
+
     </RelativeLayout>
 
 </layout>

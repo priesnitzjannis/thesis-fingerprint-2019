@@ -7,6 +7,7 @@ import android.os.Message
 import android.os.Process.THREAD_PRIORITY_BACKGROUND
 import android.util.Log
 import de.dali.thesisfingerprint2019.data.local.entity.FingerPrintIntermediateEntity
+import de.dali.thesisfingerprint2019.processing.QualityAssuranceThread.IntermediateResults.*
 import de.dali.thesisfingerprint2019.processing.Utils.HAND
 import de.dali.thesisfingerprint2019.processing.Utils.HAND.NOT_SPECIFIED
 import de.dali.thesisfingerprint2019.processing.Utils.releaseImage
@@ -18,6 +19,11 @@ import org.opencv.core.Mat
 
 class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
     HandlerThread(TAG, THREAD_PRIORITY_BACKGROUND) {
+
+    enum class IntermediateResults{
+        SUCCESSFUL,
+        FAILURE
+    }
 
     var sensorOrientation: Int = 0
     var totalImages: Int = 0
@@ -38,7 +44,7 @@ class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
         }
 
     lateinit var onSuccess: (List<FingerPrintIntermediateEntity>) -> Unit
-    lateinit var onFailure: (String) -> Unit
+    lateinit var onUpdate: (IntermediateResults, String, Int) -> Unit
 
     override fun onLooperPrepared() {
         super.onLooperPrepared()
@@ -78,9 +84,7 @@ class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
                             val qualityCheckedImage = (processingStep[5] as MultiQualityAssurance).run(it)
                             val edgeDens = (processingStep[5] as MultiQualityAssurance).edgeDensity
 
-                            val fingerPrintIntermediate =
-                                FingerPrintIntermediateEntity(qualityCheckedImage, edgeDens, degreeImprecise)
-                            Log.e(TAG, "Edge Dens : $edgeDens")
+                            val fingerPrintIntermediate = FingerPrintIntermediateEntity(qualityCheckedImage, edgeDens, degreeImprecise)
 
                             qualityCheckedImages.add(fingerPrintIntermediate)
                         }
@@ -91,11 +95,12 @@ class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
                             highestEdgeDenseMats.mapInPlace(qualityCheckedImages)
                         }
 
-                        Log.e(TAG, "Processed Image")
-
                         processedImages++
 
                         releaseImage(listOf(image, processedMat, rotatedImage))
+
+                        onUpdate(SUCCESSFUL, "Processed frame successfully.", processedImages)
+
                         if (processedImages == 5) {
                             clearQueue()
                             quit()
@@ -103,13 +108,11 @@ class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
                         }
                     } else {
                         releaseImage(listOf(image, processedMat, rotatedImage))
-                        Log.e(TAG, "FingerBorderDetection couldn't split Fingers")
-                        onFailure("FingerBorderDetection couldn't split Fingers")
+                        onUpdate(FAILURE, "Couldn't split Fingers.", processedImages)
                     }
                 } else {
                     releaseImage(listOf(image, processedMat, rotatedImage))
-                    Log.e(TAG, "MultiFingerDetection couldn't detect Fingers")
-                    onFailure("MultiFingerDetection couldn't detect Fingers")
+                    onUpdate(FAILURE, "Couldn't detect Fingers.", processedImages)
                 }
             }
         }
@@ -145,8 +148,8 @@ class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
         this.onSuccess = callback
     }
 
-    fun setFailureCallback(callback: (String) -> Unit) {
-        this.onFailure = callback
+    fun setUpdateCallback(callback: (IntermediateResults, String, Int) -> Unit) {
+        this.onUpdate = callback
     }
 
 
