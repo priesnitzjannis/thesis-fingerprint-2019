@@ -1,7 +1,7 @@
 package de.dali.thesisfingerprint2019.processing.dali
 
+import de.dali.thesisfingerprint2019.processing.Config.ROW_TO_COL_RATIO
 import de.dali.thesisfingerprint2019.processing.ProcessingStep
-import de.dali.thesisfingerprint2019.processing.Utils
 import org.opencv.core.Mat
 import org.opencv.core.Rect
 import javax.inject.Inject
@@ -14,16 +14,13 @@ class FindFingerTip @Inject constructor() : ProcessingStep() {
 
     override fun run(originalImage: Mat): Mat {
         val cols = originalImage.cols()
-        var newRows = ceil(cols * 1.5).toInt()
+        var newRows = ceil(cols * ROW_TO_COL_RATIO).toInt()
 
         newRows = if (newRows > originalImage.rows()) originalImage.rows() else newRows
 
         val rect = Rect(0, 0, cols, newRows)
 
-        val result = Mat(originalImage, rect)
-        val bmp = Utils.convertMatToBitMap(result)
-
-        return result
+        return Mat(originalImage, rect)
     }
 
     override fun runReturnMultiple(originalImage: Mat): List<Mat> {

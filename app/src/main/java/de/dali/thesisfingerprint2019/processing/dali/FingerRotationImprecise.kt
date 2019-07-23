@@ -1,12 +1,12 @@
 package de.dali.thesisfingerprint2019.processing.dali
 
+import de.dali.thesisfingerprint2019.processing.Config.POINT_PAIR_DST
 import de.dali.thesisfingerprint2019.processing.ProcessingStep
 import de.dali.thesisfingerprint2019.processing.Utils.HAND
 import de.dali.thesisfingerprint2019.processing.Utils.HAND.NOT_SPECIFIED
 import de.dali.thesisfingerprint2019.processing.Utils.HAND.RIGHT
 import de.dali.thesisfingerprint2019.processing.Utils.calcAngle
 import de.dali.thesisfingerprint2019.processing.Utils.conditionalPointOnContour
-import de.dali.thesisfingerprint2019.processing.Utils.convertMatToBitMap
 import de.dali.thesisfingerprint2019.processing.Utils.euclideanDist
 import de.dali.thesisfingerprint2019.processing.Utils.getThresholdImage
 import de.dali.thesisfingerprint2019.processing.Utils.releaseImage
@@ -27,7 +27,7 @@ class FingerRotationImprecise @Inject constructor() : ProcessingStep() {
     override fun run(originalImage: Mat): Mat {
         val thresh = getThresholdImage(originalImage)
 
-        val pointPair = generatePointPair(thresh, 50)
+        val pointPair = generatePointPair(thresh, POINT_PAIR_DST)
 
         releaseImage(listOf(thresh))
 
@@ -42,10 +42,7 @@ class FingerRotationImprecise @Inject constructor() : ProcessingStep() {
         val angle = calcAngle(distanceP1P2, distanceP2ToContour, distanceP1ToContour)
         correctionAngle = if (hand == RIGHT) angle else -angle
 
-        val rotatedImage = rotateImageByDegree(correctionAngle, originalImage)
-
-        val bmpResult = convertMatToBitMap(rotatedImage)
-        return rotatedImage
+        return rotateImageByDegree(correctionAngle, originalImage)
     }
 
     override fun runReturnMultiple(originalImage: Mat): List<Mat> {

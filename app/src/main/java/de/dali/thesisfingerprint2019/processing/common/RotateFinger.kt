@@ -1,12 +1,13 @@
 package de.dali.thesisfingerprint2019.processing.common
 
 
+import de.dali.thesisfingerprint2019.processing.Config.POINT_PAIR_DST
 import de.dali.thesisfingerprint2019.processing.ProcessingStep
+import de.dali.thesisfingerprint2019.processing.Utils
 import de.dali.thesisfingerprint2019.processing.Utils.HAND.NOT_SPECIFIED
 import de.dali.thesisfingerprint2019.processing.Utils.HAND.RIGHT
 import de.dali.thesisfingerprint2019.processing.Utils.calcAngle
 import de.dali.thesisfingerprint2019.processing.Utils.conditionalPointOnContour
-import de.dali.thesisfingerprint2019.processing.Utils.convertMatToBitMap
 import de.dali.thesisfingerprint2019.processing.Utils.euclideanDist
 import de.dali.thesisfingerprint2019.processing.Utils.getThresholdImage
 import de.dali.thesisfingerprint2019.processing.Utils.rotateImageByDegree
@@ -24,7 +25,7 @@ class RotateFinger @Inject constructor() : ProcessingStep() {
 
     override fun run(originalImage: Mat): Mat {
         val middle = calcCenterPointOfMat(originalImage)
-        val pointPair = generatePointPair(middle, 50)
+        val pointPair = generatePointPair(middle, POINT_PAIR_DST)
 
         val p1Contour = calcPointOnContour(pointPair.first, originalImage)
         val p2Contour = calcPointOnContour(pointPair.second, originalImage)
@@ -36,11 +37,11 @@ class RotateFinger @Inject constructor() : ProcessingStep() {
         val angle = calcAngle(distanceP1P2, distanceP2ToContour, distanceP1ToContour)
         correctionAngle = if (hand == RIGHT) 90 - angle else -(90 + angle)
 
-        val rotatedImage = rotateImageByDegree(correctionAngle, originalImage)
+        correctionAngle = if (correctionAngle < -100.0 && hand == Utils.HAND.LEFT) correctionAngle + 180.0
+                          else if (correctionAngle > 100.0 && hand == RIGHT ) correctionAngle - 180.0
+                          else correctionAngle
 
-        val bmpOrg = convertMatToBitMap(rotatedImage)
-
-        return rotatedImage
+        return rotateImageByDegree(correctionAngle, originalImage)
     }
 
     override fun runReturnMultiple(originalImage: Mat): List<Mat> {

@@ -68,6 +68,7 @@
 
     <string name="fragment_details_id">ISO ID:</string>
     <string name="fragment_details_correction_degree">Degree:</string>
+    <string name="fragment_details_correction_broken">Possibly broken:</string>
     <string name="export_db">Export DB</string>
     <string name="fragment_finger_scanning_frame_counter">%1$d/5</string>
     <string name="fragment_finger_scanning_frame_text">Number of successfully processed frames:</string>

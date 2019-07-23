@@ -40,9 +40,6 @@ class FingerSegmentation @Inject constructor() : ProcessingStep() {
         val crop = Mat(Size(originalImage.rows().toDouble(), originalImage.cols().toDouble()), CV_8UC1, Scalar(0.0))
         originalImage.copyTo(crop, mask)
 
-        val bmp3 = convertMatToBitMap(crop)
-
-
         return crop
     }
 

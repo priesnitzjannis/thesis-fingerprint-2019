@@ -10,6 +10,8 @@ import de.dali.thesisfingerprint2019.data.local.entity.FingerPrintIntermediateEn
 import de.dali.thesisfingerprint2019.processing.QualityAssuranceThread.IntermediateResults.*
 import de.dali.thesisfingerprint2019.processing.Utils.HAND
 import de.dali.thesisfingerprint2019.processing.Utils.HAND.NOT_SPECIFIED
+import de.dali.thesisfingerprint2019.processing.Utils.hasEnoughContent
+import de.dali.thesisfingerprint2019.processing.Utils.hasValidSize
 import de.dali.thesisfingerprint2019.processing.Utils.releaseImage
 import de.dali.thesisfingerprint2019.processing.Utils.rotateImageByDegree
 import de.dali.thesisfingerprint2019.processing.common.RotateFinger
@@ -138,7 +140,7 @@ class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
         while (iterateA.hasNext() && iterateB.hasNext()) {
             val valA = iterateA.next()
             val valB = iterateB.next()
-            if (valA.edgeDens < valB.edgeDens) {
+            if (valA.edgeDens < valB.edgeDens && hasValidSize(valB.mat) && hasEnoughContent(valB.mat) ) {
                 iterateA.set(valB)
             }
         }

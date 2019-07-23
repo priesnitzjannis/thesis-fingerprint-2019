@@ -41,7 +41,9 @@ class FingerPrintAdapter(context: Context?) : RecyclerView.Adapter<FingerPrintAd
         holder.ivFingerprintEnhanced.setImageURI(Uri.fromFile(imgFileEnhanced))
 
         holder.textID.text = listOfFingerPrints[position].biometricalID.toString()
-        holder.textDegree.text = listOfFingerPrints[position].correctionDegree.toString()
+        holder.textDegree.text = listOfFingerPrints[position].correctionDegree.toString() + "°"
+
+        holder.textBroken.text =  if (listOfFingerPrints[position].possiblyBroken == true) "Yes" else "No"
     }
 
     override fun getItemCount(): Int {
@@ -54,5 +56,6 @@ class FingerPrintAdapter(context: Context?) : RecyclerView.Adapter<FingerPrintAd
         var ivFingerprintOrig: ImageView = itemView.findViewById(R.id.ivFingerprintOrig)
         var textID: TextView = itemView.findViewById(R.id.tvID)
         var textDegree: TextView = itemView.findViewById(R.id.tvDegree)
+        var textBroken: TextView = itemView.findViewById(R.id.tvBroken)
     }
 }

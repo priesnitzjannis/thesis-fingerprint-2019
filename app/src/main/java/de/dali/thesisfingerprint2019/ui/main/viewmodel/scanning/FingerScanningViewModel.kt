@@ -11,6 +11,8 @@ import de.dali.thesisfingerprint2019.processing.QualityAssuranceThread.*
 import de.dali.thesisfingerprint2019.processing.Utils.HAND
 import de.dali.thesisfingerprint2019.processing.Utils.HAND.NOT_SPECIFIED
 import de.dali.thesisfingerprint2019.processing.Utils.convertMatToBitMap
+import de.dali.thesisfingerprint2019.processing.Utils.hasEnoughContent
+import de.dali.thesisfingerprint2019.processing.Utils.hasValidSize
 import de.dali.thesisfingerprint2019.processing.common.RotateFinger
 import de.dali.thesisfingerprint2019.ui.base.BaseViewModel
 import de.dali.thesisfingerprint2019.utils.Constants.NAME_MAIN_FOLDER
@@ -20,6 +22,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import org.opencv.core.Mat
+import java.math.RoundingMode
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -102,7 +105,8 @@ class FingerScanningViewModel @Inject constructor(
                     width = processedImage.width,
                     height = processedImage.height,
                     edgeDensity = pair.edgeDens,
-                    correctionDegree = pair.correctionDegreeImprecise + correctionDegree
+                    possiblyBroken = !hasValidSize(pair.mat) || !hasEnoughContent(pair.mat),
+                    correctionDegree = (pair.correctionDegreeImprecise + correctionDegree).toBigDecimal().setScale(2, RoundingMode.UP).toDouble()
                 )
 
                 imageRepository.insert(imageEntity)

@@ -21,8 +21,6 @@ class FingerDetectionImprecisely @Inject constructor() : ProcessingStep() {
         val yBottom = detectBottom(originalImage)
         val roi = Rect(yBottom, xLeft, yTop - yBottom, xRight - xLeft)
 
-        val bmpOrg = convertMatToBitMap(Mat(originalImage, roi))
-
         return Mat(originalImage, roi)
     }
 

@@ -11,6 +11,7 @@ import de.dali.thesisfingerprint2019.processing.Utils.getFingerContour
 import de.dali.thesisfingerprint2019.processing.Utils.getMaskImage
 import de.dali.thesisfingerprint2019.processing.Utils.getMaskedImage
 import de.dali.thesisfingerprint2019.processing.Utils.getThresholdImage
+import de.dali.thesisfingerprint2019.processing.Utils.getThresholdImageNew
 import de.dali.thesisfingerprint2019.processing.Utils.releaseImage
 import org.opencv.core.Core
 import org.opencv.core.CvType.CV_8UC1
@@ -34,19 +35,15 @@ class FingerBorderDetection @Inject constructor() : ProcessingStep() {
     override fun runReturnMultiple(originalImage: Mat): List<Mat> {
         val edgeImage = adaptiveThresh(originalImage)
 
-        val bmpResultABC = convertMatToBitMap(edgeImage)
-
         var edgesDilated = dilate(edgeImage)
         edgesDilated = erode(edgesDilated)
 
-        val thresholdImage = getThresholdImage(originalImage)
+        val thresholdImage = getThresholdImageNew(originalImage)
         val contour = getFingerContour(thresholdImage)
 
         val maskImage = getMaskImage(originalImage, contour)
         val diffMaskEdge = Mat.zeros(originalImage.rows(), originalImage.cols(), CV_8UC1)
         Core.subtract(maskImage, edgesDilated, diffMaskEdge)
-
-        val bmpResult = convertMatToBitMap(diffMaskEdge)
 
         releaseImage(contour)
         releaseImage(listOf(thresholdImage, edgeImage, edgesDilated, maskImage))
@@ -67,8 +64,6 @@ class FingerBorderDetection @Inject constructor() : ProcessingStep() {
 
             releaseImage(sepContours)
             releaseImage(sepCntFixed)
-
-            val bmpResult = convertMatToBitMap(sepImages[0])
         }
 
         return sepImages

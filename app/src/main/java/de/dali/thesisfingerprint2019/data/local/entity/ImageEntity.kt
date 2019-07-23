@@ -45,5 +45,8 @@ data class ImageEntity(
     var edgeDensity: Double? = null,
 
     @NonNull
+    var possiblyBroken: Boolean? = null,
+
+    @NonNull
     var correctionDegree: Double? = null
 )

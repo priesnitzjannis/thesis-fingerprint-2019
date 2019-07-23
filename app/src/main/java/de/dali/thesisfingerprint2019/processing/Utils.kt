@@ -3,7 +3,10 @@ package de.dali.thesisfingerprint2019.processing
 import android.graphics.Bitmap
 import android.util.Log
 import de.dali.thesisfingerprint2019.processing.Config.BLOCKSIZE
-import de.dali.thesisfingerprint2019.processing.Config.DDEPTH
+import de.dali.thesisfingerprint2019.processing.Config.CB_LOWER
+import de.dali.thesisfingerprint2019.processing.Config.CB_UPPER
+import de.dali.thesisfingerprint2019.processing.Config.CR_LOWER
+import de.dali.thesisfingerprint2019.processing.Config.CR_UPPER
 import de.dali.thesisfingerprint2019.processing.Config.DELTA
 import de.dali.thesisfingerprint2019.processing.Config.DILATE_ITERATIONS
 import de.dali.thesisfingerprint2019.processing.Config.DILATE_KERNEL_SIZE
@@ -11,13 +14,26 @@ import de.dali.thesisfingerprint2019.processing.Config.ERODE_ITERATIONS
 import de.dali.thesisfingerprint2019.processing.Config.ERODE_KERNEL_SIZE
 import de.dali.thesisfingerprint2019.processing.Config.GRAD_X
 import de.dali.thesisfingerprint2019.processing.Config.GRAD_Y
+import de.dali.thesisfingerprint2019.processing.Config.H_LOWER
+import de.dali.thesisfingerprint2019.processing.Config.H_UPPER
 import de.dali.thesisfingerprint2019.processing.Config.KERNEL_SIZE_BLUR
+import de.dali.thesisfingerprint2019.processing.Config.KERNEL_SIZE_FAND
+import de.dali.thesisfingerprint2019.processing.Config.KERNEL_SIZE_FILTER
 import de.dali.thesisfingerprint2019.processing.Config.KERNEL_SIZE_GAUS
 import de.dali.thesisfingerprint2019.processing.Config.K_SIZE_SOBEL
 import de.dali.thesisfingerprint2019.processing.Config.SCALE
+import de.dali.thesisfingerprint2019.processing.Config.S_LOWER
+import de.dali.thesisfingerprint2019.processing.Config.S_UPPER
 import de.dali.thesisfingerprint2019.processing.Config.THRESHOLD_MAX
+import de.dali.thesisfingerprint2019.processing.Config.V_LOWER
+import de.dali.thesisfingerprint2019.processing.Config.V_UPPER
+import de.dali.thesisfingerprint2019.processing.Config.Y_LOWER
+import de.dali.thesisfingerprint2019.processing.Config.Y_UPPER
 import de.dali.thesisfingerprint2019.processing.Utils.HAND.*
+import de.dali.thesisfingerprint2019.processing.Utils.YCrCb.Cb
+import de.dali.thesisfingerprint2019.processing.Utils.YCrCb.Y
 import org.opencv.core.*
+import org.opencv.core.Core.countNonZero
 import org.opencv.imgproc.Imgproc
 import org.opencv.imgproc.Imgproc.*
 import kotlin.math.PI
@@ -32,10 +48,16 @@ object Utils {
         NOT_SPECIFIED
     }
 
+    enum class YCrCb(val channelID: Int){
+        Y(0),
+        Cr(1),
+        Cb(2)
+    }
+
     fun erode(mat: Mat): Mat {
         val anchor = Point(-1.0, -1.0)
 
-        val kernel = getStructuringElement(MORPH_CROSS, ERODE_KERNEL_SIZE)
+        val kernel = getStructuringElement(MORPH_CROSS, Size(ERODE_KERNEL_SIZE, ERODE_KERNEL_SIZE))
         erode(mat, mat, kernel, anchor, ERODE_ITERATIONS)
 
         return mat
@@ -44,7 +66,7 @@ object Utils {
     fun dilate(mat: Mat): Mat {
         val anchor = Point(-1.0, -1.0)
 
-        val kernel = getStructuringElement(MORPH_ELLIPSE, DILATE_KERNEL_SIZE)
+        val kernel = getStructuringElement(MORPH_ELLIPSE, Size(DILATE_KERNEL_SIZE, DILATE_KERNEL_SIZE))
         dilate(mat, mat, kernel, anchor, DILATE_ITERATIONS)
 
         return mat
@@ -52,7 +74,7 @@ object Utils {
 
     fun sobel(frame: Mat): Mat {
         val blurred = Mat.zeros(frame.rows(), frame.cols(), CvType.CV_64FC1)
-        GaussianBlur(frame, blurred, KERNEL_SIZE_GAUS, 0.0, 0.0, Core.BORDER_DEFAULT)
+        GaussianBlur(frame, blurred, Size(KERNEL_SIZE_GAUS, KERNEL_SIZE_GAUS), 0.0, 0.0, Core.BORDER_DEFAULT)
 
         val gray = Mat.zeros(frame.rows(), frame.cols(), CvType.CV_64FC1)
         cvtColor(blurred, gray, COLOR_RGB2GRAY)
@@ -65,7 +87,7 @@ object Utils {
         Sobel(
             gray,
             grad_x,
-            DDEPTH,
+            CvType.CV_16S,
             1,
             0,
             K_SIZE_SOBEL,
@@ -77,7 +99,7 @@ object Utils {
         Sobel(
             gray,
             grad_y,
-            DDEPTH,
+            CvType.CV_16S,
             0,
             1,
             K_SIZE_SOBEL,
@@ -107,18 +129,11 @@ object Utils {
     }
 
     fun adaptiveThresh(mat: Mat): Mat {
-        val ycrcb = Mat(mat.rows(), mat.cols(), CvType.CV_8UC3)
-        val lYCrCb = ArrayList<Mat>(3)
-
-        cvtColor(mat, ycrcb, COLOR_BGR2YCrCb)
-        Core.split(mat, lYCrCb)
-
-        val y = lYCrCb[0]
-
+        val y = getYCbCRComponent(mat, Y)
         val result = Mat()
 
         val blurred = Mat.zeros(mat.rows(), mat.cols(), CvType.CV_64FC1)
-        GaussianBlur(y, blurred, KERNEL_SIZE_BLUR, 0.0, 0.0, Core.BORDER_CONSTANT)
+        GaussianBlur(y, blurred, Size(KERNEL_SIZE_BLUR, KERNEL_SIZE_BLUR), 0.0, 0.0, Core.BORDER_CONSTANT)
 
         adaptiveThreshold(
             blurred,
@@ -192,22 +207,22 @@ object Utils {
     fun getThresholdImageNew(mat: Mat): Mat {
         val img_hsv = Mat(mat.rows(), mat.cols(), CvType.CV_8UC3)
         val img_mask_hsv = Mat(mat.rows(), mat.cols(), CvType.CV_8UC1)
-        val kernel = getStructuringElement(MORPH_RECT, Size(9.0, 9.0))
+        val kernel = getStructuringElement(MORPH_RECT, Size(KERNEL_SIZE_FILTER, KERNEL_SIZE_FILTER))
 
         cvtColor(mat, img_hsv, COLOR_RGB2HSV)
-        Core.inRange(img_hsv, Scalar(0.0, 10.0, 60.0), Scalar(20.0, 150.0, 255.0), img_mask_hsv)
+        Core.inRange(img_hsv, Scalar(H_LOWER, S_LOWER, V_LOWER), Scalar(H_UPPER, S_UPPER, V_UPPER), img_mask_hsv)
         morphologyEx(img_mask_hsv, img_mask_hsv, MORPH_OPEN, kernel)
 
         val img_ycrcb = Mat(mat.rows(), mat.cols(), CvType.CV_8UC3)
         val img_mask_ycrcb = Mat(mat.rows(), mat.cols(), CvType.CV_8UC1)
 
         cvtColor(mat, img_ycrcb, COLOR_RGB2YCrCb)
-        Core.inRange(img_ycrcb, Scalar(0.0, 133.0, 77.0, 0.0), Scalar(255.0, 173.0, 127.0, 0.0), img_mask_ycrcb)
+        Core.inRange(img_ycrcb, Scalar(Y_LOWER, CR_LOWER, CB_LOWER), Scalar(Y_UPPER, CR_UPPER, CB_UPPER), img_mask_ycrcb)
         morphologyEx(img_mask_ycrcb, img_mask_ycrcb, MORPH_OPEN, kernel)
 
 
         val img_and = Mat(mat.rows(), mat.cols(), CvType.CV_8UC3)
-        val kernel_and = getStructuringElement(MORPH_RECT, Size(17.0, 17.0))
+        val kernel_and = getStructuringElement(MORPH_RECT, Size(KERNEL_SIZE_FAND, KERNEL_SIZE_FAND))
         Core.bitwise_and(img_mask_hsv, img_mask_ycrcb, img_and)
         morphologyEx(img_and, img_and, MORPH_CLOSE, kernel_and)
 
@@ -230,7 +245,7 @@ object Utils {
     }
 
     fun getThresholdImage(mat: Mat): Mat {
-        val cb = getCbComponent(mat)
+        val cb = getYCbCRComponent(mat, Cb)
         return threshold(cb)
     }
 
@@ -269,6 +284,16 @@ object Utils {
         return destMat.cropToMinArea()
     }
 
+    fun hasValidSize(mat: Mat): Boolean = mat.cols() < 400 && mat.rows() < 520 && mat.cols() < mat.rows()
+
+    fun hasEnoughContent(mat: Mat): Boolean{
+        val gray = Mat(mat.rows(), mat.cols(), CvType.CV_8UC1)
+        cvtColor(mat, gray, COLOR_RGB2GRAY)
+        threshold(gray, gray, 200.0, 255.0, THRESH_BINARY + THRESH_OTSU)
+
+        return countNonZero(gray) >= (gray.rows() * gray.cols()) * (3/4)
+    }
+
     fun conditionalPointOnContour(hand: HAND, point: Point, mat: Mat, operator: (i: Int) -> Boolean) {
         when (hand) {
             NOT_SPECIFIED, LEFT -> for (i in point.x.toInt() downTo 1) {
@@ -280,14 +305,14 @@ object Utils {
         }
     }
 
-    private fun getCbComponent(mat: Mat): Mat {
+    private fun getYCbCRComponent(mat: Mat, component: YCrCb): Mat {
         val ycrcb = Mat(mat.rows(), mat.cols(), CvType.CV_8UC3)
         val lYCrCb = ArrayList<Mat>(3)
 
         cvtColor(mat, ycrcb, COLOR_BGR2YCrCb)
         Core.split(mat, lYCrCb)
 
-        return lYCrCb[2]
+        return lYCrCb[component.channelID]
     }
 
     private fun threshold(mat: Mat): Mat {
