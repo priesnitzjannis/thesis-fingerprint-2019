@@ -1,7 +1,6 @@
 package de.dali.thesisfingerprint2019.processing.stein
 
 import de.dali.thesisfingerprint2019.processing.ProcessingStep
-import de.dali.thesisfingerprint2019.processing.Utils.convertMatToBitMap
 import org.opencv.core.*
 import org.opencv.core.CvType.CV_8UC1
 import org.opencv.imgproc.Imgproc.*

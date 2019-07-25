@@ -5,7 +5,6 @@ import de.dali.thesisfingerprint2019.processing.Config.CLIP_LIMIT
 import de.dali.thesisfingerprint2019.processing.Config.GAUSSIAN_KERNEL_SIZE_HIGH
 import de.dali.thesisfingerprint2019.processing.Config.GAUSSIAN_KERNEL_SIZE_LOW
 import de.dali.thesisfingerprint2019.processing.ProcessingStep
-import de.dali.thesisfingerprint2019.processing.Utils.convertMatToBitMap
 import org.opencv.core.Core
 import org.opencv.core.Core.subtract
 import org.opencv.core.Mat
@@ -21,7 +20,7 @@ class Enhancement @Inject constructor() : ProcessingStep() {
     override fun run(originalImage: Mat): Mat {
 
         for (i in 0 until CLAHE_ITERATIONS) {
-            val kernelSize = 2.0.pow(CLAHE_ITERATIONS)/(i + 1)
+            val kernelSize = 2.0.pow(CLAHE_ITERATIONS) / (i + 1)
             val clahe = createCLAHE(CLIP_LIMIT, Size(kernelSize, kernelSize))
             clahe.apply(originalImage, originalImage)
         }

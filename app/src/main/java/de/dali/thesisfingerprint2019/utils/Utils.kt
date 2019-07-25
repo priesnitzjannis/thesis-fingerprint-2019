@@ -57,9 +57,8 @@ object Utils {
             val sd = Environment.getExternalStorageDirectory()
 
             if (sd.canWrite()) {
-                val currentDBPath = context.filesDir.path + context.packageName + "/databases/fingerprint-database.db"
-                val backupDBPath = "$sd/$NAME_MAIN_FOLDER/fingerprint-database.db"
-                val currentDB = File(currentDBPath)
+                val currentDB = context.getDatabasePath("fingerprint-database.db")
+                val backupDBPath = "$NAME_MAIN_FOLDER/fingerprint-database.db"
                 val backupDB = File(sd, backupDBPath)
 
                 if (currentDB.exists()) {
@@ -73,7 +72,6 @@ object Utils {
         } catch (e: Exception) {
             Log.e(TAG, e.message)
         }
-
 
     }
 

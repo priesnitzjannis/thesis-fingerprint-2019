@@ -2,7 +2,6 @@ package de.dali.thesisfingerprint2019
 
 import android.app.Activity
 import android.app.Application
-import com.facebook.stetho.Stetho
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasActivityInjector
 import de.dali.thesisfingerprint2019.di.component.DaggerAppComponent
@@ -20,10 +19,6 @@ class AppController : Application(), HasActivityInjector {
 
     override fun onCreate() {
         super.onCreate()
-
-        if (BuildConfig.DEBUG) {
-            Stetho.initializeWithDefaults(this)
-        }
 
         DaggerAppComponent.builder()
             .application(this)

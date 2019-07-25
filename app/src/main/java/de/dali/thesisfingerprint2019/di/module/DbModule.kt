@@ -2,6 +2,7 @@ package de.dali.thesisfingerprint2019.di.module
 
 import android.app.Application
 import androidx.room.Room
+import androidx.room.RoomDatabase
 import dagger.Module
 import dagger.Provides
 import de.dali.thesisfingerprint2019.data.local.AppDatabase
@@ -18,7 +19,10 @@ class DbModule {
     internal fun provideDatabase(application: Application): AppDatabase {
         return Room.databaseBuilder(
             application, AppDatabase::class.java, "fingerprint-database.db"
-        ).allowMainThreadQueries().build()
+        )
+            .allowMainThreadQueries()
+            .setJournalMode(RoomDatabase.JournalMode.TRUNCATE)
+            .build()
     }
 
     @Provides

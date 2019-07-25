@@ -3,7 +3,6 @@ package de.dali.thesisfingerprint2019.processing.stein
 import de.dali.thesisfingerprint2019.processing.Config.STEP_SIZE
 import de.dali.thesisfingerprint2019.processing.Config.TRESHOLD_RED
 import de.dali.thesisfingerprint2019.processing.ProcessingStep
-import de.dali.thesisfingerprint2019.processing.Utils.convertMatToBitMap
 import org.opencv.core.Mat
 import org.opencv.core.Rect
 import javax.inject.Inject

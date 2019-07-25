@@ -2,7 +2,7 @@ package de.dali.thesisfingerprint2019.processing
 
 object Config {
     //region MultiFingerDetection
-    const val KERNEL_SIZE_FILTER = 9.0
+    const val KERNEL_SIZE_FILTER = 33.0
 
     const val H_LOWER = 0.0
     const val S_LOWER = 10.0
@@ -20,7 +20,7 @@ object Config {
     const val CR_UPPER = 173.0
     const val CB_UPPER = 127.0
 
-    const val KERNEL_SIZE_FAND = 17.0
+    const val KERNEL_SIZE_FAND = 28.0
 
     const val MIN_AREA_SIZE = 60000
     //endregion
@@ -65,7 +65,7 @@ object Config {
     const val GRAD_Y = 0.75
     //endregion
 
-    //region ENHANCEMENT
+    //region Enhancement
     const val CLIP_LIMIT = 2.0
     const val CLAHE_ITERATIONS = 6
 

@@ -6,6 +6,7 @@ import android.text.InputType.TYPE_CLASS_NUMBER
 import android.text.SpannableStringBuilder
 import android.text.TextWatcher
 import android.util.AttributeSet
+import android.view.inputmethod.EditorInfo.IME_ACTION_DONE
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -37,6 +38,13 @@ class EditTextWithTitle @JvmOverloads constructor(
 
         if (inputType == "numerical") {
             editText.inputType = TYPE_CLASS_NUMBER
+        }
+
+        editText.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == IME_ACTION_DONE) {
+                editText.clearFocus()
+            }
+            false
         }
 
         attributes.recycle()

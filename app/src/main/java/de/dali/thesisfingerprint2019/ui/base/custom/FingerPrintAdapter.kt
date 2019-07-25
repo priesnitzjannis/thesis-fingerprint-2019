@@ -43,7 +43,7 @@ class FingerPrintAdapter(context: Context?) : RecyclerView.Adapter<FingerPrintAd
         holder.textID.text = listOfFingerPrints[position].biometricalID.toString()
         holder.textDegree.text = listOfFingerPrints[position].correctionDegree.toString() + "°"
 
-        holder.textBroken.text =  if (listOfFingerPrints[position].possiblyBroken == true) "Yes" else "No"
+        holder.textBroken.text = if (listOfFingerPrints[position].brokenDetectedByAlgorithm == true) "Yes" else "No"
     }
 
     override fun getItemCount(): Int {

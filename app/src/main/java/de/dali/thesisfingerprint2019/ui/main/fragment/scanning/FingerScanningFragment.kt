@@ -14,8 +14,8 @@ import androidx.navigation.fragment.NavHostFragment
 import dagger.android.support.AndroidSupportInjection
 import de.dali.thesisfingerprint2019.R
 import de.dali.thesisfingerprint2019.databinding.FragmentFingerScanningBinding
-import de.dali.thesisfingerprint2019.processing.QualityAssuranceThread
-import de.dali.thesisfingerprint2019.processing.QualityAssuranceThread.IntermediateResults.*
+import de.dali.thesisfingerprint2019.processing.QualityAssuranceThread.IntermediateResults.FAILURE
+import de.dali.thesisfingerprint2019.processing.QualityAssuranceThread.IntermediateResults.SUCCESSFUL
 import de.dali.thesisfingerprint2019.processing.Utils.HAND.LEFT
 import de.dali.thesisfingerprint2019.processing.Utils.HAND.RIGHT
 import de.dali.thesisfingerprint2019.ui.base.BaseFragment
@@ -111,7 +111,10 @@ class FingerScanningFragment : BaseFragment() {
 
         binding.txtSuccessfulFrames.text = context?.getString(R.string.fragment_finger_scanning_frame_counter, 0)
 
-        binding.buttonFlash.setOnClickListener { javaCamera2View.toggleFlash() }
+        binding.buttonFlash.setOnClickListener {
+            binding.button.isEnabled = true
+            javaCamera2View.toggleFlash()
+        }
 
         binding.button.setOnClickListener {
             fingerScanningViewModel.record = true
@@ -135,10 +138,11 @@ class FingerScanningFragment : BaseFragment() {
         }
 
         fingerScanningViewModel.setOnUpdate { result, message, frameNumber ->
-            when(result){
+            when (result) {
                 SUCCESSFUL -> {
                     binding.txtLastFrame.text = message
-                    binding.txtSuccessfulFrames.text = context?.getString(R.string.fragment_finger_scanning_frame_counter, frameNumber)
+                    binding.txtSuccessfulFrames.text =
+                        context?.getString(R.string.fragment_finger_scanning_frame_counter, frameNumber)
                 }
 
                 FAILURE -> {

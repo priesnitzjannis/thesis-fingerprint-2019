@@ -15,7 +15,7 @@ class ProcessingThread(vararg val processingSteps: ProcessingStep) {
         grayMat = Mat(mat.rows(), mat.cols(), CV_8UC1)
         Imgproc.cvtColor(mat, grayMat, Imgproc.COLOR_RGB2GRAY)
 
-        var image = grayMat
+        var image = grayMat.clone()
 
         processingSteps.forEach {
             Log.e(TAG, it.TAG)

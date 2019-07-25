@@ -34,7 +34,6 @@ import de.dali.thesisfingerprint2019.processing.Utils.YCrCb.Cb
 import de.dali.thesisfingerprint2019.processing.Utils.YCrCb.Y
 import org.opencv.core.*
 import org.opencv.core.Core.countNonZero
-import org.opencv.imgproc.Imgproc
 import org.opencv.imgproc.Imgproc.*
 import kotlin.math.PI
 import kotlin.math.atan
@@ -48,7 +47,7 @@ object Utils {
         NOT_SPECIFIED
     }
 
-    enum class YCrCb(val channelID: Int){
+    enum class YCrCb(val channelID: Int) {
         Y(0),
         Cr(1),
         Cb(2)
@@ -207,22 +206,27 @@ object Utils {
     fun getThresholdImageNew(mat: Mat): Mat {
         val img_hsv = Mat(mat.rows(), mat.cols(), CvType.CV_8UC3)
         val img_mask_hsv = Mat(mat.rows(), mat.cols(), CvType.CV_8UC1)
-        val kernel = getStructuringElement(MORPH_RECT, Size(KERNEL_SIZE_FILTER, KERNEL_SIZE_FILTER))
+        val kernel = getStructuringElement(MORPH_ELLIPSE, Size(KERNEL_SIZE_FILTER, KERNEL_SIZE_FILTER))
 
         cvtColor(mat, img_hsv, COLOR_RGB2HSV)
         Core.inRange(img_hsv, Scalar(H_LOWER, S_LOWER, V_LOWER), Scalar(H_UPPER, S_UPPER, V_UPPER), img_mask_hsv)
-        morphologyEx(img_mask_hsv, img_mask_hsv, MORPH_OPEN, kernel)
+        morphologyEx(img_mask_hsv, img_mask_hsv, MORPH_CLOSE, kernel)
 
         val img_ycrcb = Mat(mat.rows(), mat.cols(), CvType.CV_8UC3)
         val img_mask_ycrcb = Mat(mat.rows(), mat.cols(), CvType.CV_8UC1)
 
         cvtColor(mat, img_ycrcb, COLOR_RGB2YCrCb)
-        Core.inRange(img_ycrcb, Scalar(Y_LOWER, CR_LOWER, CB_LOWER), Scalar(Y_UPPER, CR_UPPER, CB_UPPER), img_mask_ycrcb)
-        morphologyEx(img_mask_ycrcb, img_mask_ycrcb, MORPH_OPEN, kernel)
+        Core.inRange(
+            img_ycrcb,
+            Scalar(Y_LOWER, CR_LOWER, CB_LOWER),
+            Scalar(Y_UPPER, CR_UPPER, CB_UPPER),
+            img_mask_ycrcb
+        )
+        morphologyEx(img_mask_ycrcb, img_mask_ycrcb, MORPH_CLOSE, kernel)
 
 
         val img_and = Mat(mat.rows(), mat.cols(), CvType.CV_8UC3)
-        val kernel_and = getStructuringElement(MORPH_RECT, Size(KERNEL_SIZE_FAND, KERNEL_SIZE_FAND))
+        val kernel_and = getStructuringElement(MORPH_ELLIPSE, Size(KERNEL_SIZE_FAND, KERNEL_SIZE_FAND))
         Core.bitwise_and(img_mask_hsv, img_mask_ycrcb, img_and)
         morphologyEx(img_and, img_and, MORPH_CLOSE, kernel_and)
 
@@ -284,14 +288,14 @@ object Utils {
         return destMat.cropToMinArea()
     }
 
-    fun hasValidSize(mat: Mat): Boolean = mat.cols() < 400 && mat.rows() < 520 && mat.cols() < mat.rows()
+    fun hasValidSize(mat: Mat): Boolean = mat.cols() < 400 && mat.rows() < 540 && mat.cols() < mat.rows()
 
-    fun hasEnoughContent(mat: Mat): Boolean{
+    fun hasEnoughContent(mat: Mat): Boolean {
         val gray = Mat(mat.rows(), mat.cols(), CvType.CV_8UC1)
         cvtColor(mat, gray, COLOR_RGB2GRAY)
         threshold(gray, gray, 200.0, 255.0, THRESH_BINARY + THRESH_OTSU)
 
-        return countNonZero(gray) >= (gray.rows() * gray.cols()) * (3/4)
+        return countNonZero(gray) >= (gray.rows() * gray.cols()) * (3 / 4)
     }
 
     fun conditionalPointOnContour(hand: HAND, point: Point, mat: Mat, operator: (i: Int) -> Boolean) {

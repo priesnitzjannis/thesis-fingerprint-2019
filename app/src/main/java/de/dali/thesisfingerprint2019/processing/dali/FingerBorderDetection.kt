@@ -3,14 +3,12 @@ package de.dali.thesisfingerprint2019.processing.dali
 import de.dali.thesisfingerprint2019.processing.Config.PIXEL_TO_CROP
 import de.dali.thesisfingerprint2019.processing.ProcessingStep
 import de.dali.thesisfingerprint2019.processing.Utils.adaptiveThresh
-import de.dali.thesisfingerprint2019.processing.Utils.convertMatToBitMap
 import de.dali.thesisfingerprint2019.processing.Utils.dilate
 import de.dali.thesisfingerprint2019.processing.Utils.erode
 import de.dali.thesisfingerprint2019.processing.Utils.fixPossibleDefects
 import de.dali.thesisfingerprint2019.processing.Utils.getFingerContour
 import de.dali.thesisfingerprint2019.processing.Utils.getMaskImage
 import de.dali.thesisfingerprint2019.processing.Utils.getMaskedImage
-import de.dali.thesisfingerprint2019.processing.Utils.getThresholdImage
 import de.dali.thesisfingerprint2019.processing.Utils.getThresholdImageNew
 import de.dali.thesisfingerprint2019.processing.Utils.releaseImage
 import org.opencv.core.Core

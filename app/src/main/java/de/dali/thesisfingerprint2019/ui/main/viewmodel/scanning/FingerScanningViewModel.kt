@@ -7,7 +7,7 @@ import de.dali.thesisfingerprint2019.data.local.entity.ImageEntity
 import de.dali.thesisfingerprint2019.data.repository.ImageRepository
 import de.dali.thesisfingerprint2019.processing.ProcessingThread
 import de.dali.thesisfingerprint2019.processing.QualityAssuranceThread
-import de.dali.thesisfingerprint2019.processing.QualityAssuranceThread.*
+import de.dali.thesisfingerprint2019.processing.QualityAssuranceThread.IntermediateResults
 import de.dali.thesisfingerprint2019.processing.Utils.HAND
 import de.dali.thesisfingerprint2019.processing.Utils.HAND.NOT_SPECIFIED
 import de.dali.thesisfingerprint2019.processing.Utils.convertMatToBitMap
@@ -65,7 +65,8 @@ class FingerScanningViewModel @Inject constructor(
     fun setOnSuccess(callback: (List<FingerPrintIntermediateEntity>) -> Unit) =
         qualityAssuranceThread.setSuccessCallback(callback)
 
-    fun setOnUpdate(callback: (IntermediateResults, String, Int) -> Unit) = qualityAssuranceThread.setUpdateCallback(callback)
+    fun setOnUpdate(callback: (IntermediateResults, String, Int) -> Unit) =
+        qualityAssuranceThread.setUpdateCallback(callback)
 
     fun setSensorOrientation(sensorOrientation: Int) {
         qualityAssuranceThread.sensorOrientation = sensorOrientation
@@ -105,8 +106,11 @@ class FingerScanningViewModel @Inject constructor(
                     width = processedImage.width,
                     height = processedImage.height,
                     edgeDensity = pair.edgeDens,
-                    possiblyBroken = !hasValidSize(pair.mat) || !hasEnoughContent(pair.mat),
-                    correctionDegree = (pair.correctionDegreeImprecise + correctionDegree).toBigDecimal().setScale(2, RoundingMode.UP).toDouble()
+                    brokenDetectedByAlgorithm = !hasValidSize(pair.mat) || !hasEnoughContent(pair.mat),
+                    correctionDegree = (pair.correctionDegreeImprecise + correctionDegree).toBigDecimal().setScale(
+                        2,
+                        RoundingMode.UP
+                    ).toDouble()
                 )
 
                 imageRepository.insert(imageEntity)

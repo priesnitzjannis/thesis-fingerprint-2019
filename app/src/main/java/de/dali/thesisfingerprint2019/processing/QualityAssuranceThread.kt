@@ -5,9 +5,9 @@ import android.os.HandlerThread
 import android.os.Looper
 import android.os.Message
 import android.os.Process.THREAD_PRIORITY_BACKGROUND
-import android.util.Log
 import de.dali.thesisfingerprint2019.data.local.entity.FingerPrintIntermediateEntity
-import de.dali.thesisfingerprint2019.processing.QualityAssuranceThread.IntermediateResults.*
+import de.dali.thesisfingerprint2019.processing.QualityAssuranceThread.IntermediateResults.FAILURE
+import de.dali.thesisfingerprint2019.processing.QualityAssuranceThread.IntermediateResults.SUCCESSFUL
 import de.dali.thesisfingerprint2019.processing.Utils.HAND
 import de.dali.thesisfingerprint2019.processing.Utils.HAND.NOT_SPECIFIED
 import de.dali.thesisfingerprint2019.processing.Utils.hasEnoughContent
@@ -22,7 +22,7 @@ import org.opencv.core.Mat
 class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
     HandlerThread(TAG, THREAD_PRIORITY_BACKGROUND) {
 
-    enum class IntermediateResults{
+    enum class IntermediateResults {
         SUCCESSFUL,
         FAILURE
     }
@@ -86,7 +86,8 @@ class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
                             val qualityCheckedImage = (processingStep[5] as MultiQualityAssurance).run(it)
                             val edgeDens = (processingStep[5] as MultiQualityAssurance).edgeDensity
 
-                            val fingerPrintIntermediate = FingerPrintIntermediateEntity(qualityCheckedImage, edgeDens, degreeImprecise)
+                            val fingerPrintIntermediate =
+                                FingerPrintIntermediateEntity(qualityCheckedImage, edgeDens, degreeImprecise)
 
                             qualityCheckedImages.add(fingerPrintIntermediate)
                         }
@@ -140,7 +141,7 @@ class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
         while (iterateA.hasNext() && iterateB.hasNext()) {
             val valA = iterateA.next()
             val valB = iterateB.next()
-            if (valA.edgeDens < valB.edgeDens && hasValidSize(valB.mat) && hasEnoughContent(valB.mat) ) {
+            if (valA.edgeDens < valB.edgeDens && hasValidSize(valB.mat) && hasEnoughContent(valB.mat)) {
                 iterateA.set(valB)
             }
         }

@@ -45,7 +45,9 @@ data class ImageEntity(
     var edgeDensity: Double? = null,
 
     @NonNull
-    var possiblyBroken: Boolean? = null,
+    var brokenDetectedByAlgorithm: Boolean? = null,
+
+    var brokenDetectedByHand: Boolean? = null,
 
     @NonNull
     var correctionDegree: Double? = null

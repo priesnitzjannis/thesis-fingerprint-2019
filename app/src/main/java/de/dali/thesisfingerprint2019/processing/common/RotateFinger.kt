@@ -38,8 +38,8 @@ class RotateFinger @Inject constructor() : ProcessingStep() {
         correctionAngle = if (hand == RIGHT) 90 - angle else -(90 + angle)
 
         correctionAngle = if (correctionAngle < -100.0 && hand == Utils.HAND.LEFT) correctionAngle + 180.0
-                          else if (correctionAngle > 100.0 && hand == RIGHT ) correctionAngle - 180.0
-                          else correctionAngle
+        else if (correctionAngle > 100.0 && hand == RIGHT) correctionAngle - 180.0
+        else correctionAngle
 
         return rotateImageByDegree(correctionAngle, originalImage)
     }
