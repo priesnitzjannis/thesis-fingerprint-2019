@@ -43,8 +43,8 @@ class TestPersonOverviewAdapter : RecyclerView.Adapter<TestPersonOverviewViewHol
     override fun onBindViewHolder(holder: TestPersonOverviewViewHolder, position: Int) {
         list?.let {
             val entity = it[position]
-            holder.txtUser.text =
-                holder.itemView.context.getString(R.string.fragment_test_person_overview, entity.personID.toString())
+            holder.txtUser.text = entity.name
+            //holder.itemView.context.getString(R.string.fragment_test_person_overview, entity.personID.toString())
             holder.txtCreatedOn.text = holder.itemView.context.getString(
                 R.string.fragment_selection_created_on,
                 toReadableDate(entity.timestamp).toString()

@@ -2,7 +2,7 @@ package de.dali.thesisfingerprint2019.processing
 
 object Config {
     //region MultiFingerDetection
-    const val KERNEL_SIZE_FILTER = 33.0
+    const val KERNEL_SIZE_FILTER = 15.0
 
     const val H_LOWER = 0.0
     const val S_LOWER = 10.0
@@ -26,7 +26,7 @@ object Config {
     //endregion
 
     //region FingerRotationImprecise
-    const val POINT_PAIR_DST = 50
+    const val POINT_PAIR_DST = 100
     //endregion
 
     //region FingerBorderDetection

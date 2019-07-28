@@ -1,5 +1,6 @@
 package de.dali.thesisfingerprint2019.processing.dali
 
+import android.util.Log
 import de.dali.thesisfingerprint2019.processing.Config.POINT_PAIR_DST
 import de.dali.thesisfingerprint2019.processing.ProcessingStep
 import de.dali.thesisfingerprint2019.processing.Utils.HAND
@@ -13,6 +14,7 @@ import de.dali.thesisfingerprint2019.processing.Utils.releaseImage
 import de.dali.thesisfingerprint2019.processing.Utils.rotateImageByDegree
 import org.opencv.core.Mat
 import org.opencv.core.Point
+import java.lang.Exception
 import javax.inject.Inject
 
 
@@ -62,16 +64,19 @@ class FingerRotationImprecise @Inject constructor() : ProcessingStep() {
         var pointOnContour = Point()
         val imageThresh = getThresholdImage(image)
 
+        try {
+            conditionalPointOnContour(hand, point, image) { i ->
+                val pixel = imageThresh.get(point.y.toInt() - 1, i - 1)
 
-        conditionalPointOnContour(hand, point, image) { i ->
-            val pixel = imageThresh.get(point.y.toInt(), i - 1)
-
-            if (pixel[0] != 0.0) {
-                pointOnContour = Point(i.toDouble(), point.y)
-                true
-            } else {
-                false
+                if (pixel[0] != 0.0) {
+                    pointOnContour = Point(i.toDouble(), point.y)
+                    true
+                } else {
+                    false
+                }
             }
+        } catch (e : Exception){
+            Log.e(TAG, e.message)
         }
 
         return pointOnContour

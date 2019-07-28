@@ -16,7 +16,6 @@ import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class FingerPrintCreateViewModel @Inject constructor(
-    private val fingerPrintRepository: FingerPrintRepository,
     private val imageRepository: ImageRepository
 ) :
     BaseViewModel() {
@@ -37,20 +36,6 @@ class FingerPrintCreateViewModel @Inject constructor(
 
     init {
         selectedFinger.value = mutableListOf()
-    }
-
-    fun insertFingerPrint(
-        fingerPrintEntity: FingerPrintEntity,
-        onSuccess: (Long) -> Unit,
-        onError: (Throwable) -> Unit
-    ) {
-
-        val disposable = Single.fromCallable { fingerPrintRepository.insert(fingerPrintEntity) }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(onSuccess, onError)
-
-        compositeDisposable.add(disposable)
     }
 
     fun loadImages(fingerPrintID: Long) {

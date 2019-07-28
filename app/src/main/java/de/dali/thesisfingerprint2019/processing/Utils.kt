@@ -210,7 +210,7 @@ object Utils {
 
         cvtColor(mat, img_hsv, COLOR_RGB2HSV)
         Core.inRange(img_hsv, Scalar(H_LOWER, S_LOWER, V_LOWER), Scalar(H_UPPER, S_UPPER, V_UPPER), img_mask_hsv)
-        morphologyEx(img_mask_hsv, img_mask_hsv, MORPH_CLOSE, kernel)
+        morphologyEx(img_mask_hsv, img_mask_hsv, MORPH_OPEN, kernel)
 
         val img_ycrcb = Mat(mat.rows(), mat.cols(), CvType.CV_8UC3)
         val img_mask_ycrcb = Mat(mat.rows(), mat.cols(), CvType.CV_8UC1)
@@ -222,7 +222,7 @@ object Utils {
             Scalar(Y_UPPER, CR_UPPER, CB_UPPER),
             img_mask_ycrcb
         )
-        morphologyEx(img_mask_ycrcb, img_mask_ycrcb, MORPH_CLOSE, kernel)
+        morphologyEx(img_mask_ycrcb, img_mask_ycrcb, MORPH_OPEN, kernel)
 
 
         val img_and = Mat(mat.rows(), mat.cols(), CvType.CV_8UC3)

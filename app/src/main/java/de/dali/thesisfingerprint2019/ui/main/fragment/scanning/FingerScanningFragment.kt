@@ -2,6 +2,7 @@ package de.dali.thesisfingerprint2019.ui.main.fragment.scanning
 
 import android.app.ProgressDialog
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -58,7 +59,7 @@ class FingerScanningFragment : BaseFragment() {
             fingerScanningViewModel.frameCounter++
             mRgba = inputFrame.rgba()
 
-            if (fingerScanningViewModel.record && fingerScanningViewModel.frameCounter % 10 == 0) {
+            if (fingerScanningViewModel.record /* && fingerScanningViewModel.frameCounter % 10 == 0 */)  {
                 fingerScanningViewModel.sendToPipeline(mRgba)
             }
 
@@ -73,6 +74,10 @@ class FingerScanningFragment : BaseFragment() {
                 LoaderCallbackInterface.SUCCESS -> {
                     fingerScanningViewModel.startProcessingPipeline()
                     binding.javaCamera2View.enableView()
+
+                    Handler().postDelayed({
+                        javaCamera2View.toggleFlash()
+                    }, 300)
                 }
                 else -> {
                     super.onManagerConnected(status)
@@ -110,11 +115,6 @@ class FingerScanningFragment : BaseFragment() {
         binding.javaCamera2View.setCvCameraViewListener(listener)
 
         binding.txtSuccessfulFrames.text = context?.getString(R.string.fragment_finger_scanning_frame_counter, 0)
-
-        binding.buttonFlash.setOnClickListener {
-            binding.button.isEnabled = true
-            javaCamera2View.toggleFlash()
-        }
 
         binding.button.setOnClickListener {
             fingerScanningViewModel.record = true

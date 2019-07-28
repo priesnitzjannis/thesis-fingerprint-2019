@@ -71,7 +71,7 @@ class FingerBorderDetection @Inject constructor() : ProcessingStep() {
         val contour = getFingerContour(mask)
 
         return if (contour.size == amountOfFinger) {
-            Pair(orig, mask)
+            Pair(orig, getMaskImage(orig, contour))
         } else {
             val newWidth = orig.cols()
             val newHeight = orig.rows() - PIXEL_TO_CROP

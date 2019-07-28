@@ -48,6 +48,8 @@ class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
     lateinit var onSuccess: (List<FingerPrintIntermediateEntity>) -> Unit
     lateinit var onUpdate: (IntermediateResults, String, Int) -> Unit
 
+    var imageProcessingRunning = false
+
     override fun onLooperPrepared() {
         super.onLooperPrepared()
         handler = getHandler(looper)
@@ -61,7 +63,6 @@ class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
             override fun handleMessage(msg: Message) {
                 super.handleMessage(msg)
                 val image = (msg.obj as Mat)
-
                 totalImages++
 
                 val processedMat = Mat()
@@ -77,7 +78,10 @@ class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
 
                     if (separatedFingers.isNotEmpty()) {
 
-                        val rotatedFingers = separatedFingers.map { (processingStep[3] as RotateFinger).run(it) }
+                        val rotatedFingers = separatedFingers.map {
+                            (processingStep[3] as RotateFinger).degreeImprecise = degreeImprecise
+                            (processingStep[3] as RotateFinger).run(it)
+                        }
                         val fingertips = rotatedFingers.map { (processingStep[4] as FindFingerTip).run(it) }
 
                         val qualityCheckedImages = mutableListOf<FingerPrintIntermediateEntity>()
@@ -117,6 +121,8 @@ class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
                     releaseImage(listOf(image, processedMat, rotatedImage))
                     onUpdate(FAILURE, "Couldn't detect Fingers.", processedImages)
                 }
+
+                imageProcessingRunning = false
             }
         }
     }
@@ -129,9 +135,13 @@ class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
 
     fun sendToPipeline(originalImage: Mat) {
         val message = Message()
-        val image = originalImage.clone()
-        message.obj = image
-        handler.sendMessage(message)
+
+        if (!imageProcessingRunning) {
+            imageProcessingRunning = true
+            val image = originalImage.clone()
+            message.obj = image
+            handler.sendMessage(message)
+        }
     }
 
     private fun MutableList<FingerPrintIntermediateEntity>.mapInPlace(l: List<FingerPrintIntermediateEntity>) {

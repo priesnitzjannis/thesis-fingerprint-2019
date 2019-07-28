@@ -16,6 +16,9 @@ import org.opencv.core.Point
 import javax.inject.Inject
 
 class RotateFinger @Inject constructor() : ProcessingStep() {
+
+    var degreeImprecise = 0.0
+
     var correctionAngle = 0.0
 
     var hand = NOT_SPECIFIED
@@ -35,11 +38,11 @@ class RotateFinger @Inject constructor() : ProcessingStep() {
         val distanceP2ToContour = euclideanDist(pointPair.second, p2Contour)
 
         val angle = calcAngle(distanceP1P2, distanceP2ToContour, distanceP1ToContour)
-        correctionAngle = if (hand == RIGHT) 90 - angle else -(90 + angle)
+        val angleFixed = if (hand == RIGHT) 90 - angle else -(90 + angle)
 
-        correctionAngle = if (correctionAngle < -100.0 && hand == Utils.HAND.LEFT) correctionAngle + 180.0
-        else if (correctionAngle > 100.0 && hand == RIGHT) correctionAngle - 180.0
-        else correctionAngle
+        correctionAngle = if (angleFixed + degreeImprecise < -100.0 && hand == Utils.HAND.LEFT) angleFixed + 180.0
+        else if (angleFixed + degreeImprecise > 100.0 && hand == RIGHT) angleFixed - 180.0
+        else angleFixed
 
         return rotateImageByDegree(correctionAngle, originalImage)
     }

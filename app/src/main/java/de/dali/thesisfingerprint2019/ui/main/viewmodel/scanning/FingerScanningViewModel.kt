@@ -4,6 +4,7 @@ package de.dali.thesisfingerprint2019.ui.main.viewmodel.scanning
 import de.dali.thesisfingerprint2019.data.local.entity.FingerPrintEntity
 import de.dali.thesisfingerprint2019.data.local.entity.FingerPrintIntermediateEntity
 import de.dali.thesisfingerprint2019.data.local.entity.ImageEntity
+import de.dali.thesisfingerprint2019.data.repository.FingerPrintRepository
 import de.dali.thesisfingerprint2019.data.repository.ImageRepository
 import de.dali.thesisfingerprint2019.processing.ProcessingThread
 import de.dali.thesisfingerprint2019.processing.QualityAssuranceThread
@@ -27,6 +28,7 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class FingerScanningViewModel @Inject constructor(
+    private val fingerPrintRepository: FingerPrintRepository,
     private val imageRepository: ImageRepository,
     @Named("qualityAssuranceDali") private val qualityAssuranceThread: QualityAssuranceThread,
     @Named("pipelineDali") private val processingThread: ProcessingThread
@@ -79,6 +81,10 @@ class FingerScanningViewModel @Inject constructor(
     ) {
 
         val disposable = Single.fromCallable {
+            val id = fingerPrintRepository.insert(entity)
+
+            entity.fingerPrintId = id
+
             images.forEachIndexed { index, pair ->
                 val pathName = "$NAME_MAIN_FOLDER/${entity.personID}/${entity.fingerPrintId}"
                 val timestamp = System.currentTimeMillis()

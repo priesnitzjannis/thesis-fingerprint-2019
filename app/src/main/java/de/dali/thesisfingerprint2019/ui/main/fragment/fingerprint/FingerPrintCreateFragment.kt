@@ -214,37 +214,12 @@ class FingerPrintCreateFragment : BaseFragment() {
                 fingerPrintCreateViewModel.getSortedStringList() ?: emptyList()
             )
         } else {
-            showProgressDialogWithTitle()
             fingerPrintCreateViewModel.createFingerPrintEntity()
-            fingerPrintCreateViewModel.insertFingerPrint(
+            navToFingerScanningFrag(
                 fingerPrintCreateViewModel.fingerPrintEntity,
-                ::onSuccess,
-                ::onError
+                fingerPrintCreateViewModel.getSortedStringList() ?: emptyList()
             )
         }
-    }
-
-    private fun onSuccess(id: Long) {
-        fingerPrintCreateViewModel.fingerPrintEntity.fingerPrintId = id
-
-        progressDialog.dismiss()
-        navToFingerScanningFrag(
-            fingerPrintCreateViewModel.fingerPrintEntity,
-            fingerPrintCreateViewModel.getSortedStringList() ?: emptyList()
-        )
-    }
-
-    private fun onError(t: Throwable) {
-        Log.e(TAG, t.message)
-    }
-
-    private fun showProgressDialogWithTitle() {
-        progressDialog = ProgressDialog(context)
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER)
-        progressDialog.setCancelable(false)
-        progressDialog.setTitle("Please Wait..")
-        progressDialog.setMessage("Preparing to download ...")
-        progressDialog.show()
     }
 
     companion object {
