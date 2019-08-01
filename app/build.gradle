@@ -74,6 +74,9 @@ dependencies {
     kapt 'com.google.dagger:dagger-compiler:2.23.2'
     kapt 'com.google.dagger:dagger-android-processor:2.23.2'
 
+    /* Utils */
+    implementation 'com.facebook.stetho:stetho:1.5.1'
+
     /* Permission Handling */
     implementation 'com.karumi:dexter:5.0.0'
 

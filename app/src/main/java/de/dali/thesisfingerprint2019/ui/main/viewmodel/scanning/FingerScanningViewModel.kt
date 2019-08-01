@@ -85,8 +85,10 @@ class FingerScanningViewModel @Inject constructor(
 
             entity.fingerPrintId = id
 
+            val folderId = System.currentTimeMillis()
+
             images.forEachIndexed { index, pair ->
-                val pathName = "$NAME_MAIN_FOLDER/${entity.personID}/${entity.fingerPrintId}"
+                val pathName = "$NAME_MAIN_FOLDER/$folderId/${entity.fingerPrintId}"
                 val timestamp = System.currentTimeMillis()
                 val fileName = "${timestamp}_enhanced.jpg"
                 val fileNameOriginal = "${timestamp}_orig.jpg"
