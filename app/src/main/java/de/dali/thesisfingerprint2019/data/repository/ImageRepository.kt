@@ -20,4 +20,6 @@ class ImageRepository @Inject constructor(private val imageDao: ImageDao) {
     fun getAllFingerprintsByTestPerson(fingerPrintID: Long): Single<List<ImageEntity>> =
         imageDao.getAllImagesByFingerprints(fingerPrintID)
 
+    fun getAllImages() = imageDao.getAllImages()
+
 }

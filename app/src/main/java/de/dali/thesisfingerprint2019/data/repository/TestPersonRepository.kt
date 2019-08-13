@@ -17,6 +17,6 @@ class TestPersonRepository @Inject constructor(private val testPersonDao: TestPe
 
     fun deleteAll() = testPersonDao.deleteAll()
 
-    fun getAllTestPerson(): Single<List<TestPersonEntity>> = testPersonDao.getAllTestPerson()
+    fun getAllTestPerson(): List<TestPersonEntity> = testPersonDao.getAllTestPerson()
 
 }

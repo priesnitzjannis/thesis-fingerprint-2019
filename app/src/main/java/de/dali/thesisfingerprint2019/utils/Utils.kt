@@ -8,10 +8,8 @@ import android.os.Build
 import android.os.Environment
 import android.util.Log
 import de.dali.thesisfingerprint2019.utils.Constants.NAME_MAIN_FOLDER
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
 import java.util.*
+import java.io.*
 
 
 object Utils {
@@ -71,6 +69,69 @@ object Utils {
             }
         } catch (e: Exception) {
             Log.e(TAG, e.message)
+        }
+
+    }
+
+    fun copyFile(input: File, output: File, outputPath: String) {
+
+        val inputStream: InputStream?
+        val out: OutputStream?
+        try {
+            val dir = File(outputPath)
+            if (!dir.exists()) {
+                dir.mkdirs()
+            }
+
+            inputStream = FileInputStream(input)
+            out = FileOutputStream(output)
+
+            val buffer = ByteArray(1024)
+            var read: Int
+            while ((inputStream.read(buffer)).also { read = it } != -1) {
+                out.write(buffer, 0, read)
+            }
+            inputStream.close()
+
+            out.flush()
+            out.close()
+
+        } catch (fnfe1: FileNotFoundException) {
+            Log.e("tag", fnfe1.message)
+        } catch (e: Exception) {
+            Log.e("tag", e.message)
+        }
+
+    }
+    fun copyAttachedDatabase(context: Context, databaseName: String) {
+        val dbPath = context.getDatabasePath(databaseName)
+
+        // If the database already exists, return
+        if (dbPath.exists()) {
+            return
+        }
+
+        // Make sure we have a path to the file
+        dbPath.parentFile.mkdirs()
+
+        // Try to copy database file
+        try {
+            val inputStream = FileInputStream(Environment.getExternalStorageDirectory().absolutePath + "/$NAME_MAIN_FOLDER/fingerprint-database.db")
+            val output = FileOutputStream(dbPath)
+
+            val buffer = ByteArray(8192)
+
+            var length : Int
+            while (inputStream.read(buffer, 0, 8192).also { length = it } > 0) {
+                output.write(buffer, 0, length)
+            }
+
+            output.flush()
+            output.close()
+            inputStream.close()
+        } catch (e: IOException) {
+            Log.d(TAG, "Failed to open file", e)
+            e.printStackTrace()
         }
 
     }

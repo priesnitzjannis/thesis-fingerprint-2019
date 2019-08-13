@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import de.dali.thesisfingerprint2019.data.local.entity.TestPersonEntity
 import de.dali.thesisfingerprint2019.data.repository.TestPersonRepository
 import de.dali.thesisfingerprint2019.ui.base.BaseViewModel
+import de.dali.thesisfingerprint2019.utils.UpdateDB
 import de.dali.thesisfingerprint2019.utils.Utils
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -19,12 +20,16 @@ class TestPersonOverviewViewModel @Inject constructor(private val testPersonRepo
     val listOfTestPerson = MutableLiveData<List<TestPersonEntity>>()
     private var compositeDisposable = CompositeDisposable()
 
+    @Inject lateinit var updateDB: UpdateDB
+
     fun loadTestPerson() {
-        val fingerprintDisposable = testPersonRepository.getAllTestPerson()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(this::onFetchComplete, this::onError)
-        compositeDisposable.add(fingerprintDisposable)
+        val fingerprintDisposable = Single.fromCallable {
+            testPersonRepository.getAllTestPerson()
+        }
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::onFetchComplete, this::onError)
+            compositeDisposable.add(fingerprintDisposable)
     }
 
     fun exportDB(
@@ -35,6 +40,20 @@ class TestPersonOverviewViewModel @Inject constructor(private val testPersonRepo
 
         val disposable = Single.fromCallable {
             Utils.exportDB(context)
+        }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(onSuccess, onError)
+
+        compositeDisposable.add(disposable)
+    }
+
+    fun updateDB(
+        onSuccess: (Unit) -> Unit,
+        onError: (Throwable) -> Unit
+    ){
+        val disposable = Single.fromCallable {
+            updateDB.update()
         }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())

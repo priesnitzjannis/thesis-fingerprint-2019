@@ -9,6 +9,7 @@ import de.dali.thesisfingerprint2019.data.local.AppDatabase
 import de.dali.thesisfingerprint2019.data.local.dao.FingerPrintDao
 import de.dali.thesisfingerprint2019.data.local.dao.ImageDao
 import de.dali.thesisfingerprint2019.data.local.dao.TestPersonDao
+import de.dali.thesisfingerprint2019.utils.Utils
 import javax.inject.Singleton
 
 @Module
@@ -17,6 +18,8 @@ class DbModule {
     @Provides
     @Singleton
     internal fun provideDatabase(application: Application): AppDatabase {
+        Utils.copyAttachedDatabase(application, "fingerprint-database.db")
+
         return Room.databaseBuilder(
             application, AppDatabase::class.java, "fingerprint-database.db"
         )

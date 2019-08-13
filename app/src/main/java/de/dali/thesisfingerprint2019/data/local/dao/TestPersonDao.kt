@@ -20,6 +20,6 @@ interface TestPersonDao {
     fun deleteAll()
 
     @Query("SELECT * FROM test_person")
-    fun getAllTestPerson(): Single<List<TestPersonEntity>>
+    fun getAllTestPerson(): List<TestPersonEntity>
 
 }

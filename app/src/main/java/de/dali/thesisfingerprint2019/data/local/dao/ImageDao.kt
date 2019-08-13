@@ -20,7 +20,7 @@ interface ImageDao {
     fun deleteAll()
 
     @Query("SELECT * FROM images")
-    fun getAllImages(): Single<List<ImageEntity>>
+    fun getAllImages(): List<ImageEntity>
 
     @Query("SELECT * FROM images WHERE fingerPrintID = :id")
     fun getAllImagesByFingerprints(id: Long): Single<List<ImageEntity>>

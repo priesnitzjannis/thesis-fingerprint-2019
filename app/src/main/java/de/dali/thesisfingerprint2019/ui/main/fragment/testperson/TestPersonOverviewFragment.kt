@@ -92,6 +92,13 @@ class TestPersonOverviewFragment : BaseFragment() {
                 testPersonOverviewViewModel.exportDB(activity, { this.hideProgressDialog() }, {})
                 true
             }
+
+            R.id.menu_main_update -> {
+                showProgressDialogWithTitle()
+                testPersonOverviewViewModel.updateDB({ this.hideProgressDialog() }, {})
+                true
+            }
+
             else -> super.onOptionsItemSelected(item)
         }
     }

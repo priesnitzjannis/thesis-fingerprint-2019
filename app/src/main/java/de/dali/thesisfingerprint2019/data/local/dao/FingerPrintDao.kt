@@ -20,7 +20,7 @@ interface FingerPrintDao {
     fun deleteAll()
 
     @Query("SELECT * from finger_print")
-    fun getAllFingerprints(): Single<List<FingerPrintEntity>>
+    fun getAllFingerprints(): List<FingerPrintEntity>
 
     @Query("SELECT * from finger_print WHERE personID = :id")
     fun getAllFingerprintsByTestPerson(id: Long): Single<List<FingerPrintEntity>>
