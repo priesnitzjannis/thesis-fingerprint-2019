@@ -20,7 +20,7 @@ class Enhancement @Inject constructor() : ProcessingStep() {
     override fun run(originalImage: Mat): Mat {
 
         for (i in 0 until CLAHE_ITERATIONS) {
-            val kernelSize = 2.0.pow(CLAHE_ITERATIONS) / (i + 1)
+            val kernelSize = 2.0.pow(CLAHE_ITERATIONS) / (2.0.pow(i))
             val clahe = createCLAHE(CLIP_LIMIT, Size(kernelSize, kernelSize))
             clahe.apply(originalImage, originalImage)
         }

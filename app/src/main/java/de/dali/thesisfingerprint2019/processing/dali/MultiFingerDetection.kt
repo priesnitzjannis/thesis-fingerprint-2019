@@ -24,25 +24,17 @@ class MultiFingerDetection @Inject constructor() : ProcessingStep() {
         val imageThresh = getThresholdImageNew(originalImage)
         val fingerContours = getFingerContour(imageThresh)
 
-        val fingerContoursFixed = fingerContours.map {
-            val temp = fixPossibleDefects(it, originalImage)
-            val points = Mat.zeros(temp.size(), temp.type())
-            Core.findNonZero(temp, points)
-            MatOfPoint(points)
-        }
-
         releaseImage(listOf(imageThresh))
 
-        val maskImage = getMaskImage(originalImage, fingerContoursFixed)
+        val maskImage = getMaskImage(originalImage, fingerContours)
         val imageWithOutBackground = getMaskedImage(originalImage, maskImage)
 
         var croppedImage = Mat()
 
-        if (fingerContoursFixed.isNotEmpty()) {
-            val rect = Imgproc.boundingRect(fingerContoursFixed.toMat())
+        if (fingerContours.isNotEmpty()) {
+            val rect = Imgproc.boundingRect(fingerContours.toMat())
 
             releaseImage(fingerContours)
-            releaseImage(fingerContoursFixed)
             releaseImage(listOf(maskImage))
 
             croppedImage = Mat(imageWithOutBackground, rect)
