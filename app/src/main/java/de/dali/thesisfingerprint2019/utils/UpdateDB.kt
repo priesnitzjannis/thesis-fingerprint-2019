@@ -5,49 +5,71 @@ import de.dali.thesisfingerprint2019.data.repository.FingerPrintRepository
 import de.dali.thesisfingerprint2019.data.repository.ImageRepository
 import de.dali.thesisfingerprint2019.data.repository.TestPersonRepository
 import de.dali.thesisfingerprint2019.utils.Constants.NAME_MAIN_FOLDER
+import de.dali.thesisfingerprint2019.utils.UpdateDB.ImageType.*
 import de.dali.thesisfingerprint2019.utils.Utils.copyFile
 import java.io.File
 
-class UpdateDB(val userRepo : TestPersonRepository,
-               val fingerPersonRepository: FingerPrintRepository,
-               val imageRepository: ImageRepository) {
+class UpdateDB(
+    private val userRepo : TestPersonRepository,
+    private val fingerPersonRepository: FingerPrintRepository,
+    private val imageRepository: ImageRepository) {
+
+    private enum class ImageType(val nameAsString: String){
+        RGB("_rbg.jpg"),
+        GRAYSCALE("_gray.jpg"),
+        ENHANCED("_enhanced.jpg")
+    }
 
     fun update(){
         val allUser = userRepo.getAllTestPerson()
         val allFingerPrints = fingerPersonRepository.getAllFingerPrints()
         val allImages = imageRepository.getAllImages()
 
-        val listOfDevices = listOf("Samsung" /*, "Huawei" */)
+        val extStorage = Environment.getExternalStorageDirectory()
 
-        listOfDevices.forEach { deviceName ->
-            allUser.forEach { user ->
-                val userFingerPrints = allFingerPrints.filter { it.personID == user.personID && it.vendor.contains(deviceName, ignoreCase = true)}
+        allUser.forEach { user ->
+                val userFingerPrints = allFingerPrints.filter { it.personID == user.personID }
 
                 userFingerPrints.forEach { fingerprint ->
                     val userImages = allImages.filter{it.fingerPrintID == fingerprint.fingerPrintId}
 
-                    val filePath = user.timestamp.toString() + "/" + fingerprint.fingerPrintId
-                    val extStorage = Environment.getExternalStorageDirectory()
-
                     userImages.forEach {
-                        val fileName = user.personID.toString() + "_" + if (fingerprint.vendor.contains("HUAWEI", ignoreCase = true)){ "0" } else {"1"} + "_" + it.imageId
-                        val childPath = "updated-thesis-fingerprint-images/$filePath/$fileName"
+                        val fileName = createFileName(
+                            user.personID.toString(),
+                            if (fingerprint.vendor.contains("HUAWEI", ignoreCase = true)){ "0" } else {"1"} ,
+                            it.imageId
+                        )
 
-                        val fileRGB = File(extStorage, it.pathRGB)
-                        val fileRGBNew = File(extStorage, "${childPath}_rgb.jpg")
-                        copyFile(fileRGB, fileRGBNew, extStorage.absolutePath + "/updated-thesis-fingerprint-images/$filePath")
+                        val parentPath = "updated-thesis-fingerprint-images"
+                        val childPath = "$parentPath/$fileName"
 
-                        val fileGray = File(extStorage, it.pathGray)
-                        val fileGrayNew = File(extStorage, "${childPath}_gray.jpg")
-                        copyFile(fileGray, fileGrayNew, extStorage.absolutePath + "/updated-thesis-fingerprint-images/$filePath")
+                        handleImage(
+                            extStorage = extStorage.absolutePath,
+                            pathImageOld = it.pathRGB!!,
+                            imagePathNew = childPath,
+                            parentPath = parentPath,
+                            imageType = RGB
+                        )
 
-                        val fileEnhanced = File(extStorage, it.pathEnhanced)
-                        val fileEnhancedNew = File(extStorage, "${childPath}_enhanced.jpg")
-                        copyFile(fileEnhanced, fileEnhancedNew,extStorage.absolutePath + "/updated-thesis-fingerprint-images/$filePath")
+                        handleImage(
+                            extStorage = extStorage.absolutePath,
+                            pathImageOld = it.pathGray!!,
+                            imagePathNew = childPath,
+                            parentPath = parentPath,
+                            imageType = GRAYSCALE
+                        )
 
-                        it.pathRGB = NAME_MAIN_FOLDER + "/$filePath/${fileName}_rgb.jpg"
-                        it.pathGray = NAME_MAIN_FOLDER + "/$filePath/${fileName}__gray.jpg"
-                        it.pathEnhanced =  NAME_MAIN_FOLDER + "/$filePath/${fileName}__enhanced.jpg"
+                        handleImage(
+                            extStorage = extStorage.absolutePath,
+                            pathImageOld = it.pathEnhanced!!,
+                            imagePathNew = childPath,
+                            parentPath = parentPath,
+                            imageType = ENHANCED
+                        )
+
+                        it.pathRGB = fileName + RGB.nameAsString
+                        it.pathGray = fileName + GRAYSCALE.nameAsString
+                        it.pathEnhanced = fileName + ENHANCED.nameAsString
 
                         imageRepository.update(it)
 
@@ -56,7 +78,17 @@ class UpdateDB(val userRepo : TestPersonRepository,
             }
         }
 
+    private fun handleImage(extStorage: String,
+                            pathImageOld: String,
+                            imagePathNew: String,
+                            parentPath: String,
+                            imageType: ImageType){
+        val file = File(extStorage, pathImageOld)
+        val fileNew = File(extStorage, imagePathNew + imageType.nameAsString)
+        copyFile(file, fileNew, "$extStorage/$parentPath")
     }
+
+    private fun createFileName(vararg partialNames: Any?) = partialNames.joinToString(separator = "_")
 
 
 }
