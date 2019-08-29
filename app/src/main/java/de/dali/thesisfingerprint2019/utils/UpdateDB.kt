@@ -4,7 +4,6 @@ import android.os.Environment
 import de.dali.thesisfingerprint2019.data.repository.FingerPrintRepository
 import de.dali.thesisfingerprint2019.data.repository.ImageRepository
 import de.dali.thesisfingerprint2019.data.repository.TestPersonRepository
-import de.dali.thesisfingerprint2019.utils.Constants.NAME_MAIN_FOLDER
 import de.dali.thesisfingerprint2019.utils.UpdateDB.ImageType.*
 import de.dali.thesisfingerprint2019.utils.Utils.copyFile
 import java.io.File
@@ -15,9 +14,9 @@ class UpdateDB(
     private val imageRepository: ImageRepository) {
 
     private enum class ImageType(val nameAsString: String){
-        RGB("_rbg.jpg"),
-        GRAYSCALE("_gray.jpg"),
-        ENHANCED("_enhanced.jpg")
+        RGB("_rgb"),
+        GRAYSCALE("_gray"),
+        ENHANCED("_enhanced")
     }
 
     fun update(){
@@ -35,34 +34,40 @@ class UpdateDB(
 
                     userImages.forEach {
                         val fileName = createFileName(
-                            user.personID.toString(),
-                            if (fingerprint.vendor.contains("HUAWEI", ignoreCase = true)){ "0" } else {"1"} ,
+                            if (fingerprint.vendor.contains("HUAWEI", ignoreCase = true)){ "0" } else {"1"},
+                            if (it.brokenDetectedByHand == true){"1"} else {"0"},
+                            user.personID,
+                            it.biometricalID,
                             it.imageId
                         )
 
                         val parentPath = "updated-thesis-fingerprint-images"
-                        val childPath = "$parentPath/$fileName"
+                        val childPathImage = "$parentPath/thesis-images-2019/$fileName"
+                        val childPathMnt = "$parentPath/thesis-minutiaes-2019/$fileName"
 
-                        handleImage(
+                        handleFile(
                             extStorage = extStorage.absolutePath,
                             pathImageOld = it.pathRGB!!,
-                            imagePathNew = childPath,
+                            imagePathNew = childPathImage,
+                            mntPathNew = childPathMnt,
                             parentPath = parentPath,
                             imageType = RGB
                         )
 
-                        handleImage(
+                        handleFile(
                             extStorage = extStorage.absolutePath,
                             pathImageOld = it.pathGray!!,
-                            imagePathNew = childPath,
+                            imagePathNew = childPathImage,
+                            mntPathNew = childPathMnt,
                             parentPath = parentPath,
                             imageType = GRAYSCALE
                         )
 
-                        handleImage(
+                        handleFile(
                             extStorage = extStorage.absolutePath,
                             pathImageOld = it.pathEnhanced!!,
-                            imagePathNew = childPath,
+                            imagePathNew = childPathImage,
+                            mntPathNew = childPathMnt,
                             parentPath = parentPath,
                             imageType = ENHANCED
                         )
@@ -78,14 +83,20 @@ class UpdateDB(
             }
         }
 
-    private fun handleImage(extStorage: String,
-                            pathImageOld: String,
-                            imagePathNew: String,
-                            parentPath: String,
-                            imageType: ImageType){
-        val file = File(extStorage, pathImageOld)
-        val fileNew = File(extStorage, imagePathNew + imageType.nameAsString)
-        copyFile(file, fileNew, "$extStorage/$parentPath")
+    private fun handleFile(extStorage: String,
+                           pathImageOld: String,
+                           imagePathNew: String,
+                           mntPathNew: String,
+                           parentPath: String,
+                           imageType: ImageType){
+
+        val file = File(extStorage, "thesis-fingerprints-2019/thesis-images-2019/$pathImageOld")
+        val fileNew = File(extStorage, imagePathNew + imageType.nameAsString + ".jpg")
+        copyFile(file, fileNew, "$extStorage/$parentPath/thesis-images-2019")
+
+        val fileMnt = File(extStorage, "thesis-fingerprints-2019/thesis-minutiaes-2019/${pathImageOld.replace("rbg","rgb").replace(".jpg",".mnt")}")
+        val fileMntNew = File(extStorage, mntPathNew + imageType.nameAsString + ".mnt")
+        copyFile(fileMnt, fileMntNew, "$extStorage/$parentPath/thesis-minutiaes-2019")
     }
 
     private fun createFileName(vararg partialNames: Any?) = partialNames.joinToString(separator = "_")
