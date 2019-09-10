@@ -95,23 +95,26 @@ class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
 
                             qualityCheckedImages.add(fingerPrintIntermediate)
                         }
+                        if (qualityCheckedImages.none { it.edgeDens < 5.0 }) {
+                            if (highestEdgeDenseMats.isEmpty()) {
+                                highestEdgeDenseMats.addAll(qualityCheckedImages)
+                            } else {
+                                highestEdgeDenseMats.mapInPlace(qualityCheckedImages)
+                            }
 
-                        if (highestEdgeDenseMats.isEmpty()) {
-                            highestEdgeDenseMats.addAll(qualityCheckedImages)
-                        } else {
-                            highestEdgeDenseMats.mapInPlace(qualityCheckedImages)
-                        }
+                            processedImages++
 
-                        processedImages++
+                            releaseImage(listOf(image, processedMat, rotatedImage))
 
-                        releaseImage(listOf(image, processedMat, rotatedImage))
+                            onUpdate(SUCCESSFUL, "Processed frame successfully.", processedImages)
 
-                        onUpdate(SUCCESSFUL, "Processed frame successfully.", processedImages)
-
-                        if (processedImages == 5) {
-                            clearQueue()
-                            quit()
-                            onSuccess(highestEdgeDenseMats)
+                            if (processedImages == 5) {
+                                clearQueue()
+                                quit()
+                                onSuccess(highestEdgeDenseMats)
+                            }
+                        }else{
+                            onUpdate(FAILURE, "Fingers too blurry.", processedImages)
                         }
                     } else {
                         releaseImage(listOf(image, processedMat, rotatedImage))
