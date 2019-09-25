@@ -71,10 +71,13 @@ class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
                 val multiFingerImage = (processingStep[0] as MultiFingerDetection).run(rotatedImage)
 
                 if (!multiFingerImage.empty()) {
-                    val rotatedFinger = (processingStep[1] as FingerRotationImprecise).run(multiFingerImage)
-                    val degreeImprecise = (processingStep[1] as FingerRotationImprecise).correctionAngle
+                    val rotatedFinger =
+                        (processingStep[1] as FingerRotationImprecise).run(multiFingerImage)
+                    val degreeImprecise =
+                        (processingStep[1] as FingerRotationImprecise).correctionAngle
 
-                    val separatedFingers = (processingStep[2] as FingerBorderDetection).runReturnMultiple(rotatedFinger)
+                    val separatedFingers =
+                        (processingStep[2] as FingerBorderDetection).runReturnMultiple(rotatedFinger)
 
                     if (separatedFingers.isNotEmpty()) {
 
@@ -82,16 +85,22 @@ class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
                             (processingStep[3] as RotateFinger).degreeImprecise = degreeImprecise
                             (processingStep[3] as RotateFinger).run(it)
                         }
-                        val fingertips = rotatedFingers.map { (processingStep[4] as FindFingerTip).run(it) }
+                        val fingertips =
+                            rotatedFingers.map { (processingStep[4] as FindFingerTip).run(it) }
 
                         val qualityCheckedImages = mutableListOf<FingerPrintIntermediateEntity>()
 
                         fingertips.forEach {
-                            val qualityCheckedImage = (processingStep[5] as MultiQualityAssurance).run(it)
+                            val qualityCheckedImage =
+                                (processingStep[5] as MultiQualityAssurance).run(it)
                             val edgeDens = (processingStep[5] as MultiQualityAssurance).edgeDensity
 
                             val fingerPrintIntermediate =
-                                FingerPrintIntermediateEntity(qualityCheckedImage, edgeDens, degreeImprecise)
+                                FingerPrintIntermediateEntity(
+                                    qualityCheckedImage,
+                                    edgeDens,
+                                    degreeImprecise
+                                )
 
                             qualityCheckedImages.add(fingerPrintIntermediate)
                         }
@@ -113,7 +122,7 @@ class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
                                 quit()
                                 onSuccess(highestEdgeDenseMats)
                             }
-                        }else{
+                        } else {
                             onUpdate(FAILURE, "Fingers too blurry.", processedImages)
                         }
                     } else {
@@ -154,7 +163,10 @@ class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
         while (iterateA.hasNext() && iterateB.hasNext()) {
             val valA = iterateA.next()
             val valB = iterateB.next()
-            if (valA.edgeDens < valB.edgeDens && hasValidSize(valB.mat) && hasEnoughContent(valB.mat)) {
+
+            if (!hasValidSize(valA.mat) && !hasEnoughContent(valA.mat) && hasValidSize(valB.mat) && hasEnoughContent(valB.mat)) {
+                iterateA.set(valB)
+            } else if (valA.edgeDens < valB.edgeDens && hasValidSize(valB.mat) && hasEnoughContent(valB.mat)) {
                 iterateA.set(valB)
             }
         }
