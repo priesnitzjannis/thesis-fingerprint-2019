@@ -1,5 +1,6 @@
 package de.dali.thesisfingerprint2019.processing.dali
 
+import android.util.Log
 import de.dali.thesisfingerprint2019.processing.ProcessingStep
 import de.dali.thesisfingerprint2019.processing.Utils.fixPossibleDefects
 import de.dali.thesisfingerprint2019.processing.Utils.getFingerContour
@@ -8,11 +9,10 @@ import de.dali.thesisfingerprint2019.processing.Utils.getMaskedImage
 import de.dali.thesisfingerprint2019.processing.Utils.getThresholdImageNew
 import de.dali.thesisfingerprint2019.processing.Utils.releaseImage
 import de.dali.thesisfingerprint2019.processing.toMat
-import org.opencv.core.Mat
+import de.dali.thesisfingerprint2019.ui.main.fragment.scanning.FingerScanningFragment
+import org.opencv.core.*
 import org.opencv.imgproc.Imgproc
 import javax.inject.Inject
-import org.opencv.core.MatOfPoint
-import org.opencv.core.Core
 
 
 class MultiFingerDetection @Inject constructor() : ProcessingStep() {
@@ -20,27 +20,34 @@ class MultiFingerDetection @Inject constructor() : ProcessingStep() {
         get() = MultiFingerDetection::class.java.simpleName
 
     override fun run(originalImage: Mat): Mat {
-
-        val imageThresh = getThresholdImageNew(originalImage)
-        val fingerContours = getFingerContour(imageThresh)
-
-        releaseImage(listOf(imageThresh))
-
-        val maskImage = getMaskImage(originalImage, fingerContours)
-        val imageWithOutBackground = getMaskedImage(originalImage, maskImage)
-
         var croppedImage = Mat()
 
-        if (fingerContours.isNotEmpty()) {
-            val rect = Imgproc.boundingRect(fingerContours.toMat())
+        try {
+            val imageThresh = getThresholdImageNew(originalImage)
+            val fingerContours = getFingerContour(imageThresh)
 
-            releaseImage(fingerContours)
-            releaseImage(listOf(maskImage))
+            releaseImage(listOf(imageThresh))
 
-            croppedImage = Mat(imageWithOutBackground, rect)
+            val maskImage = getMaskImage(originalImage, fingerContours)
+            val imageWithOutBackground = getMaskedImage(originalImage, maskImage)
 
-            releaseImage(listOf(imageWithOutBackground))
+
+            if (fingerContours.isNotEmpty()) {
+                val rect = Imgproc.boundingRect(fingerContours.toMat())
+
+                releaseImage(fingerContours)
+                releaseImage(listOf(maskImage))
+
+                croppedImage = Mat(imageWithOutBackground, rect)
+
+                releaseImage(listOf(imageWithOutBackground))
+            }
         }
+        catch(e: CvException){
+            Log.e(FingerScanningFragment.TAG, "\n\n\n CAUGHT CvException \n\n\n")
+            croppedImage = Mat(10, 10, CvType.CV_8U, Scalar.all(0.0))
+        }
+
 
         return croppedImage
 

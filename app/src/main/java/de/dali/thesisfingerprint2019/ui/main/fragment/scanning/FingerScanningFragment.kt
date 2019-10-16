@@ -24,6 +24,7 @@ import de.dali.thesisfingerprint2019.ui.main.viewmodel.scanning.FingerScanningVi
 import de.dali.thesisfingerprint2019.utils.Dialogs
 import de.dali.thesisfingerprint2019.utils.Utils
 import kotlinx.android.synthetic.main.fragment_finger_scanning.*
+import kotlinx.android.synthetic.main.fragment_finger_scanning.view.*
 import org.opencv.android.BaseLoaderCallback
 import org.opencv.android.CameraBridgeViewBase
 import org.opencv.android.LoaderCallbackInterface
@@ -77,7 +78,7 @@ class FingerScanningFragment : BaseFragment() {
 
                     Handler().postDelayed({
                         javaCamera2View.toggleFlash()
-                    }, 300)
+                    }, 1000)
                 }
                 else -> {
                     super.onManagerConnected(status)
@@ -119,6 +120,13 @@ class FingerScanningFragment : BaseFragment() {
         binding.button.setOnClickListener {
             fingerScanningViewModel.record = true
             binding.button.isEnabled = false
+        }
+
+        binding.buttonfoo.setOnClickListener{
+            javaCamera2View.toggleFlash()
+            //binding.buttonfoo.isEnabled = false
+            Log.e(TAG, "\n\n\nBUTTONFOO PRESSED \n\n\n")
+
         }
 
         fingerScanningViewModel.setSensorOrientation(Utils.getSensorOrientation(activity))
