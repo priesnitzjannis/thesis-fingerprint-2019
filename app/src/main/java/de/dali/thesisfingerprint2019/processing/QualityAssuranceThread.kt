@@ -104,7 +104,7 @@ class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
 
                             qualityCheckedImages.add(fingerPrintIntermediate)
                         }
-                        if (qualityCheckedImages.none { it.edgeDens < 5.0 }) {
+                        if (qualityCheckedImages.none { it.edgeDens < 10.0 }) {//5.0
                             if (highestEdgeDenseMats.isEmpty()) {
                                 highestEdgeDenseMats.addAll(qualityCheckedImages)
                             } else {
@@ -131,7 +131,7 @@ class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
                     }
                 } else {
                     releaseImage(listOf(image, processedMat, rotatedImage))
-                    onUpdate(FAILURE, "Couldn't detect Fingers.", processedImages)
+                    onUpdate(FAILURE, "#01 Couldn't detect Fingers.", processedImages)
                 }
 
                 imageProcessingRunning = false

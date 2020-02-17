@@ -1,5 +1,6 @@
 package de.dali.thesisfingerprint2019.processing.dali
 
+import android.util.Log
 import de.dali.thesisfingerprint2019.processing.ProcessingStep
 import de.dali.thesisfingerprint2019.processing.Utils.fixPossibleDefects
 import de.dali.thesisfingerprint2019.processing.Utils.getFingerContour
@@ -38,7 +39,6 @@ class MultiFingerDetection @Inject constructor() : ProcessingStep() {
             releaseImage(listOf(maskImage))
 
             croppedImage = Mat(imageWithOutBackground, rect)
-
             releaseImage(listOf(imageWithOutBackground))
         }
 
