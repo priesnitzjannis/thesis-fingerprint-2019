@@ -204,13 +204,13 @@ object Utils {
     }
 
     fun getThresholdImageNew(mat: Mat): Mat {
-        val img_hsv = Mat(mat.rows(), mat.cols(), CvType.CV_8UC3)
-        val img_mask_hsv = Mat(mat.rows(), mat.cols(), CvType.CV_8UC1)
-        val kernel = getStructuringElement(MORPH_ELLIPSE, Size(KERNEL_SIZE_FILTER, KERNEL_SIZE_FILTER))
+        //val img_hsv = Mat(mat.rows(), mat.cols(), CvType.CV_8UC3)
+        //val img_mask_hsv = Mat(mat.rows(), mat.cols(), CvType.CV_8UC1)
+        //val kernel = getStructuringElement(MORPH_ELLIPSE, Size(KERNEL_SIZE_FILTER, KERNEL_SIZE_FILTER))
 
-        cvtColor(mat, img_hsv, COLOR_RGB2HSV)
-        Core.inRange(img_hsv, Scalar(H_LOWER, S_LOWER, V_LOWER), Scalar(H_UPPER, S_UPPER, V_UPPER), img_mask_hsv)
-        morphologyEx(img_mask_hsv, img_mask_hsv, MORPH_OPEN, kernel)
+        //cvtColor(mat, img_hsv, COLOR_RGB2HSV)
+        //Core.inRange(img_hsv, Scalar(H_LOWER, S_LOWER, V_LOWER), Scalar(H_UPPER, S_UPPER, V_UPPER), img_mask_hsv)
+        //morphologyEx(img_mask_hsv, img_mask_hsv, MORPH_OPEN, kernel)
 
         val img_ycrcb = Mat(mat.rows(), mat.cols(), CvType.CV_8UC3)
         val img_mask_ycrcb = Mat(mat.rows(), mat.cols(), CvType.CV_8UC1)
@@ -222,15 +222,15 @@ object Utils {
             Scalar(Y_UPPER, CR_UPPER, CB_UPPER),
             img_mask_ycrcb
         )
-        morphologyEx(img_mask_ycrcb, img_mask_ycrcb, MORPH_OPEN, kernel)
+        //morphologyEx(img_mask_ycrcb, img_mask_ycrcb, MORPH_OPEN, kernel)
 
 
-        val img_and = Mat(mat.rows(), mat.cols(), CvType.CV_8UC3)
-        val kernel_and = getStructuringElement(MORPH_ELLIPSE, Size(KERNEL_SIZE_FAND, KERNEL_SIZE_FAND))
-        Core.bitwise_and(img_mask_hsv, img_mask_ycrcb, img_and)
-        morphologyEx(img_and, img_and, MORPH_CLOSE, kernel_and)
+        //val img_and = Mat(mat.rows(), mat.cols(), CvType.CV_8UC3)
+        //val kernel_and = getStructuringElement(MORPH_ELLIPSE, Size(KERNEL_SIZE_FAND, KERNEL_SIZE_FAND))
+        //Core.bitwise_and(img_mask_hsv, img_mask_ycrcb, img_and)
+        //morphologyEx(img_and, img_and, MORPH_CLOSE, kernel_and)
 
-        return img_and
+        return img_mask_ycrcb//img_and
     }
 
     fun fixPossibleDefects(contour: MatOfPoint, mat: Mat): Mat {

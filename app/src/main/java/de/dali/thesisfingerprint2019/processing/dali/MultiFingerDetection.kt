@@ -38,10 +38,8 @@ class MultiFingerDetection @Inject constructor() : ProcessingStep() {
                 releaseImage(fingerContours)
                 releaseImage(listOf(maskImage))
 
-                croppedImage = Mat(imageWithOutBackground, rect)
-
-                releaseImage(listOf(imageWithOutBackground))
-            }
+            croppedImage = Mat(imageWithOutBackground, rect)
+            releaseImage(listOf(imageWithOutBackground))
         }
         catch(e: CvException){
             Log.e(FingerScanningFragment.TAG, "\n\n\n CAUGHT CvException \n\n\n")
