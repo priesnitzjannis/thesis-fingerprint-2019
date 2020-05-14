@@ -15,6 +15,7 @@ import androidx.navigation.fragment.NavHostFragment
 import dagger.android.support.AndroidSupportInjection
 import de.dali.thesisfingerprint2019.R
 import de.dali.thesisfingerprint2019.databinding.FragmentFingerScanningBinding
+import de.dali.thesisfingerprint2019.logging.Logging
 import de.dali.thesisfingerprint2019.processing.QualityAssuranceThread.IntermediateResults.FAILURE
 import de.dali.thesisfingerprint2019.processing.QualityAssuranceThread.IntermediateResults.SUCCESSFUL
 import de.dali.thesisfingerprint2019.processing.Utils.HAND.LEFT
@@ -126,6 +127,7 @@ class FingerScanningFragment : BaseFragment() {
             javaCamera2View.toggleFlash()
             //binding.buttonfoo.isEnabled = false
             Log.e(TAG, "\n\n\nBUTTONFOO PRESSED \n\n\n")
+            Logging.createLogEntry(5,0,"The flash has been toggled")
 
         }
 
