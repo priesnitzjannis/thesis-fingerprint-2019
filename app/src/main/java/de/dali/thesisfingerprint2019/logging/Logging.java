@@ -19,10 +19,16 @@ public final class Logging {
     private static Long run = null;
     private static loggerValues logger = loggerValues.logConsole;
     private static boolean initialised = false;
+    private static boolean imageLoggingEnabled = true;
+    private static long loggingModuleID;
 
     private static LogSQLite SQLDB = null;
 
-    private static long loggingModuleID;
+    public static long loggingLevel_critical = 20;
+    public static long loggingLevel_some = 40;
+    public static long loggingLevel_medium = 60;
+    public static long loggingLevel_detailed = 80;
+    public static long loggingLevel_debug = 100;
 
     /**
      * All methods are static, therefore a callable constructor does not make sense
@@ -39,6 +45,14 @@ public final class Logging {
     public static boolean setLogger(loggerValues logger) {
         Logging.logger = logger;
         return true;
+    }
+
+    public static void enableImageLogging() {
+        imageLoggingEnabled = true;
+    }
+
+    public static void disableImageLogging() {
+        imageLoggingEnabled = false;
     }
 
     /**
@@ -172,8 +186,8 @@ public final class Logging {
         switch (logger) {
             case logSQLite: {
                 for (Module currentModule : modules) {
-                    SQLDB.insertModule(currentModule);
-                    if (currentModule.getName().equals("Logging")) {
+                    SQLDB.addModule(currentModule);
+                    if (currentModule.getName().equals("Logging Internal")) {
                         loggingModuleID = currentModule.getModuleID();
                     }
                 }
@@ -253,7 +267,7 @@ public final class Logging {
             }
             case logSQLite: {
                 SQLDB = new LogSQLite();
-                SQLDB.init(newAppVersion, context);
+                SQLDB.init(newAppVersion, loggingModuleID, context);
 
                 initModules(modules);
 
@@ -274,7 +288,7 @@ public final class Logging {
         if (initialised) {
             // TODO
             // redo createLogEntry signature
-            createLogEntry((short) 0, (short) loggingModuleID, "Logging initialised, logging level: " + newLoggingLevel + " App version: " + "fix this");
+            createLogEntry((short) 0, (short) loggingModuleID, "Logging initialised, logging level: " + newLoggingLevel + " App version: " + newAppVersion);
             return 0;
         } else {
             return -1;
@@ -356,10 +370,10 @@ public final class Logging {
      * @param loggingLevel The logging level
      * @param moduleID     The module id
      * @param message      The logging message
-     * @param imageMat     The image to be saved
+     * @param origMat      The image to be saved
      * @return true if the message has been logged, false otherwise
      */
-    public static boolean createLogEntry(long loggingLevel, long moduleID, String message, Mat imageMat) {
+    public static boolean createLogEntry(long loggingLevel, long moduleID, String message, Mat origMat) {
         // TODO
         // implement possible logging locations
         // implement all items that need to be logged
@@ -371,6 +385,7 @@ public final class Logging {
             return false;
         }
 
+        Mat imageMat = origMat.clone();
         boolean result = false;
 
         switch (logger) {
@@ -379,10 +394,18 @@ public final class Logging {
                 break;
             }
             case logSQLite: {
-                if (run == null) {
-                    result = SQLDB.createLogEntry(loggingLevel, moduleID, message, getISOTimestamp(), imageMat);
+                if (imageLoggingEnabled) {
+                    if (run == null) {
+                        result = SQLDB.createLogEntry(loggingLevel, moduleID, message, getISOTimestamp(), imageMat);
+                    } else {
+                        result = SQLDB.createLogEntry(loggingLevel, moduleID, message, getISOTimestamp(), run, imageMat);
+                    }
                 } else {
-                    result = SQLDB.createLogEntry(loggingLevel, moduleID, message, getISOTimestamp(), run, imageMat);
+                    if (run == null) {
+                        result = SQLDB.createLogEntry(loggingLevel, moduleID, message, getISOTimestamp());
+                    } else {
+                        result = SQLDB.createLogEntry(loggingLevel, moduleID, message, getISOTimestamp(), run);
+                    }
                 }
                 break;
             }

@@ -7,20 +7,22 @@ import android.os.Environment
 import android.util.Log
 import de.dali.thesisfingerprint2019.logging.SQLite.Entity.*
 import de.dali.thesisfingerprint2019.logging.SQLite.LoggingDatabase
-import org.opencv.core.CvException
 import org.opencv.core.Mat
 import org.opencv.imgproc.Imgproc
 import java.io.File
 import java.io.FileOutputStream
+import kotlin.math.log
 
 class LogSQLite {
     private var SQLDB: LoggingDatabase? = null
     var phone = Phone(Build.MODEL)
     var appVersion = "Placeholder"
+    var loggingModuleID: Long = 0
 
-    fun init(_appVersion: String, context: Context?) {
+    fun init(_appVersion: String, _loggingModuleID: Long, context: Context?) {
         SQLDB = LoggingDatabase.getInstance(context)
         appVersion = _appVersion
+        loggingModuleID = _loggingModuleID
 
         var canProceed: Boolean = false
 
@@ -58,7 +60,7 @@ class LogSQLite {
         }
     }
 
-    fun insertModule(module: Module) {
+    fun addModule(module: Module) {
         var canProceed: Boolean = false
 
         Thread(Runnable {
@@ -193,13 +195,8 @@ class LogSQLite {
                     message,
                     timestamp
                 )
-            val img = Image(imageMat.height(), imageMat.width(), ".jpg", timestamp)
 
-            img.imageID = SQLDB!!.imageDao().insertImage(img)
-
-            saveImage("Logging_Module", img.filename, convertMatToBitMap(imageMat)!!, 100)
-
-            loggingMessage.imageID = img.imageID
+            loggingMessage.imageID = saveImage(imageMat, timestamp)
 
 
             println(
@@ -239,14 +236,7 @@ class LogSQLite {
                 )
             loggingMessage.runID = runID
 
-            val img = Image(imageMat.height(), imageMat.width(), ".jpg", timestamp)
-
-            img.imageID = SQLDB!!.imageDao().insertImage(img)
-
-            saveImage("Logging_Module", img.filename, convertMatToBitMap(imageMat)!!, 100)
-
-            loggingMessage.imageID = img.imageID
-
+            loggingMessage.imageID = saveImage(imageMat, timestamp)
 
             println(
                 "New logging message, ID #" + SQLDB!!.loggingMessageDao()
@@ -291,35 +281,99 @@ class LogSQLite {
 
     // ---------------------------------------------------------------------------------------------
 
-    fun convertMatToBitMap(input: Mat): Bitmap? {
-        var bmp: Bitmap? = null
-        val rgb = Mat()
 
-        Imgproc.cvtColor(input, rgb, Imgproc.COLOR_BGR2RGBA, 4)
+    fun saveImage(imageMat: Mat, timestamp: String): Long? {
+        if (imageMat.height() == 0 || imageMat.width() == 0) {
+            Logging.createLogEntry(10, loggingModuleID, "Cannot save image of size 0.")
+            return null
+        }
 
         try {
+            println("Saving image...")
+
+            val img = Image(imageMat.height(), imageMat.width(), ".jpg", timestamp)
+
+            img.imageID = SQLDB!!.imageDao().insertImage(img)
+
+            println("Added image data to database")
+
+            saveImageToGallery(
+                "thesis-fingerprints-2019/Logging-Images",
+                img.filename,
+                convertMatToBitMap(imageMat)!!,
+                100
+            )
+
+            println("image saved")
+
+            return img.imageID
+        } catch (e: Exception) {
+            println("Error in saving image: " + e.message)
+            Logging.createLogEntry(10, loggingModuleID, "Cannot save image.")
+            Log.d("Exception", e.message)
+            return null
+        }
+    }
+
+    fun convertMatToBitMap(input: Mat): Bitmap? {
+        if (input == null) {
+            println("Cannot save image, cannot convert null to bitmap")
+            return null
+        }
+
+        var bmp: Bitmap? = null
+        val rgb = Mat()
+        println("initialised null bitmap")
+
+        try {
+            Imgproc.cvtColor(input, rgb, Imgproc.COLOR_BGR2RGBA, 4)
+            println("performed color conversion")
+
             bmp = Bitmap.createBitmap(rgb.cols(), rgb.rows(), Bitmap.Config.ARGB_8888)
+            println("created empty bitmap")
 
             org.opencv.android.Utils.matToBitmap(input, bmp, true)
-        } catch (e: CvException) {
+            println("finished bitmap conversion")
+        } catch (e: Exception) {
+            println("Error in bitmap conversion: " + e.message)
+            Logging.createLogEntry(10, loggingModuleID, "Cannot save image.")
             Log.d("Exception", e.message)
         }
 
         return bmp
     }
 
-    fun saveImage(pathName: String, fileName: String, bitmap: Bitmap, quality: Int) {
-        val pathname = "${Environment.getExternalStorageDirectory()}/$pathName"
-        val myDir = File(pathname)
+    fun saveImageToGallery(pathName: String, fileName: String, bitmap: Bitmap, quality: Int) {
+        if (bitmap == null) {
+            println("Cannot save image, cannot save null")
+            return
+        }
 
-        if (!myDir.exists()) myDir.mkdirs()
+        println("saving to gallery...")
 
-        val file = File(myDir, fileName)
-        if (file.exists()) file.delete()
-        val out = FileOutputStream(file)
-        bitmap.compress(Bitmap.CompressFormat.JPEG, quality, out)
-        out.flush()
-        out.close()
+        try {
+            val pathname = "${Environment.getExternalStorageDirectory()}/$pathName"
+            val myDir = File(pathname)
+
+            if (!myDir.exists()) {
+                myDir.mkdirs()
+            }
+
+            val file = File(myDir, fileName)
+            if (file.exists()) file.delete()
+            val out = FileOutputStream(file)
+            println("Aquired file handle")
+
+            bitmap.compress(Bitmap.CompressFormat.JPEG, quality, out)
+            println("writing bitmap to file...")
+            out.flush()
+            out.close()
+            println("image written")
+        } catch (e: Exception) {
+            println("Error in writing bitmap to file: " + e.message)
+            Logging.createLogEntry(10, loggingModuleID, "Cannot save image.")
+            Log.d("Exception", e.message)
+        }
     }
 
 

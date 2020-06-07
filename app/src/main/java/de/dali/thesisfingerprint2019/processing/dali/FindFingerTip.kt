@@ -1,5 +1,6 @@
 package de.dali.thesisfingerprint2019.processing.dali
 
+import de.dali.thesisfingerprint2019.logging.Logging
 import de.dali.thesisfingerprint2019.processing.Config.ROW_TO_COL_RATIO
 import de.dali.thesisfingerprint2019.processing.ProcessingStep
 import org.opencv.core.Mat
@@ -13,6 +14,8 @@ class FindFingerTip @Inject constructor() : ProcessingStep() {
         get() = FindFingerTip::class.java.simpleName
 
     override fun run(originalImage: Mat): Mat {
+        val start = System.currentTimeMillis()
+
         val cols = originalImage.cols()
         var newRows = ceil(cols * ROW_TO_COL_RATIO).toInt()
 
@@ -20,7 +23,15 @@ class FindFingerTip @Inject constructor() : ProcessingStep() {
 
         val rect = Rect(0, 0, cols, newRows)
 
-        return Mat(originalImage, rect)
+        var result = Mat(originalImage, rect)
+
+
+        val duration = System.currentTimeMillis() - start
+        Logging.createLogEntry(Logging.loggingLevel_detailed, 1400, "Fingertip Location finished in " + duration + "ms.")
+
+        Logging.createLogEntry(Logging.loggingLevel_critical, 1400, "Fingertip located, see image for results.", result)
+
+        return result
     }
 
     override fun runReturnMultiple(originalImage: Mat): List<Mat> {

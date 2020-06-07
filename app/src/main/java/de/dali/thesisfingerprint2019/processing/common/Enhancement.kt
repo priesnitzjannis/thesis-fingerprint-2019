@@ -1,5 +1,6 @@
 package de.dali.thesisfingerprint2019.processing.common
 
+import de.dali.thesisfingerprint2019.logging.Logging
 import de.dali.thesisfingerprint2019.processing.Config.CLAHE_ITERATIONS
 import de.dali.thesisfingerprint2019.processing.Config.CLIP_LIMIT
 import de.dali.thesisfingerprint2019.processing.Config.GAUSSIAN_KERNEL_SIZE_HIGH
@@ -18,6 +19,8 @@ class Enhancement @Inject constructor() : ProcessingStep() {
         get() = Enhancement::class.java.simpleName
 
     override fun run(originalImage: Mat): Mat {
+        Logging.createLogEntry(Logging.loggingLevel_debug, 1500, "Enhancement started.")
+        val start = System.currentTimeMillis()
 
         for (i in 0 until CLAHE_ITERATIONS) {
             val kernelSize = 2.0.pow(CLAHE_ITERATIONS) / (2.0.pow(i))
@@ -37,6 +40,12 @@ class Enhancement @Inject constructor() : ProcessingStep() {
         equalizeHist(dst, dst)
 
         Core.bitwise_not(dst, dst)
+
+
+        val duration = System.currentTimeMillis() - start
+        Logging.createLogEntry(Logging.loggingLevel_detailed, 1500, "Enhancement finished in " + duration + "ms.")
+
+        Logging.createLogEntry(Logging.loggingLevel_critical, 1500, "Enhancement done, see image for results.", dst)
 
         return dst
     }

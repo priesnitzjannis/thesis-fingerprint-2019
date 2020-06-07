@@ -48,7 +48,7 @@ public class Image {
     }
 
     public String getFilename() {
-        return imageID + fileExtension;
+        return "LoggingImage_" + imageID + fileExtension;
     }
 
     @NonNull

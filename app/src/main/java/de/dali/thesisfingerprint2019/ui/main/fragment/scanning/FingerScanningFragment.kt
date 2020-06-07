@@ -51,19 +51,31 @@ class FingerScanningFragment : BaseFragment() {
 
         override fun onCameraViewStarted(width: Int, height: Int) {
             mRgba = Mat(height, width, CvType.CV_8UC4)
+            Logging.createLogEntry(Logging.loggingLevel_some, 1100, "Acquisition started.")
         }
 
         override fun onCameraViewStopped() {
             mRgba.release()
+            Logging.createLogEntry(Logging.loggingLevel_some, 1100, "Acquisition stopped.")
         }
 
         override fun onCameraFrame(inputFrame: CameraBridgeViewBase.CvCameraViewFrame): Mat {
+            //val start = System.currentTimeMillis()
+
             fingerScanningViewModel.frameCounter++
             mRgba = inputFrame.rgba()
 
             if (fingerScanningViewModel.record /* && fingerScanningViewModel.frameCounter % 10 == 0 */)  {
                 fingerScanningViewModel.sendToPipeline(mRgba)
+
+                // only leads to spam
+                //Logging.createLogEntry(Logging.loggingLevel_debug, 1100, "Sent an image to the pipeline.", mRgba)
             }
+
+
+            // only spams logging messages in the 2-6ms range, occasionally 10/11/14ms
+            //val duration = System.currentTimeMillis() - start
+            //Logging.createLogEntry(Logging.loggingLevel_detailed, 1100, "Image acquired in " + duration + "ms.")
 
             return mRgba
         }
@@ -121,14 +133,14 @@ class FingerScanningFragment : BaseFragment() {
         binding.button.setOnClickListener {
             fingerScanningViewModel.record = true
             binding.button.isEnabled = false
+            Logging.createLogEntry(Logging.loggingLevel_some, 1100, "Processing has been started.")
         }
 
         binding.buttonfoo.setOnClickListener{
             javaCamera2View.toggleFlash()
             //binding.buttonfoo.isEnabled = false
             Log.e(TAG, "\n\n\nBUTTONFOO PRESSED \n\n\n")
-            Logging.createLogEntry(5,0,"The flash has been toggled")
-
+            Logging.createLogEntry(Logging.loggingLevel_medium,1100,"The flash has been toggled")
         }
 
         fingerScanningViewModel.setSensorOrientation(Utils.getSensorOrientation(activity))

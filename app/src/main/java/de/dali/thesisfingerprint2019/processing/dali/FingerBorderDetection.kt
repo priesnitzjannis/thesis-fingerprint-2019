@@ -1,5 +1,6 @@
 package de.dali.thesisfingerprint2019.processing.dali
 
+import de.dali.thesisfingerprint2019.logging.Logging
 import de.dali.thesisfingerprint2019.processing.Config.PIXEL_TO_CROP
 import de.dali.thesisfingerprint2019.processing.ProcessingStep
 import de.dali.thesisfingerprint2019.processing.Utils.adaptiveThresh
@@ -31,6 +32,8 @@ class FingerBorderDetection @Inject constructor() : ProcessingStep() {
     }
 
     override fun runReturnMultiple(originalImage: Mat): List<Mat> {
+        val start = System.currentTimeMillis()
+
         val edgeImage = adaptiveThresh(originalImage)
 
         var edgesDilated = dilate(edgeImage)
@@ -62,6 +65,14 @@ class FingerBorderDetection @Inject constructor() : ProcessingStep() {
 
             releaseImage(sepContours)
             releaseImage(sepCntFixed)
+        }
+
+
+        val duration = System.currentTimeMillis() - start
+        Logging.createLogEntry(Logging.loggingLevel_detailed, 1200, "Finger Border Detection finished in " + duration + "ms.")
+
+        sepImages.forEach{
+            Logging.createLogEntry(85,1200,"A finger has been detected, see image for result.", it)
         }
 
         return sepImages

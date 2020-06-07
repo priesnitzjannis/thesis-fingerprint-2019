@@ -1,6 +1,7 @@
 package de.dali.thesisfingerprint2019.processing.dali
 
 import android.util.Log
+import de.dali.thesisfingerprint2019.logging.Logging
 import de.dali.thesisfingerprint2019.processing.Config.POINT_PAIR_DST
 import de.dali.thesisfingerprint2019.processing.ProcessingStep
 import de.dali.thesisfingerprint2019.processing.Utils.HAND
@@ -27,6 +28,8 @@ class FingerRotationImprecise @Inject constructor() : ProcessingStep() {
         get() = FingerRotationImprecise::class.java.simpleName
 
     override fun run(originalImage: Mat): Mat {
+        val start = System.currentTimeMillis()
+
         val thresh = getThresholdImage(originalImage)
 
         val pointPair = generatePointPair(thresh, POINT_PAIR_DST)
@@ -44,7 +47,16 @@ class FingerRotationImprecise @Inject constructor() : ProcessingStep() {
         val angle = calcAngle(distanceP1P2, distanceP2ToContour, distanceP1ToContour)
         correctionAngle = if (hand == RIGHT) angle else -angle
 
-        return rotateImageByDegree(correctionAngle, originalImage)
+
+        val rotatedImage = rotateImageByDegree(correctionAngle, originalImage)
+
+        val duration = System.currentTimeMillis() - start
+        Logging.createLogEntry(Logging.loggingLevel_detailed, 1300, "Finger Rotation Imprecise finished in " + duration + "ms.")
+
+
+        Logging.createLogEntry(Logging.loggingLevel_some, 1300, "Finger oriented, rotated by " + correctionAngle + "°, see images for results.", rotatedImage)
+
+        return rotatedImage
     }
 
     override fun runReturnMultiple(originalImage: Mat): List<Mat> {
