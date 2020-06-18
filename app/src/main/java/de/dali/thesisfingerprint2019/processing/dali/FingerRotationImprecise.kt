@@ -2,6 +2,7 @@ package de.dali.thesisfingerprint2019.processing.dali
 
 import android.util.Log
 import de.dali.thesisfingerprint2019.logging.Logging
+import de.dali.thesisfingerprint2019.processing.Config
 import de.dali.thesisfingerprint2019.processing.Config.POINT_PAIR_DST
 import de.dali.thesisfingerprint2019.processing.ProcessingStep
 import de.dali.thesisfingerprint2019.processing.Utils.HAND
@@ -17,6 +18,7 @@ import org.opencv.core.Mat
 import org.opencv.core.Point
 import java.lang.Exception
 import javax.inject.Inject
+import kotlin.math.roundToInt
 
 
 class FingerRotationImprecise @Inject constructor() : ProcessingStep() {
@@ -28,6 +30,11 @@ class FingerRotationImprecise @Inject constructor() : ProcessingStep() {
         get() = FingerRotationImprecise::class.java.simpleName
 
     override fun run(originalImage: Mat): Mat {
+        Logging.createLogEntry(
+            Logging.loggingLevel_param,
+            1300,
+            "Config data for Finger Rotation Imprecise:\nPOINT_PAIR_DST = " + Config.POINT_PAIR_DST
+        )
         val start = System.currentTimeMillis()
 
         val thresh = getThresholdImage(originalImage)
@@ -51,10 +58,10 @@ class FingerRotationImprecise @Inject constructor() : ProcessingStep() {
         val rotatedImage = rotateImageByDegree(correctionAngle, originalImage)
 
         val duration = System.currentTimeMillis() - start
-        Logging.createLogEntry(Logging.loggingLevel_detailed, 1300, "Finger Rotation Imprecise finished in " + duration + "ms.")
+        Logging.createLogEntry(Logging.loggingLevel_medium, 1300, "Finger Rotation Imprecise finished in " + duration + "ms.")
 
 
-        Logging.createLogEntry(Logging.loggingLevel_some, 1300, "Finger oriented, rotated by " + correctionAngle + "°, see images for results.", rotatedImage)
+        Logging.createLogEntry(Logging.loggingLevel_critical, 1300, "Finger oriented, rotated by " + correctionAngle.roundToInt() + "°, see images for results.", rotatedImage)
 
         return rotatedImage
     }

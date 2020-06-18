@@ -1,6 +1,7 @@
 package de.dali.thesisfingerprint2019.processing.dali
 
 import de.dali.thesisfingerprint2019.logging.Logging
+import de.dali.thesisfingerprint2019.processing.Config
 import de.dali.thesisfingerprint2019.processing.Config.PIXEL_TO_CROP
 import de.dali.thesisfingerprint2019.processing.ProcessingStep
 import de.dali.thesisfingerprint2019.processing.Utils.adaptiveThresh
@@ -32,6 +33,11 @@ class FingerBorderDetection @Inject constructor() : ProcessingStep() {
     }
 
     override fun runReturnMultiple(originalImage: Mat): List<Mat> {
+        Logging.createLogEntry(
+            Logging.loggingLevel_param,
+            1200,
+            "Config data for Finger Border Detection:\nKERNEL_SIZE_BLUR = " + Config.KERNEL_SIZE_BLUR + "\n\nTHRESHOLD_MAX = " + Config.THRESHOLD_MAX + "\nBLOCKSIZE = " + Config.BLOCKSIZE + "\n\nDILATE_KERNEL_SIZE = " + Config.DILATE_KERNEL_SIZE + "\nDILATE_ITERATIONS = " + Config.DILATE_ITERATIONS + "\n\nERODE_KERNEL_SIZE = " + Config.ERODE_KERNEL_SIZE + "\nERODE_ITERATIONS = " + Config.ERODE_ITERATIONS + "\n\nPIXEL_TO_CROP = " + Config.PIXEL_TO_CROP
+        )
         val start = System.currentTimeMillis()
 
         val edgeImage = adaptiveThresh(originalImage)
@@ -69,10 +75,11 @@ class FingerBorderDetection @Inject constructor() : ProcessingStep() {
 
 
         val duration = System.currentTimeMillis() - start
-        Logging.createLogEntry(Logging.loggingLevel_detailed, 1200, "Finger Border Detection finished in " + duration + "ms.")
+        Logging.createLogEntry(Logging.loggingLevel_critical, 1200, "Detected " + sepImages.size + " fingers")
+        Logging.createLogEntry(Logging.loggingLevel_medium, 1200, "Finger Border Detection finished in " + duration + "ms.")
 
         sepImages.forEach{
-            Logging.createLogEntry(85,1200,"A finger has been detected, see image for result.", it)
+            Logging.createLogEntry(Logging.loggingLevel_medium,1200,"A finger has been detected, see image for result.", it)
         }
 
         return sepImages

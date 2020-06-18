@@ -51,12 +51,12 @@ class FingerScanningFragment : BaseFragment() {
 
         override fun onCameraViewStarted(width: Int, height: Int) {
             mRgba = Mat(height, width, CvType.CV_8UC4)
-            Logging.createLogEntry(Logging.loggingLevel_some, 1100, "Acquisition started.")
+            Logging.createLogEntry(Logging.loggingLevel_critical, 1100, "Acquisition started.")
         }
 
         override fun onCameraViewStopped() {
             mRgba.release()
-            Logging.createLogEntry(Logging.loggingLevel_some, 1100, "Acquisition stopped.")
+            Logging.createLogEntry(Logging.loggingLevel_critical, 1100, "Acquisition stopped.")
         }
 
         override fun onCameraFrame(inputFrame: CameraBridgeViewBase.CvCameraViewFrame): Mat {
@@ -133,14 +133,14 @@ class FingerScanningFragment : BaseFragment() {
         binding.button.setOnClickListener {
             fingerScanningViewModel.record = true
             binding.button.isEnabled = false
-            Logging.createLogEntry(Logging.loggingLevel_some, 1100, "Processing has been started.")
+            Logging.createLogEntry(Logging.loggingLevel_critical, 1100, "Processing has been started.")
         }
 
         binding.buttonfoo.setOnClickListener{
             javaCamera2View.toggleFlash()
             //binding.buttonfoo.isEnabled = false
             Log.e(TAG, "\n\n\nBUTTONFOO PRESSED \n\n\n")
-            Logging.createLogEntry(Logging.loggingLevel_medium,1100,"The flash has been toggled")
+            Logging.createLogEntry(Logging.loggingLevel_critical,1100,"The flash has been toggled")
         }
 
         fingerScanningViewModel.setSensorOrientation(Utils.getSensorOrientation(activity))

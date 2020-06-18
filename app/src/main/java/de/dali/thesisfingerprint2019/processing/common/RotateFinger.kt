@@ -52,10 +52,10 @@ class RotateFinger @Inject constructor() : ProcessingStep() {
 
 
         val duration = System.currentTimeMillis() - start
-        Logging.createLogEntry(Logging.loggingLevel_detailed, 1300, "Finger Rotation finished in " + duration + "ms.")
+        Logging.createLogEntry(Logging.loggingLevel_medium, 1300, "Finger Rotation finished in " + duration + "ms.")
 
         // could add rotation degree to the image, represented by line
-        Logging.createLogEntry(Logging.loggingLevel_detailed, 1300, "Finger rotated by " + correctionAngle.roundToInt() + "°, see image for results.", rotatedFinger)
+        Logging.createLogEntry(Logging.loggingLevel_critical, 1300, "Finger rotated by " + correctionAngle.roundToInt() + "°, see image for results.", rotatedFinger)
 
         return rotatedFinger
     }

@@ -8,6 +8,8 @@ import org.opencv.core.Mat;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import de.dali.thesisfingerprint2019.logging.SQLite.Entity.Module;
 
@@ -24,11 +26,12 @@ public final class Logging {
 
     private static LogSQLite SQLDB = null;
 
-    public static long loggingLevel_critical = 20;
-    public static long loggingLevel_some = 40;
-    public static long loggingLevel_medium = 60;
-    public static long loggingLevel_detailed = 80;
-    public static long loggingLevel_debug = 100;
+    public static long loggingLevel_param = 1;
+    public static long loggingLevel_critical = 2;
+    public static long loggingLevel_medium = 3;
+    public static long loggingLevel_debug = 4;
+
+    private static Map<Long, Boolean> paramsWritten = new HashMap<Long, Boolean>();
 
     /**
      * All methods are static, therefore a callable constructor does not make sense
@@ -190,6 +193,7 @@ public final class Logging {
                     if (currentModule.getName().equals("Logging Internal")) {
                         loggingModuleID = currentModule.getModuleID();
                     }
+                    paramsWritten.put(currentModule.getModuleID(), false);
                 }
                 break;
             }
@@ -288,7 +292,7 @@ public final class Logging {
         if (initialised) {
             // TODO
             // redo createLogEntry signature
-            createLogEntry((short) 0, (short) loggingModuleID, "Logging initialised, logging level: " + newLoggingLevel + " App version: " + newAppVersion);
+            createLogEntry(Logging.loggingLevel_critical, loggingModuleID, "Logging initialised, logging level: " + newLoggingLevel + "; App version: " + newAppVersion);
             return 0;
         } else {
             return -1;
@@ -327,9 +331,19 @@ public final class Logging {
         // error code as return values
         // Rethink passing of each variable
 
+        if (loggingLevel > loggingLevel_debug) {
+            System.out.println("invalid logging level");
+        }
+
         // Check if the logging module has been initialised and if the logging level is low enough
         if (loggingLevel > Logging.loggingLevel || !initialised) {
             return false;
+        } else if (loggingLevel == loggingLevel_param) {
+            if (paramsWritten.get(moduleid)) {
+                return false;
+            } else {
+                paramsWritten.put(moduleid, true);
+            }
         }
 
         boolean result = false;
@@ -379,6 +393,10 @@ public final class Logging {
         // implement all items that need to be logged
         // error code as return values
         // Rethink passing of each variable
+
+        if (loggingLevel > loggingLevel_debug) {
+            System.out.println("invalid logging level");
+        }
 
         // Check if the logging module has been initialised and if the logging level is low enough
         if (loggingLevel > Logging.loggingLevel || !initialised) {

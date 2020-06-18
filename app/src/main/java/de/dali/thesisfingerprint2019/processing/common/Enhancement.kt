@@ -1,6 +1,7 @@
 package de.dali.thesisfingerprint2019.processing.common
 
 import de.dali.thesisfingerprint2019.logging.Logging
+import de.dali.thesisfingerprint2019.processing.Config
 import de.dali.thesisfingerprint2019.processing.Config.CLAHE_ITERATIONS
 import de.dali.thesisfingerprint2019.processing.Config.CLIP_LIMIT
 import de.dali.thesisfingerprint2019.processing.Config.GAUSSIAN_KERNEL_SIZE_HIGH
@@ -19,7 +20,12 @@ class Enhancement @Inject constructor() : ProcessingStep() {
         get() = Enhancement::class.java.simpleName
 
     override fun run(originalImage: Mat): Mat {
-        Logging.createLogEntry(Logging.loggingLevel_debug, 1500, "Enhancement started.")
+        Logging.createLogEntry(
+            Logging.loggingLevel_param,
+            1500,
+            "Config data for Enhancement:\nCLIP_LIMIT = " + Config.CLIP_LIMIT + "\nCLAHE_ITERATIONS = " + Config.CLAHE_ITERATIONS + "\n\nGAUSSIAN_KERNEL_SIZE_LOW = " + Config.GAUSSIAN_KERNEL_SIZE_LOW + "\nGAUSSIAN_KERNEL_SIZE_HIGH = " + Config.GAUSSIAN_KERNEL_SIZE_HIGH
+        )
+        Logging.createLogEntry(Logging.loggingLevel_critical, 1500, "Enhancement started.")
         val start = System.currentTimeMillis()
 
         for (i in 0 until CLAHE_ITERATIONS) {
@@ -43,7 +49,7 @@ class Enhancement @Inject constructor() : ProcessingStep() {
 
 
         val duration = System.currentTimeMillis() - start
-        Logging.createLogEntry(Logging.loggingLevel_detailed, 1500, "Enhancement finished in " + duration + "ms.")
+        Logging.createLogEntry(Logging.loggingLevel_medium, 1500, "Enhancement finished in " + duration + "ms.")
 
         Logging.createLogEntry(Logging.loggingLevel_critical, 1500, "Enhancement done, see image for results.", dst)
 

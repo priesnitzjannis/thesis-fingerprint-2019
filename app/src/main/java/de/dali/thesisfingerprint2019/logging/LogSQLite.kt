@@ -284,18 +284,18 @@ class LogSQLite {
 
     fun saveImage(imageMat: Mat, timestamp: String): Long? {
         if (imageMat.height() == 0 || imageMat.width() == 0) {
-            Logging.createLogEntry(10, loggingModuleID, "Cannot save image of size 0.")
+            Logging.createLogEntry(Logging.loggingLevel_debug, loggingModuleID, "Cannot save image of size 0.")
             return null
         }
 
         try {
-            println("Saving image...")
+            //println("Saving image...")
 
             val img = Image(imageMat.height(), imageMat.width(), ".jpg", timestamp)
 
             img.imageID = SQLDB!!.imageDao().insertImage(img)
 
-            println("Added image data to database")
+            //println("Added image data to database")
 
             saveImageToGallery(
                 "thesis-fingerprints-2019/Logging-Images",
@@ -304,12 +304,12 @@ class LogSQLite {
                 100
             )
 
-            println("image saved")
+            //println("image saved")
 
             return img.imageID
         } catch (e: Exception) {
-            println("Error in saving image: " + e.message)
-            Logging.createLogEntry(10, loggingModuleID, "Cannot save image.")
+            //println("Error in saving image: " + e.message)
+            Logging.createLogEntry(Logging.loggingLevel_debug, loggingModuleID, "Cannot save image.")
             Log.d("Exception", e.message)
             return null
         }
@@ -317,26 +317,26 @@ class LogSQLite {
 
     fun convertMatToBitMap(input: Mat): Bitmap? {
         if (input == null) {
-            println("Cannot save image, cannot convert null to bitmap")
+            //println("Cannot save image, cannot convert null to bitmap")
             return null
         }
 
         var bmp: Bitmap? = null
         val rgb = Mat()
-        println("initialised null bitmap")
+        //println("initialised null bitmap")
 
         try {
             Imgproc.cvtColor(input, rgb, Imgproc.COLOR_BGR2RGBA, 4)
-            println("performed color conversion")
+            //println("performed color conversion")
 
             bmp = Bitmap.createBitmap(rgb.cols(), rgb.rows(), Bitmap.Config.ARGB_8888)
-            println("created empty bitmap")
+            //println("created empty bitmap")
 
             org.opencv.android.Utils.matToBitmap(input, bmp, true)
-            println("finished bitmap conversion")
+            //println("finished bitmap conversion")
         } catch (e: Exception) {
-            println("Error in bitmap conversion: " + e.message)
-            Logging.createLogEntry(10, loggingModuleID, "Cannot save image.")
+            //println("Error in bitmap conversion: " + e.message)
+            Logging.createLogEntry(Logging.loggingLevel_debug, loggingModuleID, "Cannot save image.")
             Log.d("Exception", e.message)
         }
 
@@ -345,11 +345,11 @@ class LogSQLite {
 
     fun saveImageToGallery(pathName: String, fileName: String, bitmap: Bitmap, quality: Int) {
         if (bitmap == null) {
-            println("Cannot save image, cannot save null")
+            //println("Cannot save image, cannot save null")
             return
         }
 
-        println("saving to gallery...")
+        //println("saving to gallery...")
 
         try {
             val pathname = "${Environment.getExternalStorageDirectory()}/$pathName"
@@ -362,16 +362,16 @@ class LogSQLite {
             val file = File(myDir, fileName)
             if (file.exists()) file.delete()
             val out = FileOutputStream(file)
-            println("Aquired file handle")
+            //println("Aquired file handle")
 
             bitmap.compress(Bitmap.CompressFormat.JPEG, quality, out)
-            println("writing bitmap to file...")
+            //println("writing bitmap to file...")
             out.flush()
             out.close()
-            println("image written")
+            //println("image written")
         } catch (e: Exception) {
-            println("Error in writing bitmap to file: " + e.message)
-            Logging.createLogEntry(10, loggingModuleID, "Cannot save image.")
+            //println("Error in writing bitmap to file: " + e.message)
+            Logging.createLogEntry(Logging.loggingLevel_debug, loggingModuleID, "Cannot save image.")
             Log.d("Exception", e.message)
         }
     }

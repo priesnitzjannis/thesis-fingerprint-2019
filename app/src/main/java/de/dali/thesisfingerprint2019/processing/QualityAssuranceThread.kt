@@ -70,7 +70,7 @@ class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
 
                 Logging.startRun()
                 Logging.createLogEntry(
-                    Logging.loggingLevel_medium,
+                    Logging.loggingLevel_critical,
                     1000,
                     "Started processing of an image.",
                     image
@@ -139,7 +139,7 @@ class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
                                 clearQueue()
                                 quit()
                                 onSuccess(highestEdgeDenseMats)
-                                Logging.createLogEntry(20, 1000, "Processing completed.")
+                                Logging.createLogEntry(Logging.loggingLevel_critical, 1000, "Processing completed.")
                             }
                         } else {
                             onUpdate(FAILURE, "Fingers too blurry.", processedImages)
@@ -177,7 +177,7 @@ class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
 
                 val duration = System.currentTimeMillis() - start
                 Logging.createLogEntry(
-                    Logging.loggingLevel_detailed,
+                    Logging.loggingLevel_medium,
                     1000,
                     "Image processed in " + duration + "ms."
                 )

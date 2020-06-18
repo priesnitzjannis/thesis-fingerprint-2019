@@ -24,6 +24,7 @@ import de.dali.thesisfingerprint2019.R
 import de.dali.thesisfingerprint2019.data.local.entity.FingerPrintEntity
 import de.dali.thesisfingerprint2019.data.local.entity.ImageEntity
 import de.dali.thesisfingerprint2019.databinding.FragmentFingerPrintCreateBinding
+import de.dali.thesisfingerprint2019.logging.Logging
 import de.dali.thesisfingerprint2019.ui.base.BaseFragment
 import de.dali.thesisfingerprint2019.ui.base.custom.FingerPrintAdapter
 import de.dali.thesisfingerprint2019.ui.main.viewmodel.fingerprint.FingerPrintCreateViewModel
@@ -202,6 +203,16 @@ class FingerPrintCreateFragment : BaseFragment() {
     }
 
     private fun navToFingerScanningFrag(entity: FingerPrintEntity, list: List<Int>) {
+        // TODO
+        // Check that the finger numbering is correct
+        var loggingMessage = "Finger selection includes finger"
+        for (currentFinger in list) {
+            loggingMessage += " #" + currentFinger + ";"
+        }
+        loggingMessage = loggingMessage.dropLast(1)
+        Logging.createLogEntry(Logging.loggingLevel_critical, 100, loggingMessage)
+
+
         val action = FingerPrintCreateFragmentDirections
             .toFingerScanningFragment(entity, list.toIntArray())
         NavHostFragment.findNavController(this).navigate(action)
