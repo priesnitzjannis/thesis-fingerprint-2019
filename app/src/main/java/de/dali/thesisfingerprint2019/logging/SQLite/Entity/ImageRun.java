@@ -2,13 +2,20 @@ package de.dali.thesisfingerprint2019.logging.SQLite.Entity;
 
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
+import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
-@Entity(tableName = "run")
-public class Run {
+@Entity(tableName = "imageRun",
+        foreignKeys = {
+                @ForeignKey(entity = Acquisition.class,
+                        parentColumns = "acquisitionID",
+                        childColumns = "acquisitionID",
+                        onDelete = ForeignKey.CASCADE)
+        })
+public class ImageRun {
 
     @PrimaryKey(autoGenerate = true)
     @NonNull
@@ -21,10 +28,8 @@ public class Run {
 
     private int returnCode;
 
-
-    public Run() {
-        start = ZonedDateTime.now().format(DateTimeFormatter.ISO_INSTANT);
-    }
+    @NonNull
+    private long acquisitionID;
 
 
     public long getRunID() {
@@ -60,9 +65,22 @@ public class Run {
         this.end = end;
     }
 
+    public long getAcquisitionID() {
+        return acquisitionID;
+    }
+
+    public void setAcquisitionID(long acquisitionID_) {
+        acquisitionID = acquisitionID_;
+    }
 
     public void end(int _returnCode) {
         end = ZonedDateTime.now().format(DateTimeFormatter.ISO_INSTANT);
         returnCode = _returnCode;
     }
+
+    public ImageRun(@NonNull long acquisitionID) {
+        this.start = ZonedDateTime.now().format(DateTimeFormatter.ISO_INSTANT);
+        this.acquisitionID = acquisitionID;
+    }
+
 }

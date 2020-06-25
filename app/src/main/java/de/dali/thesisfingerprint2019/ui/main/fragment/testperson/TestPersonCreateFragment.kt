@@ -37,7 +37,7 @@ class TestPersonCreateFragment : BaseFragment() {
         AndroidSupportInjection.inject(this)
         initialiseViewModel()
 
-        Logging.createLogEntry(Logging.loggingLevel_critical, 200, "Navigation to overview of a testperson.")
+        Logging.createLogEntry(Logging.loggingLevel_critical, 100, "Navigation to overview of a testperson.")
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

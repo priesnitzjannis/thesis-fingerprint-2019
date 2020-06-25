@@ -11,7 +11,6 @@ import org.opencv.core.Mat
 import org.opencv.imgproc.Imgproc
 import java.io.File
 import java.io.FileOutputStream
-import kotlin.math.log
 
 class LogSQLite {
     private var SQLDB: LoggingDatabase? = null
@@ -248,11 +247,14 @@ class LogSQLite {
         return true
     }
 
-    fun startRun(): Long {
+    fun startRun(acquisitionID: Long): Long {
         var runID: Long? = null
         var canProceed: Boolean = false
         Thread(Runnable {
-            var run = Run()
+            var run =
+                ImageRun(
+                    acquisitionID
+                )
             runID = SQLDB!!.runDao().insertRun(run)
             canProceed = true
         }).start()
@@ -279,12 +281,60 @@ class LogSQLite {
     }
 
 
+    fun startAcquisition(location: String, illumination: Double, fingers: String): Long {
+        var acquisitionID: Long? = null
+        var canProceed: Boolean = false
+        Thread(Runnable {
+            var acquisition = Acquisition(location, illumination, fingers)
+            acquisitionID = SQLDB!!.acquisitionDao().insertAcquisition(acquisition)
+            canProceed = true
+        }).start()
+
+        while (!canProceed) {
+            Thread.yield()
+        }
+        return acquisitionID!!
+    }
+
+    fun cancelAcquisition(acquisitionID: Long) {
+        if (acquisitionID == null) {
+            return
+        }
+        Thread(Runnable {
+            var acquisitions = SQLDB!!.acquisitionDao().getAcquisitionByID(acquisitionID)
+
+            if (acquisitions.size == 1) {
+                acquisitions[0].cancel()
+                SQLDB!!.acquisitionDao().updateAcquisition(acquisitions[0])
+            }
+        }).start()
+    }
+
+    fun completeAcquisition(acquisitionID: Long) {
+        if (acquisitionID == null) {
+            return
+        }
+        Thread(Runnable {
+            var acquisitions = SQLDB!!.acquisitionDao().getAcquisitionByID(acquisitionID)
+
+            if (acquisitions.size == 1) {
+                acquisitions[0].complete()
+                SQLDB!!.acquisitionDao().updateAcquisition(acquisitions[0])
+            }
+        }).start()
+    }
+
+
     // ---------------------------------------------------------------------------------------------
 
 
     fun saveImage(imageMat: Mat, timestamp: String): Long? {
         if (imageMat.height() == 0 || imageMat.width() == 0) {
-            Logging.createLogEntry(Logging.loggingLevel_debug, loggingModuleID, "Cannot save image of size 0.")
+            Logging.createLogEntry(
+                Logging.loggingLevel_debug,
+                loggingModuleID,
+                "Cannot save image of size 0."
+            )
             return null
         }
 
@@ -309,7 +359,11 @@ class LogSQLite {
             return img.imageID
         } catch (e: Exception) {
             //println("Error in saving image: " + e.message)
-            Logging.createLogEntry(Logging.loggingLevel_debug, loggingModuleID, "Cannot save image.")
+            Logging.createLogEntry(
+                Logging.loggingLevel_debug,
+                loggingModuleID,
+                "Cannot save image."
+            )
             Log.d("Exception", e.message)
             return null
         }
@@ -336,7 +390,11 @@ class LogSQLite {
             //println("finished bitmap conversion")
         } catch (e: Exception) {
             //println("Error in bitmap conversion: " + e.message)
-            Logging.createLogEntry(Logging.loggingLevel_debug, loggingModuleID, "Cannot save image.")
+            Logging.createLogEntry(
+                Logging.loggingLevel_debug,
+                loggingModuleID,
+                "Cannot save image."
+            )
             Log.d("Exception", e.message)
         }
 
@@ -371,7 +429,11 @@ class LogSQLite {
             //println("image written")
         } catch (e: Exception) {
             //println("Error in writing bitmap to file: " + e.message)
-            Logging.createLogEntry(Logging.loggingLevel_debug, loggingModuleID, "Cannot save image.")
+            Logging.createLogEntry(
+                Logging.loggingLevel_debug,
+                loggingModuleID,
+                "Cannot save image."
+            )
             Log.d("Exception", e.message)
         }
     }

@@ -55,7 +55,7 @@ class LoggingDatabaseModule {
 
     @Provides
     @Singleton
-    internal fun provideRunDao(LoggingDatabase: LoggingDatabase): RunDao {
+    internal fun provideRunDao(LoggingDatabase: LoggingDatabase): ImageRunDao {
         return LoggingDatabase.runDao()
     }
 

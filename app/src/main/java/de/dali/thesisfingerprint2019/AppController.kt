@@ -39,15 +39,24 @@ class AppController : Application(), HasActivityInjector {
         modules.add(Module(0, "N/A"))
         modules.add(Module(1, "App General"))
         modules.add(Module(10, "Logging Internal"))
-        modules.add(Module(100, "User Action"))
-        modules.add(Module(200, "Navigation"))
+        modules.add(Module(100, "User Interaction"))
         modules.add(Module(500, "Utils General"))
-        modules.add(Module(1000, "Pipeline General"))
-        modules.add(Module(1100, "Acquisition"))
-        modules.add(Module(1200, "Detection"))
-        modules.add(Module(1300, "Rotation"))
-        modules.add(Module(1400, "Segmentation"))
-        modules.add(Module(1500, "Enhancement"))
+        modules.add(Module(1000, "Acquisition"))
+        modules.add(Module(1100, "Pipeline General"))
+        modules.add(Module(1200, "Image Run"))
+        modules.add(Module(1300, "Scanning"))
+
+        // Segmentation:
+            // Detection:
+        modules.add(Module(1400, "Multifinger Detection"))
+        modules.add(Module(1500, "Finger Border Detection"))
+        modules.add(Module(1600, "Fingertip Location"))
+            // Rotation
+        modules.add(Module(1700, "Rotation Imprecise"))
+        modules.add(Module(1800, "Rotation Precise"))
+
+        // Enhancement
+        modules.add(Module(1900, "Enhancement"))
         Logging.init(Logging.loggerValues.logSQLite, Logging.loggingLevel_debug, "1.0.0", modules, this);
         //Logging.disableImageLogging()
 

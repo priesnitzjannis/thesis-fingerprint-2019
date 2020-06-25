@@ -205,12 +205,15 @@ class FingerPrintCreateFragment : BaseFragment() {
     private fun navToFingerScanningFrag(entity: FingerPrintEntity, list: List<Int>) {
         // TODO
         // Check that the finger numbering is correct
-        var loggingMessage = "Finger selection includes finger"
+        var fingers = ""
         for (currentFinger in list) {
-            loggingMessage += " #" + currentFinger + ";"
+            fingers += " #" + currentFinger + ";"
         }
-        loggingMessage = loggingMessage.dropLast(1)
-        Logging.createLogEntry(Logging.loggingLevel_critical, 100, loggingMessage)
+        fingers = fingers.dropLast(1)
+
+        Logging.startAcquisition(fingerPrintCreateViewModel.location, fingerPrintCreateViewModel.illumination.toDouble(), fingers)
+
+        Logging.createLogEntry(Logging.loggingLevel_critical, 100, "Finger selection includes finger" + fingers)
 
 
         val action = FingerPrintCreateFragmentDirections

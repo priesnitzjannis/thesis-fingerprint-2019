@@ -35,7 +35,7 @@ class FingerBorderDetection @Inject constructor() : ProcessingStep() {
     override fun runReturnMultiple(originalImage: Mat): List<Mat> {
         Logging.createLogEntry(
             Logging.loggingLevel_param,
-            1200,
+            1500,
             "Config data for Finger Border Detection:\nKERNEL_SIZE_BLUR = " + Config.KERNEL_SIZE_BLUR + "\n\nTHRESHOLD_MAX = " + Config.THRESHOLD_MAX + "\nBLOCKSIZE = " + Config.BLOCKSIZE + "\n\nDILATE_KERNEL_SIZE = " + Config.DILATE_KERNEL_SIZE + "\nDILATE_ITERATIONS = " + Config.DILATE_ITERATIONS + "\n\nERODE_KERNEL_SIZE = " + Config.ERODE_KERNEL_SIZE + "\nERODE_ITERATIONS = " + Config.ERODE_ITERATIONS + "\n\nPIXEL_TO_CROP = " + Config.PIXEL_TO_CROP
         )
         val start = System.currentTimeMillis()
@@ -75,11 +75,11 @@ class FingerBorderDetection @Inject constructor() : ProcessingStep() {
 
 
         val duration = System.currentTimeMillis() - start
-        Logging.createLogEntry(Logging.loggingLevel_critical, 1200, "Detected " + sepImages.size + " fingers")
-        Logging.createLogEntry(Logging.loggingLevel_medium, 1200, "Finger Border Detection finished in " + duration + "ms.")
+        Logging.createLogEntry(Logging.loggingLevel_critical, 1500, "Detected " + sepImages.size + " fingers")
+        Logging.createLogEntry(Logging.loggingLevel_medium, 1500, "Finger Border Detection finished in " + duration + "ms.")
 
         sepImages.forEach{
-            Logging.createLogEntry(Logging.loggingLevel_medium,1200,"A finger has been detected, see image for result.", it)
+            Logging.createLogEntry(Logging.loggingLevel_medium,1500,"A finger has been detected, see image for result.", it)
         }
 
         return sepImages

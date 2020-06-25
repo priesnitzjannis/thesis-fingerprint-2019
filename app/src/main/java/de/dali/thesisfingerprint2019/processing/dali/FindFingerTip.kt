@@ -17,7 +17,7 @@ class FindFingerTip @Inject constructor() : ProcessingStep() {
     override fun run(originalImage: Mat): Mat {
         Logging.createLogEntry(
             Logging.loggingLevel_param,
-            1400,
+            1600,
             "Config data for Find Finger Tip:\nROW_TO_COL_RATIO = " + Config.ROW_TO_COL_RATIO
         )
         val start = System.currentTimeMillis()
@@ -33,9 +33,9 @@ class FindFingerTip @Inject constructor() : ProcessingStep() {
 
 
         val duration = System.currentTimeMillis() - start
-        Logging.createLogEntry(Logging.loggingLevel_medium, 1400, "Fingertip Location finished in " + duration + "ms.")
+        Logging.createLogEntry(Logging.loggingLevel_medium, 1600, "Fingertip Location finished in " + duration + "ms.")
 
-        Logging.createLogEntry(Logging.loggingLevel_critical, 1400, "Fingertip located, see image for results.", result)
+        Logging.createLogEntry(Logging.loggingLevel_critical, 1600, "Fingertip located, see image for results.", result)
 
         return result
     }

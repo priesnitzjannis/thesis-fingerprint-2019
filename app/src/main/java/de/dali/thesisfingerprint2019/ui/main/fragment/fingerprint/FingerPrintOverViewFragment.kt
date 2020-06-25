@@ -14,6 +14,7 @@ import dagger.android.support.AndroidSupportInjection
 import de.dali.thesisfingerprint2019.R
 import de.dali.thesisfingerprint2019.data.local.entity.FingerPrintEntity
 import de.dali.thesisfingerprint2019.databinding.FragmentFingerPrintOverviewBinding
+import de.dali.thesisfingerprint2019.logging.Logging
 import de.dali.thesisfingerprint2019.ui.base.BaseFragment
 import de.dali.thesisfingerprint2019.ui.base.custom.FingerPrintListAdapter
 import de.dali.thesisfingerprint2019.ui.base.custom.ListWithLoadingSpinner.LIST.EMPTY
@@ -72,6 +73,8 @@ class FingerPrintOverViewFragment : BaseFragment() {
 
         fingerPrintOverViewModel.loadFingerPrints(fingerPrintOverViewModel.entity.personID!!)
         fingerPrintOverViewModel.listOfFingerPrints.observe(this, Observer { updateList(it) })
+
+        Logging.cancelAcquisition()
     }
 
     private fun initialiseViewModel() {

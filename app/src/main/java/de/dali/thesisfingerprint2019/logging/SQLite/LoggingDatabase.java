@@ -8,23 +8,26 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
 import de.dali.thesisfingerprint2019.logging.SQLite.Dao.ImageDao;
+import de.dali.thesisfingerprint2019.logging.SQLite.Dao.ImageRunDao;
 import de.dali.thesisfingerprint2019.logging.SQLite.Dao.LoggingMessageDao;
 import de.dali.thesisfingerprint2019.logging.SQLite.Dao.ModuleDao;
 import de.dali.thesisfingerprint2019.logging.SQLite.Dao.PhoneDao;
-import de.dali.thesisfingerprint2019.logging.SQLite.Dao.RunDao;
+import de.dali.thesisfingerprint2019.logging.SQLite.Dao.AcquisitionDao;
 import de.dali.thesisfingerprint2019.logging.SQLite.Entity.Image;
+import de.dali.thesisfingerprint2019.logging.SQLite.Entity.ImageRun;
 import de.dali.thesisfingerprint2019.logging.SQLite.Entity.LoggingMessage;
 import de.dali.thesisfingerprint2019.logging.SQLite.Entity.Module;
 import de.dali.thesisfingerprint2019.logging.SQLite.Entity.Phone;
-import de.dali.thesisfingerprint2019.logging.SQLite.Entity.Run;
+import de.dali.thesisfingerprint2019.logging.SQLite.Entity.Acquisition;
 
 @Database(entities = {
         Phone.class,
         LoggingMessage.class,
         Module.class,
-        Run.class,
-        Image.class},
-        exportSchema = false, version = 12)
+        ImageRun.class,
+        Image.class,
+        Acquisition.class},
+        exportSchema = false, version = 16)
 public abstract class LoggingDatabase extends RoomDatabase {
     // TODO
     // Add Person, connected to run as expected Person or similar
@@ -47,8 +50,10 @@ public abstract class LoggingDatabase extends RoomDatabase {
 
     public abstract ModuleDao moduleDao();
 
-    public abstract RunDao runDao();
+    public abstract ImageRunDao runDao();
 
     public abstract ImageDao imageDao();
+
+    public abstract AcquisitionDao acquisitionDao();
 
 }

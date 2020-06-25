@@ -45,7 +45,7 @@ class TestPersonOverviewFragment : BaseFragment() {
         initialiseViewModel()
         initialiseAdapter()
 
-        Logging.createLogEntry(Logging.loggingLevel_critical, 200, "Navigation to overview of all testpeople.")
+        Logging.createLogEntry(Logging.loggingLevel_critical, 100, "Navigation to overview of all testpeople.")
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

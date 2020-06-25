@@ -20,7 +20,7 @@ import androidx.room.PrimaryKey;
                         parentColumns = "phoneID",
                         childColumns = "phoneID",
                         onDelete = ForeignKey.CASCADE),
-                @ForeignKey(entity = Run.class,
+                @ForeignKey(entity = ImageRun.class,
                         parentColumns = "runID",
                         childColumns = "runID",
                         onDelete = ForeignKey.CASCADE),

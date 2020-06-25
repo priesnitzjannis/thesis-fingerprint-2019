@@ -19,6 +19,7 @@ import de.dali.thesisfingerprint2019.logging.SQLite.Entity.Module;
 public final class Logging {
     private static long loggingLevel = 0;
     private static Long run = null;
+    private static Long acquisition = null;
     private static loggerValues logger = loggerValues.logConsole;
     private static boolean initialised = false;
     private static boolean imageLoggingEnabled = true;
@@ -108,9 +109,14 @@ public final class Logging {
      * Meant to describe recurring processes in apps where these are the main purpose.
      */
     public static void startRun() {
+        if (run != null) {
+            createLogEntry(Logging.loggingLevel_critical, loggingModuleID, "Attempt to start an image run while one is already running");
+            return;
+        }
+
         switch (logger) {
             case logSQLite: {
-                run = SQLDB.startRun();
+                run = SQLDB.startRun(acquisition);
                 break;
             }
             case logConsole:
@@ -124,7 +130,7 @@ public final class Logging {
             }
         }
 
-        createLogEntry(0, loggingModuleID, "Run " + run + " has begun");
+        createLogEntry(Logging.loggingLevel_critical, loggingModuleID, "ImageRun " + run + " has begun");
 
         return;
     }
@@ -136,10 +142,11 @@ public final class Logging {
      */
     public static void endRun(int code) {
         if (run == null) {
+            createLogEntry(Logging.loggingLevel_critical, loggingModuleID, "Attempt to end a non existent image run");
             return;
         }
 
-        createLogEntry(0, loggingModuleID, "Run " + run + " has ended with return code " + code);
+        createLogEntry(Logging.loggingLevel_critical, loggingModuleID, "ImageRun " + run + " has ended with return code " + code);
 
         switch (logger) {
             case logSQLite: {
@@ -159,6 +166,87 @@ public final class Logging {
 
         run = null;
     }
+
+    public static void startAcquisition(String location, double illumination, String fingers) {
+        if (acquisition != null) {
+            //createLogEntry(Logging.loggingLevel_critical, loggingModuleID, "Attempt to start an acquisition while one is already running");
+            return;
+        }
+
+        switch (logger) {
+            case logSQLite: {
+                acquisition = SQLDB.startAcquisition(location, illumination, fingers);
+                break;
+            }
+            case logConsole:
+            case logFile:
+            case logMySQL: {
+                break;
+            }
+            default: {
+                // all possible cases for logging methods should be covered by the switch statement, i.e. the default case should never be used
+                return;
+            }
+        }
+
+        createLogEntry(Logging.loggingLevel_critical, loggingModuleID, "Acquisition " + acquisition + " has begun");
+    }
+
+    public static void cancelAcquisition() {
+        if (acquisition == null) {
+            //createLogEntry(Logging.loggingLevel_critical, loggingModuleID, "Attempt to cancel a non existent acquisition");
+            return;
+        }
+
+        createLogEntry(Logging.loggingLevel_critical, loggingModuleID, "Acquisition " + acquisition + " has been cancelled");
+
+        switch (logger) {
+            case logSQLite: {
+                SQLDB.cancelAcquisition(acquisition);
+                break;
+            }
+            case logConsole:
+            case logFile:
+            case logMySQL: {
+                break;
+            }
+            default: {
+                // all possible cases for logging methods should be covered by the switch statement, i.e. the default case should never be used
+                return;
+            }
+        }
+
+        acquisition = null;
+    }
+
+    public static void completeAcquisition() {
+        if (acquisition == null) {
+            //createLogEntry(Logging.loggingLevel_critical, loggingModuleID, "Attempt to complete a non existent acquisition");
+            return;
+        }
+
+
+        createLogEntry(Logging.loggingLevel_critical, loggingModuleID, "Acquisition " + acquisition + " has ended");
+
+        switch (logger) {
+            case logSQLite: {
+                SQLDB.completeAcquisition(acquisition);
+                break;
+            }
+            case logConsole:
+            case logFile:
+            case logMySQL: {
+                break;
+            }
+            default: {
+                // all possible cases for logging methods should be covered by the switch statement, i.e. the default case should never be used
+                return;
+            }
+        }
+
+        acquisition = null;
+    }
+
 
     /**
      * Get a timestamp of the current time in UTC±00:00

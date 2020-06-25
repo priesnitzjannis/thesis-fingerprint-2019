@@ -71,7 +71,7 @@ class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
                 Logging.startRun()
                 Logging.createLogEntry(
                     Logging.loggingLevel_critical,
-                    1000,
+                    1100,
                     "Started processing of an image.",
                     image
                 )
@@ -130,7 +130,7 @@ class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
 
                             Logging.createLogEntry(
                                 Logging.loggingLevel_critical,
-                                1000,
+                                1100,
                                 "Processing of image completed."
                             )
                             Logging.endRun(0)
@@ -139,13 +139,13 @@ class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
                                 clearQueue()
                                 quit()
                                 onSuccess(highestEdgeDenseMats)
-                                Logging.createLogEntry(Logging.loggingLevel_critical, 1000, "Processing completed.")
+                                Logging.createLogEntry(Logging.loggingLevel_critical, 1100, "Processing completed.")
                             }
                         } else {
                             onUpdate(FAILURE, "Fingers too blurry.", processedImages)
                             Logging.createLogEntry(
                                 Logging.loggingLevel_critical,
-                                1000,
+                                1100,
                                 "Processing cancelled. Fingers too blurry."
                             )
                             Logging.endRun(-1)
@@ -155,7 +155,7 @@ class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
                         onUpdate(FAILURE, "Couldn't split Fingers.", processedImages)
                         Logging.createLogEntry(
                             Logging.loggingLevel_critical,
-                            1000,
+                            1100,
                             "Processing cancelled. Couldn't split Fingers."
                         )
                         Logging.endRun(-2)
@@ -165,7 +165,7 @@ class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
                     onUpdate(FAILURE, "Couldn't detect Fingers.", processedImages)
                     Logging.createLogEntry(
                         Logging.loggingLevel_critical,
-                        1000,
+                        1100,
                         "Processing cancelled. Couldn't detect Fingers."
                     )
                     Logging.endRun(-3)
@@ -178,7 +178,7 @@ class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
                 val duration = System.currentTimeMillis() - start
                 Logging.createLogEntry(
                     Logging.loggingLevel_medium,
-                    1000,
+                    1100,
                     "Image processed in " + duration + "ms."
                 )
             }
@@ -200,7 +200,7 @@ class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
             message.obj = image
             handler.sendMessage(message)
 
-            //Logging.createLogEntry(40, 1000, "Pipeline started with an image.", originalImage) duplicate
+            //Logging.createLogEntry(40, 1100, "Pipeline started with an image.", originalImage) duplicate
         }
     }
 

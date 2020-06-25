@@ -32,7 +32,7 @@ class FingerRotationImprecise @Inject constructor() : ProcessingStep() {
     override fun run(originalImage: Mat): Mat {
         Logging.createLogEntry(
             Logging.loggingLevel_param,
-            1300,
+            1700,
             "Config data for Finger Rotation Imprecise:\nPOINT_PAIR_DST = " + Config.POINT_PAIR_DST
         )
         val start = System.currentTimeMillis()
@@ -58,10 +58,10 @@ class FingerRotationImprecise @Inject constructor() : ProcessingStep() {
         val rotatedImage = rotateImageByDegree(correctionAngle, originalImage)
 
         val duration = System.currentTimeMillis() - start
-        Logging.createLogEntry(Logging.loggingLevel_medium, 1300, "Finger Rotation Imprecise finished in " + duration + "ms.")
+        Logging.createLogEntry(Logging.loggingLevel_medium, 1700, "Finger Rotation Imprecise finished in " + duration + "ms.")
 
 
-        Logging.createLogEntry(Logging.loggingLevel_critical, 1300, "Finger oriented, rotated by " + correctionAngle.roundToInt() + "°, see images for results.", rotatedImage)
+        Logging.createLogEntry(Logging.loggingLevel_critical, 1700, "Finger oriented, rotated by " + correctionAngle.roundToInt() + "°, see images for results.", rotatedImage)
 
         return rotatedImage
     }
