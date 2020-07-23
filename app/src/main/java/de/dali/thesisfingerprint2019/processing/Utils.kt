@@ -38,6 +38,7 @@ import org.opencv.imgproc.Imgproc.*
 import kotlin.math.PI
 import kotlin.math.atan
 import kotlin.math.sqrt
+import kotlin.system.measureTimeMillis
 
 object Utils {
 
@@ -53,6 +54,16 @@ object Utils {
         Cb(2)
     }
 
+    inline fun <T> measureTimeMillis(loggingFunction: (Long) -> Unit,
+                                     function: () -> T): T {
+
+        val startTime = System.currentTimeMillis()
+        val result: T = function.invoke()
+        loggingFunction.invoke(System.currentTimeMillis() - startTime)
+
+        return result
+    }
+
     fun erode(mat: Mat): Mat {
         val anchor = Point(-1.0, -1.0)
 
@@ -65,8 +76,10 @@ object Utils {
     fun dilate(mat: Mat): Mat {
         val anchor = Point(-1.0, -1.0)
 
-        val kernel = getStructuringElement(MORPH_ELLIPSE, Size(DILATE_KERNEL_SIZE, DILATE_KERNEL_SIZE))
-        dilate(mat, mat, kernel, anchor, DILATE_ITERATIONS)
+        //val kernel = measureTimeMillis({ time -> Log.d(QualityAssuranceThread.TAG, "--> getStructuringElement:  $time") }) {getStructuringElement(MORPH_ELLIPSE, Size(DILATE_KERNEL_SIZE, DILATE_KERNEL_SIZE))}
+        //measureTimeMillis({ time -> Log.d(QualityAssuranceThread.TAG, "--> dilate:  $time") }) {
+        //    dilate(mat, mat, kernel, anchor, DILATE_ITERATIONS)
+        //}
 
         return mat
     }

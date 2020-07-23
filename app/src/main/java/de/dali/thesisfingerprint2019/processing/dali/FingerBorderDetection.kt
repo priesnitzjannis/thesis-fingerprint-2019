@@ -1,7 +1,9 @@
 package de.dali.thesisfingerprint2019.processing.dali
 
+import android.util.Log
 import de.dali.thesisfingerprint2019.processing.Config.PIXEL_TO_CROP
 import de.dali.thesisfingerprint2019.processing.ProcessingStep
+import de.dali.thesisfingerprint2019.processing.QualityAssuranceThread
 import de.dali.thesisfingerprint2019.processing.Utils.adaptiveThresh
 import de.dali.thesisfingerprint2019.processing.Utils.dilate
 import de.dali.thesisfingerprint2019.processing.Utils.erode
@@ -30,32 +32,44 @@ class FingerBorderDetection @Inject constructor() : ProcessingStep() {
         throw NotImplementedError("Not implemented for this processing step.")
     }
 
+    inline fun <T> measureTimeMillis(loggingFunction: (Long) -> Unit,
+                                     function: () -> T): T {
+
+        val startTime = System.currentTimeMillis()
+        val result: T = function.invoke()
+        loggingFunction.invoke(System.currentTimeMillis() - startTime)
+
+        return result
+    }
+
     override fun runReturnMultiple(originalImage: Mat): List<Mat> {
-        val edgeImage = adaptiveThresh(originalImage)
+        val edgeImage = measureTimeMillis({ time -> Log.d(QualityAssuranceThread.TAG, "-> adaptiveThresh:  $time") }) {
+            adaptiveThresh(originalImage)
+        }
 
-        var edgesDilated = dilate(edgeImage)
-        edgesDilated = erode(edgesDilated)
+        var edgesDilated = measureTimeMillis({ time -> Log.d(QualityAssuranceThread.TAG, "-> dilate:  $time") }) {dilate(edgeImage)}
+        edgesDilated = measureTimeMillis({ time -> Log.d(QualityAssuranceThread.TAG, "-> erode:  $time") }) {erode(edgesDilated)}
 
-        val thresholdImage = getThresholdImageNew(originalImage)
-        val contour = getFingerContour(thresholdImage)
+        val thresholdImage = measureTimeMillis({ time -> Log.d(QualityAssuranceThread.TAG, "-> getThresholdImageNew:  $time") }) {getThresholdImageNew(originalImage)}
+        val contour = measureTimeMillis({ time -> Log.d(QualityAssuranceThread.TAG, "-> getFingerContour:  $time") }) {getFingerContour(thresholdImage)}
 
-        val maskImage = getMaskImage(originalImage, contour)
+        val maskImage = measureTimeMillis({ time -> Log.d(QualityAssuranceThread.TAG, "-> getMaskImage:  $time") }) {getMaskImage(originalImage, contour)}
         val diffMaskEdge = Mat.zeros(originalImage.rows(), originalImage.cols(), CV_8UC1)
         Core.subtract(maskImage, edgesDilated, diffMaskEdge)
 
         releaseImage(contour)
         releaseImage(listOf(thresholdImage, edgeImage, edgesDilated, maskImage))
 
-        val newImages = cropPalmIfNeeded(originalImage, diffMaskEdge, (originalImage.rows() * 0.5).toInt())
+        val newImages = measureTimeMillis({ time -> Log.d(QualityAssuranceThread.TAG, "-> cropPalmIfNeeded:  $time") }) {cropPalmIfNeeded(originalImage, diffMaskEdge, (originalImage.rows() * 0.5).toInt())}
 
         var sepImages = emptyList<Mat>()
 
         if (newImages != null) {
-            val sepContours = getFingerContour(newImages.second).sortedBy { moments(it).m10 / moments(it).m00 }
-            val sepCntFixed = sepContours.map { fixPossibleDefects(it, newImages.first) }
+            val sepContours = measureTimeMillis({ time -> Log.d(QualityAssuranceThread.TAG, "-> getFingerContour:  $time") }) {getFingerContour(newImages.second).sortedBy { moments(it).m10 / moments(it).m00 }}
+            val sepCntFixed = measureTimeMillis({ time -> Log.d(QualityAssuranceThread.TAG, "-> fixPossibleDefects:  $time") }) {sepContours.map { fixPossibleDefects(it, newImages.first) }}
 
             sepImages = sepCntFixed.mapIndexed { index, mat ->
-                val m = getMaskedImage(newImages.first, mat)
+                val m = measureTimeMillis({ time -> Log.d(QualityAssuranceThread.TAG, "-> getMaskedImage:  $time") }) {getMaskedImage(newImages.first, mat)}
                 val r = boundingRect(sepCntFixed[index])
                 Mat(m, r)
             }

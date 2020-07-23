@@ -31,7 +31,6 @@ import org.opencv.android.LoaderCallbackInterface
 import org.opencv.android.OpenCVLoader
 import org.opencv.core.CvType
 import org.opencv.core.Mat
-import java.lang.Exception
 import javax.inject.Inject
 
 class FingerScanningFragment : BaseFragment() {
@@ -77,13 +76,9 @@ class FingerScanningFragment : BaseFragment() {
                     fingerScanningViewModel.startProcessingPipeline()
                     binding.javaCamera2View.enableView()
 
-                    try {
-                        Handler().postDelayed({
-                            javaCamera2View.toggleFlash()
-                        }, 1000)
-                    } catch (e : Exception) {
-                        //throw RuntimeException(e)
-                    }
+                    Handler().postDelayed({
+                        javaCamera2View.toggleFlash()
+                    }, 1000)
                 }
                 else -> {
                     super.onManagerConnected(status)

@@ -41,6 +41,7 @@ import org.opencv.imgproc.Imgproc;
 public class JavaCamera2View extends CameraBridgeViewBase {
 
     private static final String LOGTAG = "JavaCamera2View";
+    private static final String FLASHTAG = "ToggleFlash";
 
     private ImageReader mImageReader;
     private int mPreviewFormat = ImageFormat.YUV_420_888;
@@ -77,7 +78,9 @@ public class JavaCamera2View extends CameraBridgeViewBase {
             mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON);
             mCaptureSession.setRepeatingRequest(mPreviewRequestBuilder.build(), null, null);
         } catch (CameraAccessException e) {
-            e.printStackTrace();
+            // don't break the app
+            //e.printStackTrace();
+            Log.w(FLASHTAG, "uncaught exception from flash");
         }
     }
 
