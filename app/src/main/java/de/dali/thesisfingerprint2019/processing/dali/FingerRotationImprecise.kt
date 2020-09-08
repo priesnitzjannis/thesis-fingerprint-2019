@@ -27,24 +27,25 @@ class FingerRotationImprecise @Inject constructor() : ProcessingStep() {
         get() = FingerRotationImprecise::class.java.simpleName
 
     override fun run(originalImage: Mat): Mat {
-        val thresh = getThresholdImage(originalImage)
-
-        val pointPair = generatePointPair(thresh, POINT_PAIR_DST)
-
-        releaseImage(listOf(thresh))
-
-        val p1Contour = calcPointOnContour(pointPair.first, originalImage)
-        val p2Contour = calcPointOnContour(pointPair.second, originalImage)
-
-
-        val distanceP1P2 = euclideanDist(pointPair.first, pointPair.second)
-        val distanceP1ToContour = euclideanDist(pointPair.first, p1Contour)
-        val distanceP2ToContour = euclideanDist(pointPair.second, p2Contour)
-
-        val angle = calcAngle(distanceP1P2, distanceP2ToContour, distanceP1ToContour)
-        correctionAngle = if (hand == RIGHT) angle else -angle
-
-        return rotateImageByDegree(correctionAngle, originalImage)
+//        val thresh = getThresholdImage(originalImage)
+//
+//        val pointPair = generatePointPair(thresh, POINT_PAIR_DST)
+//
+//        releaseImage(listOf(thresh))
+//
+//        val p1Contour = calcPointOnContour(pointPair.first, originalImage)
+//        val p2Contour = calcPointOnContour(pointPair.second, originalImage)
+//
+//
+//        val distanceP1P2 = euclideanDist(pointPair.first, pointPair.second)
+//        val distanceP1ToContour = euclideanDist(pointPair.first, p1Contour)
+//        val distanceP2ToContour = euclideanDist(pointPair.second, p2Contour)
+//
+//        val angle = calcAngle(distanceP1P2, distanceP2ToContour, distanceP1ToContour)
+//        correctionAngle = if (hand == RIGHT) angle else -angle
+//
+//        return rotateImageByDegree(correctionAngle, originalImage)
+        return originalImage
     }
 
     override fun runReturnMultiple(originalImage: Mat): List<Mat> {

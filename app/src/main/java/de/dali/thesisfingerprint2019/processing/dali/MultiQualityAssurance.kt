@@ -18,10 +18,10 @@ class MultiQualityAssurance @Inject constructor() : ProcessingStep() {
         get() = MultiQualityAssurance::class.java.simpleName
 
     override fun run(originalImage: Mat): Mat {
-        val point = calcCenterPoint(originalImage)
-        val result = sobel(originalImage)
+       // val point = calcCenterPoint(originalImage)
+       // val result = sobel(originalImage)
 
-        edgeDensity = edgeDensity(result, point)
+       // edgeDensity = edgeDensity(result, point)
 
         return originalImage
     }

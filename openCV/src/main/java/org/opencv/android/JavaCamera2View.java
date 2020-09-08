@@ -81,7 +81,11 @@ public class JavaCamera2View extends CameraBridgeViewBase {
             // don't break the app
             //e.printStackTrace();
             Log.w(FLASHTAG, "uncaught exception from flash");
+        } catch (NullPointerException e) {
+            Log.w(FLASHTAG, "uncaught exception from flash");
+
         }
+
     }
 
     private void startBackgroundThread() {

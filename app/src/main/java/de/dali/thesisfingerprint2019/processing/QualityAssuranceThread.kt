@@ -84,7 +84,6 @@ class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
                     measureTimeMillis({ time -> Log.d(TAG, "Sensor Rotate:  $time") }) {
                         rotateImageByDegree(0.0 - sensorOrientation, image)
                     }
-                //val rotatedImage = rotateImageByDegree(0.0 - sensorOrientation, image)
 
                 val multiFingerImage = measureTimeMillis({ time -> Log.d(TAG, "Detect Finger:  $time") }) {
                     (processingStep[0] as MultiFingerDetection).run(rotatedImage)
@@ -126,7 +125,7 @@ class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
 
                             qualityCheckedImages.add(fingerPrintIntermediate)
                         }
-                        if (qualityCheckedImages.none { it.edgeDens < 10.0 }) {//5.0
+                        if (qualityCheckedImages.none { it.edgeDens < 100.0 }) {//5.0
                             if (highestEdgeDenseMats.isEmpty()) {
                                 highestEdgeDenseMats.addAll(qualityCheckedImages)
                             } else {
@@ -139,7 +138,7 @@ class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
 
                             onUpdate(SUCCESSFUL, "Processed frame successfully.", processedImages)
 
-                            if (processedImages == 5) {
+                            if (processedImages == 1) {
                                 clearQueue()
                                 quit()
                                 onSuccess(highestEdgeDenseMats)

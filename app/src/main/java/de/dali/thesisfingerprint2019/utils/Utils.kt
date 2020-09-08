@@ -38,6 +38,7 @@ object Utils {
 
     fun toReadableDate(time: Long): Date = Date(time)
 
+    ///storage/sdcard0/thesis-fingerprints-2019/Logging-Images
     fun saveImage(pathName: String, fileName: String, bitmap: Bitmap, quality: Int) {
         val pathname = "${Environment.getExternalStorageDirectory()}/$pathName"
         val myDir = File(pathname)

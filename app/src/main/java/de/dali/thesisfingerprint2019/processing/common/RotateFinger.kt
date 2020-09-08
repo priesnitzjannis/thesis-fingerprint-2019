@@ -27,24 +27,25 @@ class RotateFinger @Inject constructor() : ProcessingStep() {
         get() = RotateFinger::class.java.simpleName
 
     override fun run(originalImage: Mat): Mat {
-        val middle = calcCenterPointOfMat(originalImage)
-        val pointPair = generatePointPair(middle, POINT_PAIR_DST)
-
-        val p1Contour = calcPointOnContour(pointPair.first, originalImage)
-        val p2Contour = calcPointOnContour(pointPair.second, originalImage)
-
-        val distanceP1P2 = euclideanDist(pointPair.first, pointPair.second)
-        val distanceP1ToContour = euclideanDist(pointPair.first, p1Contour)
-        val distanceP2ToContour = euclideanDist(pointPair.second, p2Contour)
-
-        val angle = calcAngle(distanceP1P2, distanceP2ToContour, distanceP1ToContour)
-        val angleFixed = if (hand == RIGHT) 90 - angle else -(90 + angle)
-
-        correctionAngle = if (angleFixed + degreeImprecise < -100.0 && hand == Utils.HAND.LEFT) angleFixed + 180.0
-        else if (angleFixed + degreeImprecise > 100.0 && hand == RIGHT) angleFixed - 180.0
-        else angleFixed
-
-        return rotateImageByDegree(correctionAngle, originalImage)
+//        val middle = calcCenterPointOfMat(originalImage)
+//        val pointPair = generatePointPair(middle, POINT_PAIR_DST)
+//
+//        val p1Contour = calcPointOnContour(pointPair.first, originalImage)
+//        val p2Contour = calcPointOnContour(pointPair.second, originalImage)
+//
+//        val distanceP1P2 = euclideanDist(pointPair.first, pointPair.second)
+//        val distanceP1ToContour = euclideanDist(pointPair.first, p1Contour)
+//        val distanceP2ToContour = euclideanDist(pointPair.second, p2Contour)
+//
+//        val angle = calcAngle(distanceP1P2, distanceP2ToContour, distanceP1ToContour)
+//        val angleFixed = if (hand == RIGHT) 90 - angle else -(90 + angle)
+//
+//        correctionAngle = if (angleFixed + degreeImprecise < -100.0 && hand == Utils.HAND.LEFT) angleFixed + 180.0
+//        else if (angleFixed + degreeImprecise > 100.0 && hand == RIGHT) angleFixed - 180.0
+//        else angleFixed
+//
+//        return rotateImageByDegree(correctionAngle, originalImage)
+        return originalImage
     }
 
     override fun runReturnMultiple(originalImage: Mat): List<Mat> {
