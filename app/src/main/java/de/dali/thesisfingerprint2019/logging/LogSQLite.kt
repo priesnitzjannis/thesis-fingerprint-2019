@@ -25,7 +25,7 @@ class LogSQLite {
 
         var canProceed: Boolean = false
 
-        Thread(Runnable {
+        //Thread(Runnable {
             Thread.MAX_PRIORITY
             //SQLDB!!.clearAllTables() // Clear the database, should only be temporary
 
@@ -51,7 +51,7 @@ class LogSQLite {
 
             canProceed = true
 
-        }).start()
+        //}).start()
 
         // Make sure the thread to add the phone is completed, otherwise writing a logging message may lead to a failure to comply with a foreign key constraint upon which the app exits
         while (!canProceed) {
@@ -310,7 +310,7 @@ class LogSQLite {
         }).start()
     }
 
-    fun completeAcquisition(acquisitionID: Long) {
+    fun completeAcquisition(acquisitionID: Long, fingerPrintID: Long) {
         if (acquisitionID == null) {
             return
         }
@@ -318,7 +318,7 @@ class LogSQLite {
             var acquisitions = SQLDB!!.acquisitionDao().getAcquisitionByID(acquisitionID)
 
             if (acquisitions.size == 1) {
-                acquisitions[0].complete()
+                acquisitions[0].complete(fingerPrintID)
                 SQLDB!!.acquisitionDao().updateAcquisition(acquisitions[0])
             }
         }).start()

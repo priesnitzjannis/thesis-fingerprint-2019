@@ -122,15 +122,13 @@ class FingerScanningViewModel @Inject constructor(
 
                 imageRepository.insert(imageEntity)
             }
+            Logging.completeAcquisition(id)
         }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(onSuccess, onError)
 
         compositeDisposable.add(disposable)
-
-        Logging.completeAcquisition()
-
     }
 
     override fun onCleared() {

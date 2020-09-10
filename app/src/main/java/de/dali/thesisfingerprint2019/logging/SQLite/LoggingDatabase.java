@@ -27,7 +27,7 @@ import de.dali.thesisfingerprint2019.logging.SQLite.Entity.Acquisition;
         ImageRun.class,
         Image.class,
         Acquisition.class},
-        exportSchema = false, version = 16)
+        exportSchema = false, version = 18)
 public abstract class LoggingDatabase extends RoomDatabase {
     // TODO
     // Add Person, connected to run as expected Person or similar
@@ -38,7 +38,7 @@ public abstract class LoggingDatabase extends RoomDatabase {
 
     public static synchronized LoggingDatabase getInstance(Context context) {
         if (instance == null) {
-            instance = Room.databaseBuilder(context.getApplicationContext(), LoggingDatabase.class, DB_Name).fallbackToDestructiveMigration().build();
+            instance = Room.databaseBuilder(context.getApplicationContext(), LoggingDatabase.class, DB_Name).fallbackToDestructiveMigration().allowMainThreadQueries().build();
             //instance = Room.databaseBuilder(context.getApplicationContext(), LoggingDatabase.class, DB_Name).build();
         }
         return instance;

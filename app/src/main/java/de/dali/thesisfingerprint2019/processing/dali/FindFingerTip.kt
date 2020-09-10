@@ -1,5 +1,6 @@
 package de.dali.thesisfingerprint2019.processing.dali
 
+import android.os.SystemClock.elapsedRealtimeNanos
 import de.dali.thesisfingerprint2019.logging.Logging
 import de.dali.thesisfingerprint2019.processing.Config
 import de.dali.thesisfingerprint2019.processing.Config.ROW_TO_COL_RATIO
@@ -20,7 +21,7 @@ class FindFingerTip @Inject constructor() : ProcessingStep() {
             1600,
             "Config data for Find Finger Tip:\nROW_TO_COL_RATIO = " + Config.ROW_TO_COL_RATIO
         )
-        val start = System.currentTimeMillis()
+        val start = elapsedRealtimeNanos()
 
         val cols = originalImage.cols()
         var newRows = ceil(cols * ROW_TO_COL_RATIO).toInt()
@@ -32,8 +33,8 @@ class FindFingerTip @Inject constructor() : ProcessingStep() {
         var result = Mat(originalImage, rect)
 
 
-        val duration = System.currentTimeMillis() - start
-        Logging.createLogEntry(Logging.loggingLevel_medium, 1600, "Fingertip Location finished in " + duration + "ms.")
+        val duration = elapsedRealtimeNanos() - start
+        Logging.createLogEntry(Logging.loggingLevel_medium, 1600, "Fingertip Location finished in " + duration + "ns.")
 
         Logging.createLogEntry(Logging.loggingLevel_critical, 1600, "Fingertip located, see image for results.", result)
 

@@ -207,9 +207,9 @@ class FingerPrintCreateFragment : BaseFragment() {
         // Check that the finger numbering is correct
         var fingers = ""
         for (currentFinger in list) {
-            fingers += " #" + currentFinger + ";"
+            fingers += "#" + currentFinger + "; "
         }
-        fingers = fingers.dropLast(1)
+        fingers = fingers.dropLast(2)
 
         Logging.startAcquisition(fingerPrintCreateViewModel.location, fingerPrintCreateViewModel.illumination.toDouble(), fingers)
 

@@ -66,6 +66,7 @@ class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
 
                 super.handleMessage(msg)
                 val image = (msg.obj as Mat)
+                //val image = Utils.readImageFromDisk()
                 totalImages++
 
                 Logging.startRun()

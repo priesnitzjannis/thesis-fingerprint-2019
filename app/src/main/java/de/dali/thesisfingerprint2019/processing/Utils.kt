@@ -1,6 +1,7 @@
 package de.dali.thesisfingerprint2019.processing
 
 import android.graphics.Bitmap
+import android.os.Environment
 import android.util.Log
 import de.dali.thesisfingerprint2019.processing.Config.BLOCKSIZE
 import de.dali.thesisfingerprint2019.processing.Config.CB_LOWER
@@ -32,12 +33,16 @@ import de.dali.thesisfingerprint2019.processing.Config.Y_UPPER
 import de.dali.thesisfingerprint2019.processing.Utils.HAND.*
 import de.dali.thesisfingerprint2019.processing.Utils.YCrCb.Cb
 import de.dali.thesisfingerprint2019.processing.Utils.YCrCb.Y
+import de.dali.thesisfingerprint2019.utils.Constants.NAME_MAIN_FOLDER
 import org.opencv.core.*
 import org.opencv.core.Core.countNonZero
+import org.opencv.imgcodecs.Imgcodecs.imread
 import org.opencv.imgproc.Imgproc.*
+import java.nio.file.Paths
 import kotlin.math.PI
 import kotlin.math.atan
 import kotlin.math.sqrt
+
 
 object Utils {
 
@@ -54,19 +59,25 @@ object Utils {
     }
 
     fun erode(mat: Mat): Mat {
+        //val start = System.currentTimeMillis()
         val anchor = Point(-1.0, -1.0)
 
-        val kernel = getStructuringElement(MORPH_CROSS, Size(ERODE_KERNEL_SIZE, ERODE_KERNEL_SIZE))
+        val kernel = getStructuringElement(MORPH_RECT, Size(ERODE_KERNEL_SIZE, ERODE_KERNEL_SIZE))
         erode(mat, mat, kernel, anchor, ERODE_ITERATIONS)
+        //val duration = System.currentTimeMillis() - start
+        //println("Logging: Erosion: finished in " + duration + "ms")
 
         return mat
     }
 
     fun dilate(mat: Mat): Mat {
+        //val start = System.currentTimeMillis()
         val anchor = Point(-1.0, -1.0)
 
-        val kernel = getStructuringElement(MORPH_ELLIPSE, Size(DILATE_KERNEL_SIZE, DILATE_KERNEL_SIZE))
+        val kernel = getStructuringElement(MORPH_RECT, Size(DILATE_KERNEL_SIZE, DILATE_KERNEL_SIZE))
         dilate(mat, mat, kernel, anchor, DILATE_ITERATIONS)
+        //val duration = System.currentTimeMillis() - start
+        //println("Logging: Dilatation: finished in " + duration + "ms")
 
         return mat
     }
@@ -206,7 +217,7 @@ object Utils {
     fun getThresholdImageNew(mat: Mat): Mat {
         val img_hsv = Mat(mat.rows(), mat.cols(), CvType.CV_8UC3)
         val img_mask_hsv = Mat(mat.rows(), mat.cols(), CvType.CV_8UC1)
-        val kernel = getStructuringElement(MORPH_ELLIPSE, Size(KERNEL_SIZE_FILTER, KERNEL_SIZE_FILTER))
+        val kernel = getStructuringElement(MORPH_RECT, Size(KERNEL_SIZE_FILTER, KERNEL_SIZE_FILTER))
 
         cvtColor(mat, img_hsv, COLOR_RGB2HSV)
         Core.inRange(img_hsv, Scalar(H_LOWER, S_LOWER, V_LOWER), Scalar(H_UPPER, S_UPPER, V_UPPER), img_mask_hsv)
@@ -226,7 +237,7 @@ object Utils {
 
 
         val img_and = Mat(mat.rows(), mat.cols(), CvType.CV_8UC3)
-        val kernel_and = getStructuringElement(MORPH_ELLIPSE, Size(KERNEL_SIZE_FAND, KERNEL_SIZE_FAND))
+        val kernel_and = getStructuringElement(MORPH_RECT, Size(KERNEL_SIZE_FAND, KERNEL_SIZE_FAND))
         Core.bitwise_and(img_mask_hsv, img_mask_ycrcb, img_and)
         morphologyEx(img_and, img_and, MORPH_CLOSE, kernel_and)
 
@@ -324,6 +335,24 @@ object Utils {
         threshold(mat, imageThresh, 100.0, 255.0, THRESH_BINARY + THRESH_OTSU)
 
         return imageThresh
+    }
+
+    var imageCounter = 41;
+
+    public fun readImageFromDisk(): Mat{
+        imageCounter++
+        val fullFilename = "${Environment.getExternalStorageDirectory()}/$NAME_MAIN_FOLDER/" + imageCounter.toString() + ".jpg"
+
+        //val m: Mat = imread(filename)
+        //return m;
+        println("Image requested: " + fullFilename)
+        var input = imread(fullFilename)
+        //var input = imread(filename + ".jpg")
+        var result = Mat()
+
+        cvtColor(input, result, COLOR_BGRA2RGBA, 0)
+
+        return result
     }
 
 }

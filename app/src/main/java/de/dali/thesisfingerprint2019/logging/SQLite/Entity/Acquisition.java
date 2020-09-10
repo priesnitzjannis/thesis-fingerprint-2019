@@ -19,7 +19,7 @@ public class Acquisition {
     private String end;
 
     @NonNull
-    private boolean completed;
+    private String completed;
 
     //private Boolean possiblyBroken;
 
@@ -32,13 +32,16 @@ public class Acquisition {
     @NonNull
     private double illumination;
 
+    private Long fingerPrintID;
+
     public Acquisition(@NonNull String location, double illumination, @NonNull String fingers) {
         this.start = ZonedDateTime.now().format(DateTimeFormatter.ISO_INSTANT);
-        this.completed = false;
+        this.completed = "false";
         this.location = location;
         this.illumination = illumination;
         this.fingers = fingers;
         this.end = null;
+        this.fingerPrintID = null;
     }
 
     public long getAcquisitionID() {
@@ -66,45 +69,54 @@ public class Acquisition {
         this.end = end;
     }
 
-    public boolean getCompleted() {
+    public String getCompleted() {
         return completed;
     }
 
-    public void setCompleted(boolean completed_) {
-        completed = completed;
+    public void setCompleted(String completed_) {
+        completed = completed_;
     }
 
-    public void setFingers(@NonNull String fingers_){
+    public void setFingers(@NonNull String fingers_) {
         fingers = fingers_;
     }
 
-    public String getFingers(){
+    public String getFingers() {
         return fingers;
     }
 
-    public void setLocation(@NonNull String location_){
+    public void setLocation(@NonNull String location_) {
         location = location_;
     }
 
-    public String getLocation(){
+    public String getLocation() {
         return location;
     }
 
-    public void setIllumination(double illumination_){
+    public void setIllumination(double illumination_) {
         illumination = illumination_;
     }
 
-    public double getIllumination(){
+    public double getIllumination() {
         return illumination;
+    }
+
+    public Long getFingerPrintID() {
+        return fingerPrintID;
+    }
+
+    public void setFingerPrintID(Long fingerPrintID_) {
+        fingerPrintID = fingerPrintID_;
     }
 
     public void cancel() {
         end = ZonedDateTime.now().format(DateTimeFormatter.ISO_INSTANT);
-        completed = false;
+        completed = "false";
     }
 
-    public void complete(){
+    public void complete(long fingerPrintID_) {
         end = ZonedDateTime.now().format(DateTimeFormatter.ISO_INSTANT);
-        completed = true;
+        completed = "true";
+        fingerPrintID = fingerPrintID_;
     }
 }

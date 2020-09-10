@@ -51,12 +51,12 @@ class FingerScanningFragment : BaseFragment() {
 
         override fun onCameraViewStarted(width: Int, height: Int) {
             mRgba = Mat(height, width, CvType.CV_8UC4)
-            Logging.createLogEntry(Logging.loggingLevel_critical, 1000, "Acquisition started.")
+            Logging.createLogEntry(Logging.loggingLevel_critical, 1300, "Scanning started.")
         }
 
         override fun onCameraViewStopped() {
             mRgba.release()
-            Logging.createLogEntry(Logging.loggingLevel_critical, 1000, "Acquisition stopped.")
+            Logging.createLogEntry(Logging.loggingLevel_critical, 1300, "Scanning stopped.")
             // TODO:
             // distinguish between cancellation (back) & home button (possible to return)
             //Logging.cancelAcquisition()

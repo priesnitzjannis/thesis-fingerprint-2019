@@ -13,6 +13,8 @@ import java.util.Map;
 
 import de.dali.thesisfingerprint2019.logging.SQLite.Entity.Module;
 
+import static android.os.SystemClock.elapsedRealtimeNanos;
+
 /**
  * The main logic for the logging mechanism
  */
@@ -219,18 +221,18 @@ public final class Logging {
         acquisition = null;
     }
 
-    public static void completeAcquisition() {
+    public static void completeAcquisition(long fingerPrintID) {
         if (acquisition == null) {
             //createLogEntry(Logging.loggingLevel_critical, loggingModuleID, "Attempt to complete a non existent acquisition");
             return;
         }
 
 
-        createLogEntry(Logging.loggingLevel_critical, loggingModuleID, "Acquisition " + acquisition + " has ended");
+        createLogEntry(Logging.loggingLevel_critical, loggingModuleID, "Acquisition " + acquisition + " has been completed");
 
         switch (logger) {
             case logSQLite: {
-                SQLDB.completeAcquisition(acquisition);
+                SQLDB.completeAcquisition(acquisition, fingerPrintID);
                 break;
             }
             case logConsole:
@@ -296,49 +298,6 @@ public final class Logging {
         }
     }
 
-    /*
-     * Initialise the logging mechanism.
-     *
-     * @param loggingLocation What logging location to use, as enum
-     * @param newLoggingLevel The logging level to use
-     * @param newAppVersion The current app version
-     * @return 0 if successful, an error code otherwise
-     */
-    /*public static short init(loggerValues loggingLocation, short newLoggingLevel, String newAppVersion) {
-        // TODO
-        // Initialise database connection, filename and the likes for each logging method
-
-        setLoggingLevel(newLoggingLevel);
-        setAppVersion(newAppVersion);
-        setLogger(loggingLocation);
-        setphoneModel(Build.MODEL);
-        switch (logger) {
-            case logConsole: {
-                LogConsole.init();
-                initialised = true;
-                break;
-            }
-            case logSQLite:
-            case logFile:
-            case logMySQL:
-             {
-                initialised = false;
-                break;
-            }
-            default: {
-                // all possible cases for logging methods should be covered by the switch statement, i.e. the default case should never be used
-                initialised = false;
-            }
-        }
-
-        if (initialised) {
-            createLogEntry((short) 2,(short) loggingModuleID, "Logging initialised, logging level: " + newLoggingLevel + " App version: " + appVersion);
-            return 0;
-        } else {
-            return -1;
-        }
-    }*/
-
     /**
      * Initialise the logging mechanism.
      *
@@ -387,22 +346,41 @@ public final class Logging {
         }
     }
 
-    /*
-     * Initialise the logging mechanism for a database based logging.
+    /**
+     * Function used to measure the execution time of saving a logging message.
+     * Simply swap the function name of this one with createLogEntry()
      *
-     * @param loggingLocation What logging location to use, as enum
-     * @param newLoggingLevel The logging level to use
-     * @param newAppVersion The current app version
-     * @param databaseLocation The location where the database can be reached
-     * @param databaseLogin The login for the database
-     * @param databasePwd The password for the database
-     * @return 0 if successful, an error code otherwise
+     * @param loggingLevel The logging level
+     * @param moduleid     The module creating the logging message
+     * @param message      The logging message
+     * @return true if the message has been logged, false otherwise
      */
-    /*public static short init(loggerValues loggingLocation, short newLoggingLevel, String newAppVersion,  String databaseLocation, String databaseLogin, String databasePwd) {
-        // TODO
-        // Implement Database connections
-        return -1;
-    }*/
+    public static boolean createLogEntryTimeMeasurement(long loggingLevel, long moduleid, String message) {
+        long start = elapsedRealtimeNanos();
+        boolean returnVal = createLogEntryTimeMeasurement(loggingLevel, moduleid, message);
+        long duration = elapsedRealtimeNanos() - start;
+        println("Creating text based logging message took " + duration + "ns.");
+        createLogEntryTimeMeasurement(loggingLevel_critical,10,"Creating text based logging message took " + duration + "ns.");
+        return returnVal;
+    }
+
+    /**
+     * Function used to measure the execution time of saving a logging message
+     * Simply swap the function name of this one with createLogEntry()
+     *
+     * @param loggingLevel The logging level
+     * @param moduleID     The module id
+     * @param message      The logging message
+     * @param origMat      The image to be saved
+     * @return true if the message has been logged, false otherwise
+     */
+    public static boolean createLogEntryTimeMeasurement(long loggingLevel, long moduleID, String message, Mat origMat) {
+        long start = elapsedRealtimeNanos();
+        boolean returnVal = createLogEntryTimeMeasurement(loggingLevel, moduleID, message, origMat);
+        long duration = elapsedRealtimeNanos() - start;
+        createLogEntryTimeMeasurement(loggingLevel_critical,10,"Creating image based logging message took " + duration + "ns.");
+        return returnVal;
+    }
 
     /**
      * Create a log entry.
@@ -421,6 +399,7 @@ public final class Logging {
 
         if (loggingLevel > loggingLevel_debug) {
             System.out.println("invalid logging level");
+            return false;
         }
 
         // Check if the logging module has been initialised and if the logging level is low enough
@@ -436,8 +415,6 @@ public final class Logging {
 
         boolean result = false;
 
-        // TODO
-        // Redo createLogEntry signature
         switch (logger) {
             case logConsole: {
                 result = LogConsole.createLogEntry(0, "fix this", getPhoneModel(), loggingLevel, moduleid, getISOTimestamp(), message);
@@ -477,13 +454,11 @@ public final class Logging {
      */
     public static boolean createLogEntry(long loggingLevel, long moduleID, String message, Mat origMat) {
         // TODO
-        // implement possible logging locations
-        // implement all items that need to be logged
         // error code as return values
-        // Rethink passing of each variable
 
         if (loggingLevel > loggingLevel_debug) {
             System.out.println("invalid logging level");
+            return false;
         }
 
         // Check if the logging module has been initialised and if the logging level is low enough
@@ -558,5 +533,11 @@ public final class Logging {
         logFile,
         logMySQL,
         logSQLite
+    }
+
+    // -------------------------------------------------------------------------------------------
+
+    public static void println(String message) {
+        System.out.println("Logging: " + message);
     }
 }
