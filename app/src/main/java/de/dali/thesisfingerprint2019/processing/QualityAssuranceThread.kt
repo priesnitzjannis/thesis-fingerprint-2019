@@ -5,6 +5,7 @@ import android.os.HandlerThread
 import android.os.Looper
 import android.os.Message
 import android.os.Process.THREAD_PRIORITY_BACKGROUND
+import android.util.Log
 import de.dali.thesisfingerprint2019.data.local.entity.FingerPrintIntermediateEntity
 import de.dali.thesisfingerprint2019.logging.Logging
 import de.dali.thesisfingerprint2019.processing.QualityAssuranceThread.IntermediateResults.FAILURE
@@ -18,6 +19,7 @@ import de.dali.thesisfingerprint2019.processing.Utils.rotateImageByDegree
 import de.dali.thesisfingerprint2019.processing.common.RotateFinger
 import de.dali.thesisfingerprint2019.processing.dali.*
 import org.opencv.core.Mat
+import kotlin.system.measureTimeMillis
 
 
 class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
@@ -51,6 +53,17 @@ class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
 
     var imageProcessingRunning = false
 
+
+    inline fun <T> measureTimeMillis(loggingFunction: (Long) -> Unit,
+                                     function: () -> T): T {
+
+        val startTime = System.currentTimeMillis()
+        val result: T = function.invoke()
+        loggingFunction.invoke(System.currentTimeMillis() - startTime)
+
+        return result
+    }
+
     override fun onLooperPrepared() {
         super.onLooperPrepared()
         handler = getHandler(looper)
@@ -78,25 +91,33 @@ class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
                 )
 
                 val processedMat = Mat()
-                val rotatedImage = rotateImageByDegree(0.0 - sensorOrientation, image)
 
-                val multiFingerImage = (processingStep[0] as MultiFingerDetection).run(rotatedImage)
+                val rotatedImage =
+                    measureTimeMillis({ time -> Log.d(TAG, "Sensor Rotate:  $time") }) {
+                        rotateImageByDegree(0.0 - sensorOrientation, image)
+                    }
+
+                val multiFingerImage = measureTimeMillis({ time -> Log.d(TAG, "Detect Finger:  $time") }) {
+                    (processingStep[0] as MultiFingerDetection).run(rotatedImage)
+                }
 
                 if (!multiFingerImage.empty()) {
-                    val rotatedFinger =
+                    val rotatedFinger = measureTimeMillis({ time -> Log.d(TAG, "FingerRotationImprecise:  $time") }) {
                         (processingStep[1] as FingerRotationImprecise).run(multiFingerImage)
-                    val degreeImprecise =
+                    }
+                    val degreeImprecise = measureTimeMillis({ time -> Log.d(TAG, "FingerRotationImprecise 2:  $time") }) {
                         (processingStep[1] as FingerRotationImprecise).correctionAngle
-
-                    val separatedFingers =
+                    }
+                    val separatedFingers = measureTimeMillis({ time -> Log.d(TAG, "FingerBorderDetection:  $time") }) {
                         (processingStep[2] as FingerBorderDetection).runReturnMultiple(rotatedFinger)
-
+                    }
                     if (separatedFingers.isNotEmpty()) {
 
                         val rotatedFingers = separatedFingers.map {
                             (processingStep[3] as RotateFinger).degreeImprecise = degreeImprecise
                             (processingStep[3] as RotateFinger).run(it)
                         }
+
                         val fingertips =
                             rotatedFingers.map { (processingStep[4] as FindFingerTip).run(it) }
 
@@ -116,7 +137,7 @@ class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
 
                             qualityCheckedImages.add(fingerPrintIntermediate)
                         }
-                        if (qualityCheckedImages.none { it.edgeDens < 5.0 }) {
+                        if (qualityCheckedImages.none { it.edgeDens < 100.0 }) {//5.0
                             if (highestEdgeDenseMats.isEmpty()) {
                                 highestEdgeDenseMats.addAll(qualityCheckedImages)
                             } else {

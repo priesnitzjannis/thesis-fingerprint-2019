@@ -3,40 +3,24 @@ package de.dali.thesisfingerprint2019.processing
 import android.graphics.Bitmap
 import android.os.Environment
 import android.util.Log
-import de.dali.thesisfingerprint2019.processing.Config.BLOCKSIZE
-import de.dali.thesisfingerprint2019.processing.Config.CB_LOWER
-import de.dali.thesisfingerprint2019.processing.Config.CB_UPPER
-import de.dali.thesisfingerprint2019.processing.Config.CR_LOWER
-import de.dali.thesisfingerprint2019.processing.Config.CR_UPPER
 import de.dali.thesisfingerprint2019.processing.Config.DELTA
-import de.dali.thesisfingerprint2019.processing.Config.DILATE_ITERATIONS
-import de.dali.thesisfingerprint2019.processing.Config.DILATE_KERNEL_SIZE
 import de.dali.thesisfingerprint2019.processing.Config.ERODE_ITERATIONS
 import de.dali.thesisfingerprint2019.processing.Config.ERODE_KERNEL_SIZE
 import de.dali.thesisfingerprint2019.processing.Config.GRAD_X
 import de.dali.thesisfingerprint2019.processing.Config.GRAD_Y
-import de.dali.thesisfingerprint2019.processing.Config.H_LOWER
-import de.dali.thesisfingerprint2019.processing.Config.H_UPPER
-import de.dali.thesisfingerprint2019.processing.Config.KERNEL_SIZE_BLUR
-import de.dali.thesisfingerprint2019.processing.Config.KERNEL_SIZE_FAND
-import de.dali.thesisfingerprint2019.processing.Config.KERNEL_SIZE_FILTER
 import de.dali.thesisfingerprint2019.processing.Config.KERNEL_SIZE_GAUS
 import de.dali.thesisfingerprint2019.processing.Config.K_SIZE_SOBEL
 import de.dali.thesisfingerprint2019.processing.Config.SCALE
-import de.dali.thesisfingerprint2019.processing.Config.S_LOWER
-import de.dali.thesisfingerprint2019.processing.Config.S_UPPER
-import de.dali.thesisfingerprint2019.processing.Config.THRESHOLD_MAX
-import de.dali.thesisfingerprint2019.processing.Config.V_LOWER
-import de.dali.thesisfingerprint2019.processing.Config.V_UPPER
-import de.dali.thesisfingerprint2019.processing.Config.Y_LOWER
-import de.dali.thesisfingerprint2019.processing.Config.Y_UPPER
 import de.dali.thesisfingerprint2019.processing.Utils.HAND.*
 import de.dali.thesisfingerprint2019.processing.Utils.YCrCb.Cb
 import de.dali.thesisfingerprint2019.processing.Utils.YCrCb.Y
 import de.dali.thesisfingerprint2019.utils.Constants.NAME_MAIN_FOLDER
+import de.dali.thesisfingerprint2019.utils.Constants.NAME_MAIN_FOLDER
+import de.dali.thesisfingerprint2019.utils.Utils
 import org.opencv.core.*
 import org.opencv.core.Core.countNonZero
 import org.opencv.imgcodecs.Imgcodecs.imread
+import org.opencv.core.CvType.CV_8UC1
 import org.opencv.imgproc.Imgproc.*
 import java.nio.file.Paths
 import kotlin.math.PI
@@ -56,6 +40,16 @@ object Utils {
         Y(0),
         Cr(1),
         Cb(2)
+    }
+
+    inline fun <T> measureTimeMillis(loggingFunction: (Long) -> Unit,
+                                     function: () -> T): T {
+
+        val startTime = System.currentTimeMillis()
+        val result: T = function.invoke()
+        loggingFunction.invoke(System.currentTimeMillis() - startTime)
+
+        return result
     }
 
     fun erode(mat: Mat): Mat {
@@ -139,25 +133,34 @@ object Utils {
     }
 
     fun adaptiveThresh(mat: Mat): Mat {
-        val y = getYCbCRComponent(mat, Y)
-        val result = Mat()
+//        val y = getYCbCRComponent(mat, Y)
+//        val ycrcb = Mat(mat.rows(), mat.cols(), CvType.CV_8UC3)
+//        val lYCrCb = ArrayList<Mat>(3)
+//
+//        cvtColor(mat, ycrcb, COLOR_BGR2YCrCb)
+//        Core.split(mat, lYCrCb)
 
-        val blurred = Mat.zeros(mat.rows(), mat.cols(), CvType.CV_64FC1)
-        GaussianBlur(y, blurred, Size(KERNEL_SIZE_BLUR, KERNEL_SIZE_BLUR), 0.0, 0.0, Core.BORDER_CONSTANT)
+        val result = Mat(mat.rows(), mat.cols(), CvType.CV_8UC1)
 
-        adaptiveThreshold(
-            blurred,
-            result,
-            THRESHOLD_MAX,
-            ADAPTIVE_THRESH_MEAN_C,
-            THRESH_BINARY_INV,
-            BLOCKSIZE,
-            12.0
-        )
+        //val blurred = Mat.zeros(mat.rows(), mat.cols(), CvType.CV_64FC1)
+        //GaussianBlur(y, blurred, Size(KERNEL_SIZE_BLUR, KERNEL_SIZE_BLUR), 0.0, 0.0, Core.BORDER_CONSTANT)
+//
+//        adaptiveThreshold(
+//            y,
+//            result,
+//            THRESHOLD_MAX,
+//            ADAPTIVE_THRESH_MEAN_C,
+//            THRESH_BINARY_INV,
+//            BLOCKSIZE,
+//            12.0
+//        )
+        val gray = Mat(mat.rows(), mat.cols(), CvType.CV_8UC1)
 
-        threshold(result, result, 1.0, 255.0, THRESH_BINARY + THRESH_OTSU)
+        cvtColor(mat, gray, COLOR_RGB2GRAY)
 
-        releaseImage(listOf(y, blurred))
+        threshold(gray, result, 0.0, 255.0, THRESH_BINARY + THRESH_OTSU)
+
+        //releaseImage(listOf(y)) //, blurred))
 
         return result
     }
@@ -166,8 +169,19 @@ object Utils {
 
         val contours: List<MatOfPoint> = mutableListOf()
         val hierarchy = Mat()
+        var type = mat.type()
+        var dims = mat.dims()
+        Log.d("IMAGE_PROC: ", "Type: $type$")
+        Log.d("IMAGE_PROC: ", "Dims: $dims$")
 
-        findContours(mat, contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE)
+        if (mat.type() != CV_8UC1){
+            cvtColor(mat, mat, COLOR_BGR2GRAY, 2)
+        }
+        type = mat.type()
+        dims = mat.dims()
+        Log.d("IMAGE_PROC: ", "Type: $type$")
+        Log.d("IMAGE_PROC: ", "Dims: $dims$")
+        findContours(mat, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE) //RETR_EXTERNAL
 
         return contours.filter {
             val area = contourArea(it, false)
@@ -197,11 +211,19 @@ object Utils {
         return maskedImage
     }
 
+    fun secure_cvtColor(src: Mat, dst: Mat, code: Int, dstCn: Int): Mat {
+        if (src.dims() == 2) {
+            cvtColor(src, src, COLOR_GRAY2BGR, 3)
+        }
+        cvtColor(src, dst, code, dstCn)
+        return dst
+    }
+
     fun convertMatToBitMap(input: Mat): Bitmap? {
         var bmp: Bitmap? = null
         val rgb = Mat()
 
-        cvtColor(input, rgb, COLOR_BGR2RGBA, 4)
+        secure_cvtColor(input, rgb, COLOR_BGR2RGBA, 4)
 
         try {
             bmp = Bitmap.createBitmap(rgb.cols(), rgb.rows(), Bitmap.Config.ARGB_8888)
@@ -332,7 +354,7 @@ object Utils {
 
     private fun threshold(mat: Mat): Mat {
         val imageThresh = Mat()
-        threshold(mat, imageThresh, 100.0, 255.0, THRESH_BINARY + THRESH_OTSU)
+        threshold(mat, imageThresh, 0.0, 255.0, THRESH_BINARY + THRESH_OTSU)
 
         return imageThresh
     }

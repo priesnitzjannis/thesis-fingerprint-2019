@@ -7,7 +7,7 @@ import de.dali.thesisfingerprint2019.processing.ProcessingStep
 import de.dali.thesisfingerprint2019.processing.Utils.getFingerContour
 import de.dali.thesisfingerprint2019.processing.Utils.getMaskImage
 import de.dali.thesisfingerprint2019.processing.Utils.getMaskedImage
-import de.dali.thesisfingerprint2019.processing.Utils.getThresholdImageNew
+//import de.dali.thesisfingerprint2019.processing.Utils.getThresholdImageNew
 import de.dali.thesisfingerprint2019.processing.Utils.releaseImage
 import de.dali.thesisfingerprint2019.processing.toMat
 import de.dali.thesisfingerprint2019.ui.main.fragment.scanning.FingerScanningFragment
@@ -36,7 +36,9 @@ class MultiFingerDetection @Inject constructor() : ProcessingStep() {
         var croppedImage = Mat()
 
         try {
-            val imageThresh = getThresholdImageNew(originalImage)
+            /* Input RGB Image Output: RGB Image cropped to hand area */
+            //val imageThresh = getThresholdImageNew(originalImage)
+            val imageThresh = adaptiveThresh(originalImage)
             val fingerContours = getFingerContour(imageThresh)
 
             releaseImage(listOf(imageThresh))
@@ -52,7 +54,6 @@ class MultiFingerDetection @Inject constructor() : ProcessingStep() {
                 releaseImage(listOf(maskImage))
 
                 croppedImage = Mat(imageWithOutBackground, rect)
-
                 releaseImage(listOf(imageWithOutBackground))
 
             }

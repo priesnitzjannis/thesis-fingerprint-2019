@@ -4,25 +4,26 @@ object Config {
     //region MultiFingerDetection
     const val KERNEL_SIZE_FILTER = 15.0
 
-    const val H_LOWER = 0.0
-    const val S_LOWER = 10.0
-    const val V_LOWER = 60.0
+    const val H_LOWER = 0.0 //0.0
+    const val S_LOWER = 40.0 //10.0
+    const val V_LOWER = 60.0 //60.0
 
-    const val H_UPPER = 20.0
-    const val S_UPPER = 150.0
-    const val V_UPPER = 255.0
+    const val H_UPPER = 255.0//20.0
+    const val S_UPPER = 255.0//150.0
+    const val V_UPPER = 255.0//255.0
 
-    const val Y_LOWER = 0.0
-    const val CR_LOWER = 133.0
-    const val CB_LOWER = 77.0
+    const val Y_LOWER = 0.0//0.0
+    const val CB_LOWER = 77.0//77.0
+    const val CR_LOWER = 133.0//133.0
 
-    const val Y_UPPER = 255.0
-    const val CR_UPPER = 173.0
-    const val CB_UPPER = 127.0
+    const val Y_UPPER = 255.0//255.0
+    const val CB_UPPER = 130.0//127.0
+    const val CR_UPPER = 175.0//173.0
 
     const val KERNEL_SIZE_FAND = 28.0
 
-    const val MIN_AREA_SIZE = 60000
+
+    const val MIN_AREA_SIZE = 30000 //60000
     //endregion
 
     //region FingerRotationImprecise
@@ -46,7 +47,7 @@ object Config {
     //endregion
 
     //region FindFingerTip
-    const val ROW_TO_COL_RATIO = 1.5
+    const val ROW_TO_COL_RATIO = 3.0//1.5
     //endregion
 
     //region MultiQA

@@ -4,6 +4,7 @@ import de.dali.thesisfingerprint2019.logging.Logging
 import de.dali.thesisfingerprint2019.processing.Config
 import de.dali.thesisfingerprint2019.processing.Config.PIXEL_TO_CROP
 import de.dali.thesisfingerprint2019.processing.ProcessingStep
+import de.dali.thesisfingerprint2019.processing.QualityAssuranceThread
 import de.dali.thesisfingerprint2019.processing.Utils.adaptiveThresh
 import de.dali.thesisfingerprint2019.processing.Utils.dilate
 import de.dali.thesisfingerprint2019.processing.Utils.erode
@@ -11,14 +12,15 @@ import de.dali.thesisfingerprint2019.processing.Utils.fixPossibleDefects
 import de.dali.thesisfingerprint2019.processing.Utils.getFingerContour
 import de.dali.thesisfingerprint2019.processing.Utils.getMaskImage
 import de.dali.thesisfingerprint2019.processing.Utils.getMaskedImage
-import de.dali.thesisfingerprint2019.processing.Utils.getThresholdImageNew
+//import de.dali.thesisfingerprint2019.processing.Utils.getThresholdImageNew
 import de.dali.thesisfingerprint2019.processing.Utils.releaseImage
+import de.dali.thesisfingerprint2019.processing.Utils.saveImgToDisk
 import org.opencv.core.Core
 import org.opencv.core.CvType.CV_8UC1
 import org.opencv.core.Mat
 import org.opencv.core.Rect
-import org.opencv.imgproc.Imgproc.boundingRect
-import org.opencv.imgproc.Imgproc.moments
+import org.opencv.core.Scalar
+import org.opencv.imgproc.Imgproc.*
 import javax.inject.Inject
 
 
@@ -32,6 +34,16 @@ class FingerBorderDetection @Inject constructor() : ProcessingStep() {
         throw NotImplementedError("Not implemented for this processing step.")
     }
 
+    inline fun <T> measureTimeMillis(loggingFunction: (Long) -> Unit,
+                                     function: () -> T): T {
+
+        val startTime = System.currentTimeMillis()
+        val result: T = function.invoke()
+        loggingFunction.invoke(System.currentTimeMillis() - startTime)
+
+        return result
+    }
+
     override fun runReturnMultiple(originalImage: Mat): List<Mat> {
         Logging.createLogEntry(
             Logging.loggingLevel_param,
@@ -42,35 +54,23 @@ class FingerBorderDetection @Inject constructor() : ProcessingStep() {
 
         val edgeImage = adaptiveThresh(originalImage)
 
-        var edgesDilated = dilate(edgeImage)
-        edgesDilated = erode(edgesDilated)
-
-        val thresholdImage = getThresholdImageNew(originalImage)
-        val contour = getFingerContour(thresholdImage)
-
-        val maskImage = getMaskImage(originalImage, contour)
-        val diffMaskEdge = Mat.zeros(originalImage.rows(), originalImage.cols(), CV_8UC1)
-        Core.subtract(maskImage, edgesDilated, diffMaskEdge)
-
-        releaseImage(contour)
-        releaseImage(listOf(thresholdImage, edgeImage, edgesDilated, maskImage))
-
-        val newImages = cropPalmIfNeeded(originalImage, diffMaskEdge, (originalImage.rows() * 0.5).toInt())
-
-        var sepImages = emptyList<Mat>()
-
-        if (newImages != null) {
-            val sepContours = getFingerContour(newImages.second).sortedBy { moments(it).m10 / moments(it).m00 }
-            val sepCntFixed = sepContours.map { fixPossibleDefects(it, newImages.first) }
-
-            sepImages = sepCntFixed.mapIndexed { index, mat ->
-                val m = getMaskedImage(newImages.first, mat)
-                val r = boundingRect(sepCntFixed[index])
-                Mat(m, r)
+        val contour =
+            measureTimeMillis({ time -> Log.d(QualityAssuranceThread.TAG, "-> getFingerContour:  $time") }) {
+                getFingerContour(edgeImage)
             }
+        var cnt = 0
 
-            releaseImage(sepContours)
-            releaseImage(sepCntFixed)
+
+
+        saveImgToDisk(edgeImage, "bar")
+
+        saveImgToDisk(edgeImage, "foo")
+
+
+
+        for (i in contour){
+            saveImgToDisk(i, "Contour_$cnt$")
+            cnt++
         }
 
 
