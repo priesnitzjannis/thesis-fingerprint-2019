@@ -15,6 +15,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
+// Neuen Fingerprint aufnehmen - Einstellungen
 class FingerPrintCreateViewModel @Inject constructor(
     private val imageRepository: ImageRepository
 ) :
@@ -34,6 +35,8 @@ class FingerPrintCreateViewModel @Inject constructor(
 
     val listOfImages = MutableLiveData<List<ImageEntity>>()
 
+
+
     init {
         selectedFinger.value = mutableListOf()
     }
@@ -45,6 +48,7 @@ class FingerPrintCreateViewModel @Inject constructor(
             .subscribe(this::onFetchComplete, this::onError)
 
         compositeDisposable.add(disposable)
+
     }
 
     private fun onError(throwable: Throwable) {

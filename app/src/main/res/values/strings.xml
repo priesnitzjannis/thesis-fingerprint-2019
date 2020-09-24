@@ -14,6 +14,7 @@
     <string name="dialog_button_requierments">Settings</string>
     <string name="dialog_button_permission">Retry</string>
     <string name="dialog_button_quit">Quit</string>
+    <string name="btnBackToMainMenu">Back to Main Menu</string>
 
     <string name="fragment_details_gender">Gender:</string>
     <string name="fragment_details_Name">Name:</string>
@@ -40,6 +41,7 @@
     <string name="row_multiselect_middle_finger">Middle Finger</string>
     <string name="row_multiselect_ring_finger">Ring Finger</string>
     <string name="row_multiselect_little_finger">Little Finger</string>
+    <string name="row_multiselect_four_fingers">Four Fingers</string>
     <string name="fragment_details_scan">Scan</string>
     <string name="placeholder">Placeholder</string>
 
@@ -71,7 +73,7 @@
     <string name="fragment_details_correction_broken">Possibly broken:</string>
     <string name="export_db">Export DB</string>
     <string name="fragment_finger_scanning_frame_counter">%1$d/5</string>
-    <string name="fragment_finger_scanning_frame_text">Number of successfully processed frames:</string>
+    <string name="fragment_finger_scanning_frame_text">Number of successfully processed fingers:</string>
     <string name="fragment_finger_scanning_last_frame">Last frame in pipeline:</string>
     <string name="fragment_finger_scanning_record">Record</string>
 

@@ -1,9 +1,11 @@
 package de.dali.thesisfingerprint2019.ui.main.fragment.fingerprint
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -19,11 +21,14 @@ import de.dali.thesisfingerprint2019.ui.base.BaseFragment
 import de.dali.thesisfingerprint2019.ui.base.custom.FingerPrintListAdapter
 import de.dali.thesisfingerprint2019.ui.base.custom.ListWithLoadingSpinner.LIST.EMPTY
 import de.dali.thesisfingerprint2019.ui.base.custom.ListWithLoadingSpinner.LIST.RESULT
+import de.dali.thesisfingerprint2019.ui.main.fragment.testperson.TestPersonOverviewFragment
+import de.dali.thesisfingerprint2019.ui.main.fragment.testperson.TestPersonOverviewFragmentDirections
 import de.dali.thesisfingerprint2019.ui.main.viewmodel.fingerprint.FingerPrintOverviewViewModel
 import kotlinx.android.synthetic.main.childview_list.view.*
 import kotlinx.android.synthetic.main.fragment_finger_selection.view.*
 import javax.inject.Inject
 
+// Recordsetübersicht einer einzelnen Person
 class FingerPrintOverViewFragment : BaseFragment() {
 
     @Inject
@@ -32,6 +37,8 @@ class FingerPrintOverViewFragment : BaseFragment() {
     lateinit var binding: FragmentFingerPrintOverviewBinding
 
     lateinit var fingerPrintOverViewModel: FingerPrintOverviewViewModel
+
+    lateinit var testPersonOverviewFragment: TestPersonOverviewFragment
 
     lateinit var adapter: FingerPrintListAdapter
 
@@ -63,6 +70,8 @@ class FingerPrintOverViewFragment : BaseFragment() {
             )
         )
 
+
+
         binding.btnAddFingerprint.setOnClickListener {
             val action = FingerPrintOverViewFragmentDirections.toFingerPrintCreateFragment(
                 null,
@@ -75,6 +84,16 @@ class FingerPrintOverViewFragment : BaseFragment() {
         fingerPrintOverViewModel.listOfFingerPrints.observe(this, Observer { updateList(it) })
 
         Logging.cancelAcquisition()
+
+
+        // Button to Main Menu einbauen
+        binding.btnBackToMainMenu.setOnClickListener {
+            val action =
+            TestPersonOverviewFragmentDirections.toTestPersonCreateFragment(null)
+            NavHostFragment.findNavController(this).navigate(action)
+        }
+       
+
     }
 
     private fun initialiseViewModel() {
@@ -98,6 +117,7 @@ class FingerPrintOverViewFragment : BaseFragment() {
 
     private fun updateList(fingerprints: List<FingerPrintEntity>) {
         binding.btnAddFingerprint.show()
+        binding.btnBackToMainMenu.show()
 
         when {
             fingerprints.isEmpty() -> {

@@ -9,11 +9,14 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
+//Testperson erstellen - Einstellungen
 class TestPersonCreateViewModel @Inject constructor(private val testPersonRepository: TestPersonRepository) :
     BaseViewModel() {
 
     lateinit var entity: TestPersonEntity
     private var compositeDisposable = CompositeDisposable()
+
+
 
     var name: String = ""
     lateinit var gender: String

@@ -10,9 +10,10 @@ import android.text.SpannableStringBuilder
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
+import android.view.View.*
 import android.view.ViewGroup
+import android.widget.CheckBox
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -31,9 +32,11 @@ import de.dali.thesisfingerprint2019.ui.main.viewmodel.fingerprint.FingerPrintCr
 import de.dali.thesisfingerprint2019.utils.Utils
 import de.dali.thesisfingerprint2019.utils.update
 import kotlinx.android.synthetic.main.fragment_finger_print_create.*
+import kotlinx.android.synthetic.main.row_multiselect.*
 import kotlinx.android.synthetic.main.row_multiselect.view.*
 import javax.inject.Inject
 
+// Fingerabdruck aufnehmen - Einstellungen
 class FingerPrintCreateFragment : BaseFragment() {
 
     @Inject
@@ -90,7 +93,12 @@ class FingerPrintCreateFragment : BaseFragment() {
 
                 fingerPrintCreateViewModel.selectedFinger.observe(this, Observer { fingers ->
                     binding.btnScan.isEnabled = fingers.isNotEmpty()
+
+                    checkPossibility(fingers)
+
                 })
+
+
 
                 if (entity != null) {
                     fingerPrintCreateViewModel.fingerPrintEntity = entity
@@ -105,6 +113,35 @@ class FingerPrintCreateFragment : BaseFragment() {
             })
 
             fingerPrintCreateViewModel.loadImages(entity?.fingerPrintId ?: -1)
+        }
+    }
+
+    private fun checkPossibility(fingers: MutableList<Int>) {
+        if (fingers.isNotEmpty()) {
+            if (fingers.contains(6) || fingers.contains(1)) {
+                binding.multiSelect.fingerSelectionIndexFinger.visibility = INVISIBLE
+                binding.multiSelect.fingerSelectionMiddleFinger.visibility = INVISIBLE
+                binding.multiSelect.fingerSelectionRingFinger.visibility = INVISIBLE
+                binding.multiSelect.fingerSelectionLittleFinger.visibility = INVISIBLE
+            } else {
+                binding.multiSelect.fingerSelectionIndexFinger.visibility = VISIBLE
+                binding.multiSelect.fingerSelectionMiddleFinger.visibility = VISIBLE
+                binding.multiSelect.fingerSelectionRingFinger.visibility = VISIBLE
+                binding.multiSelect.fingerSelectionLittleFinger.visibility = VISIBLE
+            }
+
+            if ( fingers.contains(2) || fingers.contains(3) || fingers.contains(4) || fingers.contains(5)
+                || fingers.contains(7) || fingers.contains(8) || fingers.contains(9) || fingers.contains(10)) {
+                binding.multiSelect.fingerSelectionThumb.visibility = INVISIBLE
+            } else {
+                binding.multiSelect.fingerSelectionThumb.visibility = VISIBLE
+            }
+        } else {
+            binding.multiSelect.fingerSelectionThumb.visibility = VISIBLE
+            binding.multiSelect.fingerSelectionIndexFinger.visibility = VISIBLE
+            binding.multiSelect.fingerSelectionMiddleFinger.visibility = VISIBLE
+            binding.multiSelect.fingerSelectionRingFinger.visibility = VISIBLE
+            binding.multiSelect.fingerSelectionLittleFinger.visibility = VISIBLE
         }
     }
 
@@ -150,8 +187,11 @@ class FingerPrintCreateFragment : BaseFragment() {
         }
         binding.multiSelect.fingerSelectionLittleFinger.setOnChangeListener { i, j ->
             fingerPrintCreateViewModel.selectedFinger.update(i, j)
+
         }
+
     }
+
 
     private fun initOnCLick() {
         binding.btnScan.setOnClickListener {
@@ -196,6 +236,7 @@ class FingerPrintCreateFragment : BaseFragment() {
 
         binding.multiSelect.fingerSelectionLittleFinger.update(listOfFingerIds)
         binding.multiSelect.fingerSelectionLittleFinger.lock(lockCB)
+
     }
 
     private fun hideParts() {

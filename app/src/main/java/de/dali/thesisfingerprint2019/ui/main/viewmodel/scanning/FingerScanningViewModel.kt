@@ -28,6 +28,7 @@ import java.math.RoundingMode
 import javax.inject.Inject
 import javax.inject.Named
 
+// Worflow Akquise
 class FingerScanningViewModel @Inject constructor(
     private val fingerPrintRepository: FingerPrintRepository,
     private val imageRepository: ImageRepository,
@@ -38,7 +39,7 @@ class FingerScanningViewModel @Inject constructor(
     lateinit var list: List<Int>
     lateinit var entity: FingerPrintEntity
 
-    var frameCounter: Int = 0
+    var sucessfullFingersCounter: Int = 0
 
     var record: Boolean = false
 
