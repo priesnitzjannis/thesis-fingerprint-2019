@@ -35,11 +35,12 @@
                 android:id="@+id/btnBackToMainMenu"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="370dp"
-                android:src="@drawable/ic_user"
+                android:layout_marginStart="24dp"
+                android:layout_marginBottom="32dp"
+                android:src="@drawable/ic_user_white"
                 android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="@id/btnAddFingerprint"
-                app:layout_constraintEnd_toEndOf="parent" />
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

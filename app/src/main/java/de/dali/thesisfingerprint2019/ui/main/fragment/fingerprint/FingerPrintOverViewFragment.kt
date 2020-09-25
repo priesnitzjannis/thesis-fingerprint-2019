@@ -1,6 +1,7 @@
 package de.dali.thesisfingerprint2019.ui.main.fragment.fingerprint
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -21,6 +22,7 @@ import de.dali.thesisfingerprint2019.ui.base.BaseFragment
 import de.dali.thesisfingerprint2019.ui.base.custom.FingerPrintListAdapter
 import de.dali.thesisfingerprint2019.ui.base.custom.ListWithLoadingSpinner.LIST.EMPTY
 import de.dali.thesisfingerprint2019.ui.base.custom.ListWithLoadingSpinner.LIST.RESULT
+import de.dali.thesisfingerprint2019.ui.main.activity.MainActivity
 import de.dali.thesisfingerprint2019.ui.main.fragment.testperson.TestPersonOverviewFragment
 import de.dali.thesisfingerprint2019.ui.main.fragment.testperson.TestPersonOverviewFragmentDirections
 import de.dali.thesisfingerprint2019.ui.main.viewmodel.fingerprint.FingerPrintOverviewViewModel
@@ -88,11 +90,9 @@ class FingerPrintOverViewFragment : BaseFragment() {
 
         // Button to Main Menu einbauen
         binding.btnBackToMainMenu.setOnClickListener {
-            val action =
-            TestPersonOverviewFragmentDirections.toTestPersonCreateFragment(null)
-            NavHostFragment.findNavController(this).navigate(action)
-        }
-       
+            val intent = Intent(getActivity(), MainActivity::class.java)
+            startActivity(intent)
+            }
 
     }
 
