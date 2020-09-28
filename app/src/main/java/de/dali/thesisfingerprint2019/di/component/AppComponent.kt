@@ -7,6 +7,7 @@ import dagger.Component
 import dagger.android.support.AndroidSupportInjectionModule
 import de.dali.thesisfingerprint2019.AppController
 import de.dali.thesisfingerprint2019.di.module.*
+import de.dali.thesisfingerprint2019.logging.LoggingDatabaseModule
 import javax.inject.Singleton
 
 @Singleton
@@ -18,7 +19,8 @@ import javax.inject.Singleton
         ViewModelModule::class,
         AndroidSupportInjectionModule::class,
         ActivityModule::class,
-        FragmentModule::class]
+        FragmentModule::class,
+        LoggingDatabaseModule::class]
 )
 interface AppComponent {
 

@@ -1,6 +1,7 @@
 package de.dali.thesisfingerprint2019.processing.common
 
 
+import de.dali.thesisfingerprint2019.logging.Logging
 import de.dali.thesisfingerprint2019.processing.Config.POINT_PAIR_DST
 import de.dali.thesisfingerprint2019.processing.ProcessingStep
 import de.dali.thesisfingerprint2019.processing.Utils
@@ -14,6 +15,7 @@ import de.dali.thesisfingerprint2019.processing.Utils.rotateImageByDegree
 import org.opencv.core.Mat
 import org.opencv.core.Point
 import javax.inject.Inject
+import kotlin.math.roundToInt
 
 class RotateFinger @Inject constructor() : ProcessingStep() {
 
@@ -27,6 +29,8 @@ class RotateFinger @Inject constructor() : ProcessingStep() {
         get() = RotateFinger::class.java.simpleName
 
     override fun run(originalImage: Mat): Mat {
+        val start = System.currentTimeMillis()
+
         val middle = calcCenterPointOfMat(originalImage)
         val pointPair = generatePointPair(middle, POINT_PAIR_DST)
 
@@ -44,7 +48,16 @@ class RotateFinger @Inject constructor() : ProcessingStep() {
         else if (angleFixed + degreeImprecise > 100.0 && hand == RIGHT) angleFixed - 180.0
         else angleFixed
 
-        return rotateImageByDegree(correctionAngle, originalImage)
+        val rotatedFinger = rotateImageByDegree(correctionAngle, originalImage)
+
+
+        val duration = System.currentTimeMillis() - start
+        Logging.createLogEntry(Logging.loggingLevel_medium, 1800, "Finger Rotation finished in " + duration + "ms.")
+
+        // could add rotation degree to the image, represented by line
+        Logging.createLogEntry(Logging.loggingLevel_critical, 1800, "Finger rotated by " + correctionAngle.roundToInt() + "°, see image for results.", rotatedFinger)
+
+        return rotatedFinger
     }
 
     override fun runReturnMultiple(originalImage: Mat): List<Mat> {

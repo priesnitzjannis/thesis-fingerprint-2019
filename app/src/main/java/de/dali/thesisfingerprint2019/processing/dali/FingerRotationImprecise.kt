@@ -1,6 +1,8 @@
 package de.dali.thesisfingerprint2019.processing.dali
 
 import android.util.Log
+import de.dali.thesisfingerprint2019.logging.Logging
+import de.dali.thesisfingerprint2019.processing.Config
 import de.dali.thesisfingerprint2019.processing.Config.POINT_PAIR_DST
 import de.dali.thesisfingerprint2019.processing.ProcessingStep
 import de.dali.thesisfingerprint2019.processing.Utils.HAND
@@ -16,6 +18,7 @@ import org.opencv.core.Mat
 import org.opencv.core.Point
 import java.lang.Exception
 import javax.inject.Inject
+import kotlin.math.roundToInt
 
 
 class FingerRotationImprecise @Inject constructor() : ProcessingStep() {
@@ -27,6 +30,13 @@ class FingerRotationImprecise @Inject constructor() : ProcessingStep() {
         get() = FingerRotationImprecise::class.java.simpleName
 
     override fun run(originalImage: Mat): Mat {
+        Logging.createLogEntry(
+            Logging.loggingLevel_param,
+            1700,
+            "Config data for Finger Rotation Imprecise:\nPOINT_PAIR_DST = " + Config.POINT_PAIR_DST
+        )
+        val start = System.currentTimeMillis()
+
         val thresh = getThresholdImage(originalImage)
 
         val pointPair = generatePointPair(thresh, POINT_PAIR_DST)
@@ -44,7 +54,16 @@ class FingerRotationImprecise @Inject constructor() : ProcessingStep() {
         val angle = calcAngle(distanceP1P2, distanceP2ToContour, distanceP1ToContour)
         correctionAngle = if (hand == RIGHT) angle else -angle
 
-        return rotateImageByDegree(correctionAngle, originalImage)
+
+        val rotatedImage = rotateImageByDegree(correctionAngle, originalImage)
+
+        val duration = System.currentTimeMillis() - start
+        Logging.createLogEntry(Logging.loggingLevel_medium, 1700, "Finger Rotation Imprecise finished in " + duration + "ms.")
+
+
+        Logging.createLogEntry(Logging.loggingLevel_critical, 1700, "Finger oriented, rotated by " + correctionAngle.roundToInt() + "°, see images for results.", rotatedImage)
+
+        return rotatedImage
     }
 
     override fun runReturnMultiple(originalImage: Mat): List<Mat> {

@@ -6,6 +6,7 @@ import de.dali.thesisfingerprint2019.data.local.entity.FingerPrintIntermediateEn
 import de.dali.thesisfingerprint2019.data.local.entity.ImageEntity
 import de.dali.thesisfingerprint2019.data.repository.FingerPrintRepository
 import de.dali.thesisfingerprint2019.data.repository.ImageRepository
+import de.dali.thesisfingerprint2019.logging.Logging
 import de.dali.thesisfingerprint2019.processing.ProcessingThread
 import de.dali.thesisfingerprint2019.processing.QualityAssuranceThread
 import de.dali.thesisfingerprint2019.processing.QualityAssuranceThread.IntermediateResults
@@ -121,13 +122,13 @@ class FingerScanningViewModel @Inject constructor(
 
                 imageRepository.insert(imageEntity)
             }
+            Logging.completeAcquisition(id)
         }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(onSuccess, onError)
 
         compositeDisposable.add(disposable)
-
     }
 
     override fun onCleared() {

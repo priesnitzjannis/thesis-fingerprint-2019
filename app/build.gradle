@@ -52,7 +52,7 @@ dependencies {
     implementation 'io.reactivex.rxjava2:rxjava:2.2.9'
 
     /* Android Architecture Component - ConstraintLayout  */
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta2'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta4'
 
     /* Android Architecture Component - LiveData & ViewModel  */
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0-alpha05'

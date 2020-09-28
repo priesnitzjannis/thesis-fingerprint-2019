@@ -15,6 +15,7 @@ import androidx.navigation.fragment.NavHostFragment
 import dagger.android.support.AndroidSupportInjection
 import de.dali.thesisfingerprint2019.R
 import de.dali.thesisfingerprint2019.databinding.FragmentFingerScanningBinding
+import de.dali.thesisfingerprint2019.logging.Logging
 import de.dali.thesisfingerprint2019.processing.QualityAssuranceThread.IntermediateResults.FAILURE
 import de.dali.thesisfingerprint2019.processing.QualityAssuranceThread.IntermediateResults.SUCCESSFUL
 import de.dali.thesisfingerprint2019.processing.Utils.HAND.LEFT
@@ -31,6 +32,7 @@ import org.opencv.android.LoaderCallbackInterface
 import org.opencv.android.OpenCVLoader
 import org.opencv.core.CvType
 import org.opencv.core.Mat
+import java.lang.Exception
 import javax.inject.Inject
 
 class FingerScanningFragment : BaseFragment() {
@@ -50,19 +52,34 @@ class FingerScanningFragment : BaseFragment() {
 
         override fun onCameraViewStarted(width: Int, height: Int) {
             mRgba = Mat(height, width, CvType.CV_8UC4)
+            Logging.createLogEntry(Logging.loggingLevel_critical, 1300, "Scanning started.")
         }
 
         override fun onCameraViewStopped() {
             mRgba.release()
+            Logging.createLogEntry(Logging.loggingLevel_critical, 1300, "Scanning stopped.")
+            // TODO:
+            // distinguish between cancellation (back) & home button (possible to return)
+            //Logging.cancelAcquisition()
         }
 
         override fun onCameraFrame(inputFrame: CameraBridgeViewBase.CvCameraViewFrame): Mat {
+            //val start = System.currentTimeMillis()
+
             fingerScanningViewModel.frameCounter++
             mRgba = inputFrame.rgba()
 
             if (fingerScanningViewModel.record /* && fingerScanningViewModel.frameCounter % 10 == 0 */)  {
                 fingerScanningViewModel.sendToPipeline(mRgba)
+
+                // only leads to spam
+                //Logging.createLogEntry(Logging.loggingLevel_debug, 1300, "Sent an image to the pipeline.", mRgba)
             }
+
+
+            // only spams logging messages in the 2-6ms range, occasionally 10/11/14ms
+            //val duration = System.currentTimeMillis() - start
+            //Logging.createLogEntry(Logging.loggingLevel_detailed, 1300, "Image acquired in " + duration + "ms.")
 
             return mRgba
         }
@@ -76,9 +93,14 @@ class FingerScanningFragment : BaseFragment() {
                     fingerScanningViewModel.startProcessingPipeline()
                     binding.javaCamera2View.enableView()
 
-                    Handler().postDelayed({
-                        javaCamera2View.toggleFlash()
-                    }, 1000)
+                    try {
+                        Handler().postDelayed({
+                            javaCamera2View.toggleFlash()
+                        }, 1000)
+                    } catch (e : Exception) {
+                        // this exception happens only during debugging
+                        //throw RuntimeException(e)
+                    }
                 }
                 else -> {
                     super.onManagerConnected(status)
@@ -120,13 +142,14 @@ class FingerScanningFragment : BaseFragment() {
         binding.button.setOnClickListener {
             fingerScanningViewModel.record = true
             binding.button.isEnabled = false
+            Logging.createLogEntry(Logging.loggingLevel_critical, 1100, "Processing has been started.")
         }
 
         binding.buttonfoo.setOnClickListener{
             javaCamera2View.toggleFlash()
             //binding.buttonfoo.isEnabled = false
             Log.e(TAG, "\n\n\nBUTTONFOO PRESSED \n\n\n")
-
+            Logging.createLogEntry(Logging.loggingLevel_critical,100,"The flash has been toggled")
         }
 
         fingerScanningViewModel.setSensorOrientation(Utils.getSensorOrientation(activity))

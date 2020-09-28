@@ -14,6 +14,7 @@ import dagger.android.support.AndroidSupportInjection
 import de.dali.thesisfingerprint2019.R
 import de.dali.thesisfingerprint2019.data.local.entity.TestPersonEntity
 import de.dali.thesisfingerprint2019.databinding.FragmentTestPersonOverviewBinding
+import de.dali.thesisfingerprint2019.logging.Logging
 import de.dali.thesisfingerprint2019.ui.base.BaseFragment
 import de.dali.thesisfingerprint2019.ui.base.custom.ListWithLoadingSpinner.LIST.EMPTY
 import de.dali.thesisfingerprint2019.ui.base.custom.ListWithLoadingSpinner.LIST.RESULT
@@ -43,6 +44,8 @@ class TestPersonOverviewFragment : BaseFragment() {
         AndroidSupportInjection.inject(this)
         initialiseViewModel()
         initialiseAdapter()
+
+        Logging.createLogEntry(Logging.loggingLevel_critical, 100, "Navigation to overview of all testpeople.")
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
