@@ -16,6 +16,7 @@ import dagger.android.support.AndroidSupportInjection
 import de.dali.thesisfingerprint2019.R
 import de.dali.thesisfingerprint2019.data.local.entity.TestPersonEntity
 import de.dali.thesisfingerprint2019.databinding.FragmentTestPersonCreateBinding
+import de.dali.thesisfingerprint2019.logging.Logging
 import de.dali.thesisfingerprint2019.ui.base.BaseFragment
 import de.dali.thesisfingerprint2019.ui.main.viewmodel.testperson.TestPersonCreateViewModel
 import javax.inject.Inject
@@ -35,6 +36,8 @@ class TestPersonCreateFragment : BaseFragment() {
         super.onCreate(savedInstanceState)
         AndroidSupportInjection.inject(this)
         initialiseViewModel()
+
+        Logging.createLogEntry(Logging.loggingLevel_critical, 100, "Navigation to overview of a testperson.")
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

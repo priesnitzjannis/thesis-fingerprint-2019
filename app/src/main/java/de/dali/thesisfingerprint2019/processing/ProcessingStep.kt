@@ -1,5 +1,6 @@
 package de.dali.thesisfingerprint2019.processing
 
+import android.util.Log
 import org.opencv.core.Mat
 
 abstract class ProcessingStep {
@@ -13,6 +14,7 @@ abstract class ProcessingStep {
     private val executionTimes: MutableList<Long> = mutableListOf()
 
     fun addExecutionTimes(execTime: Long) {
+        Log.d("Exec Time Proc Step: ", execTime.toString())
         executionTimes.add(execTime)
     }
 
