@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
 import android.view.ViewGroup
+import android.widget.Switch
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -29,6 +30,8 @@ import de.dali.thesisfingerprint2019.ui.main.viewmodel.fingerprint.FingerPrintCr
 import de.dali.thesisfingerprint2019.utils.Utils
 import de.dali.thesisfingerprint2019.utils.update
 import kotlinx.android.synthetic.main.fragment_finger_print_create.*
+import kotlinx.android.synthetic.main.row_finger_selection.view.*
+import kotlinx.android.synthetic.main.row_multiselect.*
 import kotlinx.android.synthetic.main.row_multiselect.view.*
 import javax.inject.Inject
 
@@ -113,32 +116,76 @@ class FingerPrintCreateFragment : BaseFragment() {
     }
 
     private fun checkPossibility(fingers: MutableList<Int>) {
-        if (fingers.isNotEmpty()) {
-            if (fingers.contains(6) || fingers.contains(1)) {
-                binding.multiSelect.fingerSelectionIndexFinger.visibility = INVISIBLE
-                binding.multiSelect.fingerSelectionMiddleFinger.visibility = INVISIBLE
-                binding.multiSelect.fingerSelectionRingFinger.visibility = INVISIBLE
-                binding.multiSelect.fingerSelectionLittleFinger.visibility = INVISIBLE
-            } else {
-                binding.multiSelect.fingerSelectionIndexFinger.visibility = VISIBLE
-                binding.multiSelect.fingerSelectionMiddleFinger.visibility = VISIBLE
-                binding.multiSelect.fingerSelectionRingFinger.visibility = VISIBLE
-                binding.multiSelect.fingerSelectionLittleFinger.visibility = VISIBLE
-            }
 
-            if ( fingers.contains(2) || fingers.contains(3) || fingers.contains(4) || fingers.contains(5)
-                || fingers.contains(7) || fingers.contains(8) || fingers.contains(9) || fingers.contains(10)) {
-                binding.multiSelect.fingerSelectionThumb.visibility = INVISIBLE
-            } else {
-                binding.multiSelect.fingerSelectionThumb.visibility = VISIBLE
-            }
+        if (fingers.isNotEmpty()) {
+            if (fingers.contains(1) || fingers.contains(2) || fingers.contains(3) || fingers.contains(4) || fingers.contains(5)){
+                binding.multiSelect.fingerSelectionThumb.cbLeft.isEnabled = false
+                binding.multiSelect.fingerSelectionIndexFinger.cbLeft.isEnabled = false
+                binding.multiSelect.fingerSelectionMiddleFinger.cbLeft.isEnabled = false
+                binding.multiSelect.fingerSelectionRingFinger.cbLeft.isEnabled = false
+                binding.multiSelect.fingerSelectionLittleFinger.cbLeft.isEnabled = false
+
+                binding.multiSelect.fingerSelectionThumb.cbRight.isEnabled = true
+                binding.multiSelect.fingerSelectionIndexFinger.cbRight.isEnabled = true
+                binding.multiSelect.fingerSelectionMiddleFinger.cbRight.isEnabled = true
+                binding.multiSelect.fingerSelectionRingFinger.cbRight.isEnabled = true
+                binding.multiSelect.fingerSelectionLittleFinger.cbRight.isEnabled = true
+
+                if (fingers.contains(1)) {
+                    binding.multiSelect.fingerSelectionIndexFinger.cbRight.isEnabled = false
+                    binding.multiSelect.fingerSelectionMiddleFinger.cbRight.isEnabled = false
+                    binding.multiSelect.fingerSelectionRingFinger.cbRight.isEnabled = false
+                    binding.multiSelect.fingerSelectionLittleFinger.cbRight.isEnabled = false
+                }
+
+                if (fingers.contains(2) || fingers.contains(3) || fingers.contains(4) || fingers.contains(5)){
+                    binding.multiSelect.fingerSelectionThumb.cbRight.isEnabled = false
+                }
+
+
+            } else if (fingers.contains(6) || fingers.contains(7) || fingers.contains(8) || fingers.contains(9) || fingers.contains(10)){
+                binding.multiSelect.fingerSelectionThumb.cbRight.isEnabled = false
+                binding.multiSelect.fingerSelectionIndexFinger.cbRight.isEnabled = false
+                binding.multiSelect.fingerSelectionMiddleFinger.cbRight.isEnabled = false
+                binding.multiSelect.fingerSelectionRingFinger.cbRight.isEnabled = false
+                binding.multiSelect.fingerSelectionLittleFinger.cbRight.isEnabled = false
+
+                binding.multiSelect.fingerSelectionThumb.cbLeft.isEnabled = true
+                binding.multiSelect.fingerSelectionIndexFinger.cbLeft.isEnabled = true
+                binding.multiSelect.fingerSelectionMiddleFinger.cbLeft.isEnabled = true
+                binding.multiSelect.fingerSelectionRingFinger.cbLeft.isEnabled = true
+                binding.multiSelect.fingerSelectionLittleFinger.cbLeft.isEnabled = true
+
+                if (fingers.contains(6)) {
+                    binding.multiSelect.fingerSelectionIndexFinger.cbLeft.isEnabled = false
+                    binding.multiSelect.fingerSelectionMiddleFinger.cbLeft.isEnabled = false
+                    binding.multiSelect.fingerSelectionRingFinger.cbLeft.isEnabled = false
+                    binding.multiSelect.fingerSelectionLittleFinger.cbLeft.isEnabled = false
+                }
+
+                if (fingers.contains(7) || fingers.contains(8) || fingers.contains(9) || fingers.contains(10)){
+                    binding.multiSelect.fingerSelectionThumb.cbLeft.isEnabled = false
+                }
+
+            } else { activateAll()}
+
         } else {
-            binding.multiSelect.fingerSelectionThumb.visibility = VISIBLE
-            binding.multiSelect.fingerSelectionIndexFinger.visibility = VISIBLE
-            binding.multiSelect.fingerSelectionMiddleFinger.visibility = VISIBLE
-            binding.multiSelect.fingerSelectionRingFinger.visibility = VISIBLE
-            binding.multiSelect.fingerSelectionLittleFinger.visibility = VISIBLE
+            activateAll()
         }
+    }
+
+    private fun activateAll() {
+        binding.multiSelect.fingerSelectionThumb.cbRight.isEnabled = true
+        binding.multiSelect.fingerSelectionIndexFinger.cbRight.isEnabled = true
+        binding.multiSelect.fingerSelectionMiddleFinger.cbRight.isEnabled = true
+        binding.multiSelect.fingerSelectionRingFinger.cbRight.isEnabled = true
+        binding.multiSelect.fingerSelectionLittleFinger.cbRight.isEnabled = true
+
+        binding.multiSelect.fingerSelectionThumb.cbLeft.isEnabled = true
+        binding.multiSelect.fingerSelectionIndexFinger.cbLeft.isEnabled = true
+        binding.multiSelect.fingerSelectionMiddleFinger.cbLeft.isEnabled = true
+        binding.multiSelect.fingerSelectionRingFinger.cbLeft.isEnabled = true
+        binding.multiSelect.fingerSelectionLittleFinger.cbLeft.isEnabled = true
     }
 
     private fun initialiseListener() {
