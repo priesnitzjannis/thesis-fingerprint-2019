@@ -76,5 +76,6 @@
     <string name="fragment_finger_scanning_frame_text">Number of successfully processed fingers:</string>
     <string name="fragment_finger_scanning_last_frame">Last frame in pipeline:</string>
     <string name="fragment_finger_scanning_record">Record</string>
+    <string name="Autofill">Auto</string>
 
 </resources>

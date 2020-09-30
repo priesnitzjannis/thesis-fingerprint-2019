@@ -2,13 +2,15 @@ package de.dali.thesisfingerprint2019.ui.main.fragment.testperson
 
 
 import android.app.ProgressDialog
+import android.os.Build
 import android.os.Bundle
+import android.text.Editable
 import android.text.SpannableStringBuilder
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
@@ -20,6 +22,7 @@ import de.dali.thesisfingerprint2019.databinding.FragmentTestPersonCreateBinding
 import de.dali.thesisfingerprint2019.logging.Logging
 import de.dali.thesisfingerprint2019.ui.base.BaseFragment
 import de.dali.thesisfingerprint2019.ui.main.viewmodel.testperson.TestPersonCreateViewModel
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 // Testperson Einstellungen
@@ -48,6 +51,7 @@ class TestPersonCreateFragment : BaseFragment() {
         return binding.root
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -70,6 +74,7 @@ class TestPersonCreateFragment : BaseFragment() {
             ViewModelProviders.of(this, viewModelFactory).get(TestPersonCreateViewModel::class.java)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun initOnChange() {
         binding.editName.setCallback {
             testPersonCreateViewModel.name = it
@@ -80,6 +85,11 @@ class TestPersonCreateFragment : BaseFragment() {
             testPersonCreateViewModel.age = (if (it == "") -1 else it.toInt()).toInt()
             binding.btnContinue.isEnabled = testPersonCreateViewModel.age != -1 && testPersonCreateViewModel.name != ""
         }
+        binding.Autofill.setOnClickListener{
+            val current = LocalDateTime.now().toString()
+            binding.editName.setText(Editable.Factory.getInstance().newEditable(current))
+        }
+
         binding.spinnerGender.setCallback { testPersonCreateViewModel.gender = it }
         binding.spinnerColor.setCallback { testPersonCreateViewModel.color = it }
     }
@@ -97,6 +107,7 @@ class TestPersonCreateFragment : BaseFragment() {
         binding.spinnerColor.setSelectedItem(entity.skinColor)
         binding.spinnerColor.lock(lockUI)
 
+        binding.Autofill.isEnabled = false
     }
 
     private fun navToFingerPrintOverViewFrag(entity: TestPersonEntity) {

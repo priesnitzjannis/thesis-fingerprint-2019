@@ -7,13 +7,10 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Bundle
 import android.text.SpannableStringBuilder
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
 import android.view.ViewGroup
-import android.widget.CheckBox
-import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -32,7 +29,6 @@ import de.dali.thesisfingerprint2019.ui.main.viewmodel.fingerprint.FingerPrintCr
 import de.dali.thesisfingerprint2019.utils.Utils
 import de.dali.thesisfingerprint2019.utils.update
 import kotlinx.android.synthetic.main.fragment_finger_print_create.*
-import kotlinx.android.synthetic.main.row_multiselect.*
 import kotlinx.android.synthetic.main.row_multiselect.view.*
 import javax.inject.Inject
 
