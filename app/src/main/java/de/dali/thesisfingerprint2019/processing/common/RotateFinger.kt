@@ -12,8 +12,11 @@ import de.dali.thesisfingerprint2019.processing.Utils.conditionalPointOnContour
 import de.dali.thesisfingerprint2019.processing.Utils.euclideanDist
 import de.dali.thesisfingerprint2019.processing.Utils.getThresholdImage
 import de.dali.thesisfingerprint2019.processing.Utils.rotateImageByDegree
+import org.opencv.core.CvType
 import org.opencv.core.Mat
+import org.opencv.core.MatOfPoint2f
 import org.opencv.core.Point
+import org.opencv.imgproc.Imgproc
 import javax.inject.Inject
 import kotlin.math.roundToInt
 
@@ -31,31 +34,57 @@ class RotateFinger @Inject constructor() : ProcessingStep() {
     override fun run(originalImage: Mat): Mat {
         val start = System.currentTimeMillis()
 
-        val middle = calcCenterPointOfMat(originalImage)
-        val pointPair = generatePointPair(middle, POINT_PAIR_DST)
 
-        val p1Contour = calcPointOnContour(pointPair.first, originalImage)
-        val p2Contour = calcPointOnContour(pointPair.second, originalImage)
+        // -- NEW VERSION --
+        val thresh = getThresholdImage(originalImage)
 
-        val distanceP1P2 = euclideanDist(pointPair.first, pointPair.second)
-        val distanceP1ToContour = euclideanDist(pointPair.first, p1Contour)
-        val distanceP2ToContour = euclideanDist(pointPair.second, p2Contour)
+        val matrix: MutableList<MatOfPoint2f> = ArrayList()
+        val contours = Utils.getFingerContour(thresh)
+        val myPt = MatOfPoint2f()
+        contours[0].convertTo(myPt, CvType.CV_32FC2)
 
-        val angle = calcAngle(distanceP1P2, distanceP2ToContour, distanceP1ToContour)
-        val angleFixed = if (hand == RIGHT) 90 - angle else -(90 + angle)
+        val rect = Imgproc.minAreaRect(myPt)
+        var angle = rect.angle
+        if (angle > 45.0 && angle < 135.0) {
+            angle = angle - 90
+        } else if (angle < -45.0 && angle < 135.0){
+            angle = angle + 90
+        } else if(angle > 135.0 && angle < 135.0){
+            angle = angle + 180
 
-        correctionAngle = if (angleFixed + degreeImprecise < -100.0 && hand == Utils.HAND.LEFT) angleFixed + 180.0
-        else if (angleFixed + degreeImprecise > 100.0 && hand == RIGHT) angleFixed - 180.0
-        else angleFixed
+        }
+        val rotatedFinger = rotateImageByDegree(angle, originalImage)
 
-        val rotatedFinger = rotateImageByDegree(correctionAngle, originalImage)
+
+
+        // ---
+
+
+//        val middle = calcCenterPointOfMat(originalImage)
+//        val pointPair = generatePointPair(middle, POINT_PAIR_DST)
+
+//        val p1Contour = calcPointOnContour(pointPair.first, originalImage)
+//        val p2Contour = calcPointOnContour(pointPair.second, originalImage)
+//
+//        val distanceP1P2 = euclideanDist(pointPair.first, pointPair.second)
+//        val distanceP1ToContour = euclideanDist(pointPair.first, p1Contour)
+//        val distanceP2ToContour = euclideanDist(pointPair.second, p2Contour)
+//
+//        val angle = calcAngle(distanceP1P2, distanceP2ToContour, distanceP1ToContour)
+//        val angleFixed = if (hand == RIGHT) 90 - angle else -(90 + angle)
+//
+//        correctionAngle = if (angleFixed + degreeImprecise < -100.0 && hand == Utils.HAND.LEFT) angleFixed + 180.0
+//        else if (angleFixed + degreeImprecise > 100.0 && hand == RIGHT) angleFixed - 180.0
+//        else angleFixed
+
+//        val rotatedFinger = rotateImageByDegree(correctionAngle, originalImage)
 
 
         val duration = System.currentTimeMillis() - start
         Logging.createLogEntry(Logging.loggingLevel_medium, 1800, "Finger Rotation finished in " + duration + "ms.")
 
         // could add rotation degree to the image, represented by line
-        Logging.createLogEntry(Logging.loggingLevel_critical, 1800, "Finger rotated by " + correctionAngle.roundToInt() + "°, see image for results.", rotatedFinger)
+        Logging.createLogEntry(Logging.loggingLevel_critical, 1800, "Finger rotated by " + angle + "°, see image for results.", rotatedFinger)
 
         return rotatedFinger
     }
