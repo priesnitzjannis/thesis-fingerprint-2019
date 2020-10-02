@@ -16,6 +16,7 @@ import javax.inject.Inject
 import kotlin.math.pow
 
 class Enhancement @Inject constructor() : ProcessingStep() {
+
     override val TAG: String
         get() = Enhancement::class.java.simpleName
 

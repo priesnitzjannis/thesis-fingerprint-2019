@@ -6,6 +6,7 @@ import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -131,7 +132,7 @@ class FingerScanningFragment : BaseFragment() {
         binding.javaCamera2View.visibility = VISIBLE
         binding.javaCamera2View.setCvCameraViewListener(listener)
 
-        binding.txtSuccessfulFrames.text = context?.getString(R.string.fragment_finger_scanning_frame_counter, 0)
+        binding.txtSuccessfulFrames.text = fingerScanningViewModel.processedFingers.toString() + "/" + fingerScanningViewModel.amountOfFinger.toString()
 
         binding.button.setOnClickListener {
             fingerScanningViewModel.record = true
@@ -167,7 +168,7 @@ class FingerScanningFragment : BaseFragment() {
                 SUCCESSFUL -> {
                     binding.txtLastFrame.text = message
                     binding.txtSuccessfulFrames.text =
-                        context?.getString(R.string.fragment_finger_scanning_frame_counter, frameNumber)
+                        fingerScanningViewModel.processedFingers.toString() + "/" + fingerScanningViewModel.amountOfFinger.toString()
                 }
 
                 FAILURE -> {

@@ -41,6 +41,8 @@ class FingerScanningViewModel @Inject constructor(
 
     var sucessfullFingersCounter: Int = 0
 
+    var processedFingers: Int = 0
+
     var record: Boolean = false
 
     var amountOfFinger: Int = 0
@@ -100,8 +102,10 @@ class FingerScanningViewModel @Inject constructor(
                 val correctionDegree = (qualityAssuranceThread.processingStep[3] as RotateFinger).correctionAngle
 
                 val grayBmp = convertMatToBitMap(processingThread.grayMat)
-                Utils.saveImage(pathName, fileNameGray, grayBmp!!, 100)
 
+                processedFingers += 1
+
+                Utils.saveImage(pathName, fileNameGray, grayBmp!!, 100)
                 Utils.saveImage(pathName, fileName, processedImage, 100)
 
                 val imageEntity = ImageEntity(

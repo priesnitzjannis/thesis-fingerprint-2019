@@ -116,7 +116,6 @@ class FingerPrintCreateFragment : BaseFragment() {
     }
 
     private fun checkPossibility(fingers: MutableList<Int>) {
-
         if (fingers.isNotEmpty()) {
             if (fingers.contains(1) || fingers.contains(2) || fingers.contains(3) || fingers.contains(4) || fingers.contains(5)){
                 binding.multiSelect.fingerSelectionThumb.cbLeft.isEnabled = false
