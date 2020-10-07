@@ -6,8 +6,7 @@ import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.INVISIBLE
-import android.view.View.VISIBLE
+import android.view.View.*
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
@@ -142,6 +141,14 @@ class FingerScanningFragment : BaseFragment() {
 
         binding.buttonfoo.setOnClickListener{
             javaCamera2View.toggleFlash()
+
+            // Overlay Toggle Test
+            if (javaCamera2ViewOverlay.visibility == VISIBLE) {
+                javaCamera2ViewOverlay.visibility = GONE
+            } else {
+                javaCamera2ViewOverlay.visibility = VISIBLE
+            }
+
             //binding.buttonfoo.isEnabled = false
             Log.e(TAG, "\n\n\nBUTTONFOO PRESSED \n\n\n")
             Logging.createLogEntry(Logging.loggingLevel_critical,100,"The flash has been toggled")
