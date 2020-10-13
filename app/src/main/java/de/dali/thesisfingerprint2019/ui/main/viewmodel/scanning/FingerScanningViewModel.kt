@@ -93,11 +93,12 @@ class FingerScanningViewModel @Inject constructor(
                 val pathName = NAME_MAIN_FOLDER
                 val timestamp = System.currentTimeMillis()
 
-                var newName = entity.personID.toString() + " " + entity.fingerPrintId.toString()
+                // TestpersonID_biometrischeFingerID_(FingerID)
+                var baseFileName = entity.personID.toString() + "_" + list[index] + "_(" + entity.fingerPrintId.toString() + ")"
 
-                val fileName = "${timestamp}_enhanced.jpg"
-                val fileNameOriginal = "${timestamp}_orig.jpg"
-                val fileNameGray = "${timestamp}_gray.jpg"
+                val fileName = baseFileName + "_enhanced.jpg"
+                val fileNameOriginal = baseFileName +"_orig.jpg"
+                val fileNameGray = baseFileName + "_gray.jpg"
 
                 Utils.saveImage(pathName, fileNameOriginal, convertMatToBitMap(pair.mat)!!, 100)
 
