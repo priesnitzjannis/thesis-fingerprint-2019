@@ -162,7 +162,7 @@ class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
                         Logging.endRun(-2)
                     }
                 } else {
-                    releaseImage(listOf(image, processedMat, rotatedImage))
+                    releaseImage(listOf(image, processedMat)) //rotatedImage
                     onUpdate(FAILURE, "Couldn't detect Fingers.", processedImages)
                     Logging.createLogEntry(
                         Logging.loggingLevel_critical,
