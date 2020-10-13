@@ -78,9 +78,9 @@ class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
                 )
 
                 val processedMat = Mat()
-                val rotatedImage = rotateImageByDegree(0.0 - sensorOrientation, image)
+                //val rotatedImage = rotateImageByDegree(0.0 - sensorOrientation, image)
 
-                val multiFingerImage = (processingStep[0] as MultiFingerDetection).run(rotatedImage)
+                val multiFingerImage = (processingStep[0] as MultiFingerDetection).run(image)
 
                 if (!multiFingerImage.empty()) {
                     val rotatedFinger =
@@ -125,7 +125,7 @@ class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
 
                             processedImages++
 
-                            releaseImage(listOf(image, processedMat, rotatedImage))
+                            releaseImage(listOf(image, processedMat)) //rotatedImage
 
                             onUpdate(SUCCESSFUL, "Processed frame successfully.", processedImages)
 
@@ -152,7 +152,7 @@ class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
                             Logging.endRun(-1)
                         }
                     } else {
-                        releaseImage(listOf(image, processedMat, rotatedImage))
+                        releaseImage(listOf(image, processedMat)) //rotatedImage
                         onUpdate(FAILURE, "Couldn't split Fingers.", processedImages)
                         Logging.createLogEntry(
                             Logging.loggingLevel_critical,
