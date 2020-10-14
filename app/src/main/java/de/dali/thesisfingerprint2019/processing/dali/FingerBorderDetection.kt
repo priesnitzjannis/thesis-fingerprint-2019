@@ -42,18 +42,18 @@ class FingerBorderDetection @Inject constructor() : ProcessingStep() {
 
         val edgeImage = adaptiveThresh(originalImage)
 
-        var edgesDilated = dilate(edgeImage)
-        edgesDilated = erode(edgesDilated)
+        //var edgesDilated = dilate(edgeImage)
+        //edgesDilated = erode(edgesDilated)
 
         val thresholdImage = getThresholdImageNew(originalImage)
-        val contour = getFingerContour(thresholdImage)
+        //val contour = getFingerContour(thresholdImage)
 
-        val maskImage = getMaskImage(originalImage, contour)
+        //val maskImage = getMaskImage(originalImage, contour)
         val diffMaskEdge = Mat.zeros(originalImage.rows(), originalImage.cols(), CV_8UC1)
-        Core.subtract(maskImage, edgesDilated, diffMaskEdge)
+        Core.subtract(thresholdImage, edgeImage, diffMaskEdge)
 
-        releaseImage(contour)
-        releaseImage(listOf(thresholdImage, edgeImage, edgesDilated, maskImage))
+        //releaseImage(contour)
+        releaseImage(listOf(thresholdImage, edgeImage)) //maskImage
 
         val newImages = cropPalmIfNeeded(originalImage, diffMaskEdge, (originalImage.rows() * 0.5).toInt())
 

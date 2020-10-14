@@ -69,13 +69,18 @@ class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
                 //val image = Utils.readImageFromDisk()
                 totalImages++
 
-                Logging.startRun()
-                Logging.createLogEntry(
-                    Logging.loggingLevel_critical,
-                    1100,
-                    "Started processing of an image.",
-                    image
-                )
+                try {
+                    Logging.startRun()
+                    Logging.createLogEntry(
+                        Logging.loggingLevel_critical,
+                        1100,
+                        "Started processing of an image.",
+                        image
+                    )
+                } catch (e: NullPointerException){
+                    e.printStackTrace()
+                }
+
 
                 val processedMat = Mat()
                 //val rotatedImage = rotateImageByDegree(0.0 - sensorOrientation, image)
