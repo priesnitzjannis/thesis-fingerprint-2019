@@ -1,10 +1,12 @@
 package de.dali.thesisfingerprint2019.processing
 
+import de.dali.thesisfingerprint2019.processing.Utils.getFingerContour
+import de.dali.thesisfingerprint2019.processing.Utils.getThresholdImageNew
 import org.opencv.core.Mat
 import org.opencv.core.MatOfInt
 import org.opencv.core.MatOfPoint
 import org.opencv.core.Point
-import org.opencv.imgproc.Imgproc
+import org.opencv.imgproc.Imgproc.boundingRect
 import org.opencv.utils.Converters
 
 
@@ -33,9 +35,9 @@ fun MatOfInt.toMatOfPoint(contour: MatOfPoint): MatOfPoint {
 }
 
 fun Mat.cropToMinArea(): Mat {
-    val thresh = Utils.getThresholdImage(this)
-    val contour = Utils.getFingerContour(thresh)
-    val rect = Imgproc.boundingRect(contour.toMat())
+    val thresh = getThresholdImageNew(this)
+    val contour = getFingerContour(thresh)
+    val rect = boundingRect(contour.toMat())
 
     return Mat(this, rect)
 }

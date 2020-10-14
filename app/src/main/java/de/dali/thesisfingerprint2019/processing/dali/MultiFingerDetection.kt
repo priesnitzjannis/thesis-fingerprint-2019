@@ -37,13 +37,24 @@ class MultiFingerDetection @Inject constructor() : ProcessingStep() {
 
         try {
             val imageThresh = getThresholdImageNew(originalImage)
+            Logging.createLogEntry(
+                Logging.loggingLevel_param,
+                1400,
+                "Threshold Image",
+                imageThresh
+            )
             val fingerContours = getFingerContour(imageThresh)
 
             releaseImage(listOf(imageThresh))
 
             val maskImage = getMaskImage(originalImage, fingerContours)
             val imageWithOutBackground = getMaskedImage(originalImage, maskImage)
-
+            Logging.createLogEntry(
+                Logging.loggingLevel_param,
+                1400,
+                "imageWithOutBackground",
+                imageWithOutBackground
+            )
 
             if (fingerContours.isNotEmpty()) {
                 val rect = Imgproc.boundingRect(fingerContours.toMat())

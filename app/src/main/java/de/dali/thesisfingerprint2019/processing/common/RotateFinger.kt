@@ -2,15 +2,10 @@ package de.dali.thesisfingerprint2019.processing.common
 
 
 import de.dali.thesisfingerprint2019.logging.Logging
-import de.dali.thesisfingerprint2019.processing.Config.POINT_PAIR_DST
 import de.dali.thesisfingerprint2019.processing.ProcessingStep
-import de.dali.thesisfingerprint2019.processing.Utils
 import de.dali.thesisfingerprint2019.processing.Utils.HAND.NOT_SPECIFIED
-import de.dali.thesisfingerprint2019.processing.Utils.HAND.RIGHT
-import de.dali.thesisfingerprint2019.processing.Utils.calcAngle
-import de.dali.thesisfingerprint2019.processing.Utils.conditionalPointOnContour
-import de.dali.thesisfingerprint2019.processing.Utils.euclideanDist
-import de.dali.thesisfingerprint2019.processing.Utils.getThresholdImage
+import de.dali.thesisfingerprint2019.processing.Utils.getFingerContour
+import de.dali.thesisfingerprint2019.processing.Utils.getThresholdImageNew
 import de.dali.thesisfingerprint2019.processing.Utils.rotateImageByDegree
 import org.opencv.core.CvType
 import org.opencv.core.Mat
@@ -18,7 +13,6 @@ import org.opencv.core.MatOfPoint2f
 import org.opencv.core.Point
 import org.opencv.imgproc.Imgproc
 import javax.inject.Inject
-import kotlin.math.roundToInt
 
 class RotateFinger @Inject constructor() : ProcessingStep() {
 
@@ -33,51 +27,34 @@ class RotateFinger @Inject constructor() : ProcessingStep() {
 
     override fun run(originalImage: Mat): Mat {
         val start = System.currentTimeMillis()
+        var rotatedFinger = originalImage
 
 
         // -- NEW VERSION --
-        val thresh = getThresholdImage(originalImage)
-
+        val thresh = getThresholdImageNew(originalImage)
+        var angle = 0.0
         val matrix: MutableList<MatOfPoint2f> = ArrayList()
-        val contours = Utils.getFingerContour(thresh)
+        val contours = getFingerContour(thresh)
         val myPt = MatOfPoint2f()
-        contours[0].convertTo(myPt, CvType.CV_32FC2)
+        try {
+            contours[0].convertTo(myPt, CvType.CV_32FC2)
 
-        val rect = Imgproc.minAreaRect(myPt)
-        var angle = rect.angle
-        if (angle > 45.0 && angle < 135.0) {
-            angle = angle - 90
-        } else if (angle < -45.0 && angle < 135.0){
-            angle = angle + 90
-        } else if(angle > 135.0 && angle < 135.0){
-            angle = angle + 180
+            val rect = Imgproc.minAreaRect(myPt)
+            angle = rect.angle
+            if (angle > 45.0 && angle < 135.0) {
+                angle = angle - 90
+            } else if (angle < -45.0 && angle < 135.0){
+                angle = angle + 90
+            } else if(angle > 135.0 && angle < 135.0){
+                angle = angle + 180
+
+            }
+            rotatedFinger = rotateImageByDegree(angle, originalImage)
+        } catch (e:IndexOutOfBoundsException){
+            rotatedFinger = originalImage
 
         }
-        val rotatedFinger = rotateImageByDegree(angle, originalImage)
 
-
-
-        // ---
-
-
-//        val middle = calcCenterPointOfMat(originalImage)
-//        val pointPair = generatePointPair(middle, POINT_PAIR_DST)
-
-//        val p1Contour = calcPointOnContour(pointPair.first, originalImage)
-//        val p2Contour = calcPointOnContour(pointPair.second, originalImage)
-//
-//        val distanceP1P2 = euclideanDist(pointPair.first, pointPair.second)
-//        val distanceP1ToContour = euclideanDist(pointPair.first, p1Contour)
-//        val distanceP2ToContour = euclideanDist(pointPair.second, p2Contour)
-//
-//        val angle = calcAngle(distanceP1P2, distanceP2ToContour, distanceP1ToContour)
-//        val angleFixed = if (hand == RIGHT) 90 - angle else -(90 + angle)
-//
-//        correctionAngle = if (angleFixed + degreeImprecise < -100.0 && hand == Utils.HAND.LEFT) angleFixed + 180.0
-//        else if (angleFixed + degreeImprecise > 100.0 && hand == RIGHT) angleFixed - 180.0
-//        else angleFixed
-
-//        val rotatedFinger = rotateImageByDegree(correctionAngle, originalImage)
 
 
         val duration = System.currentTimeMillis() - start
@@ -91,24 +68,6 @@ class RotateFinger @Inject constructor() : ProcessingStep() {
 
     override fun runReturnMultiple(originalImage: Mat): List<Mat> {
         throw NotImplementedError("Not implemented for this processing step.")
-    }
-
-    private fun calcPointOnContour(point: Point, image: Mat): Point {
-        var pointOnContour = Point()
-        val imageThresh = getThresholdImage(image)
-
-        conditionalPointOnContour(NOT_SPECIFIED, point, image) { i ->
-            val pixel = imageThresh.get(point.y.toInt(), i)
-
-            if (pixel[0] == 0.0) {
-                pointOnContour = Point(i.toDouble(), point.y)
-                true
-            } else {
-                false
-            }
-        }
-
-        return pointOnContour
     }
 
     private fun generatePointPair(middle: Point, i: Int): Pair<Point, Point> =
