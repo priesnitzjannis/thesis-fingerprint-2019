@@ -39,23 +39,30 @@ class FingerBorderDetection @Inject constructor() : ProcessingStep() {
             "Config data for Finger Border Detection:\nKERNEL_SIZE_BLUR = " + Config.KERNEL_SIZE_BLUR + "\n\nTHRESHOLD_MAX = " + Config.THRESHOLD_MAX + "\nBLOCKSIZE = " + Config.BLOCKSIZE + "\n\nDILATE_KERNEL_SIZE = " + Config.DILATE_KERNEL_SIZE + "\nDILATE_ITERATIONS = " + Config.DILATE_ITERATIONS + "\n\nERODE_KERNEL_SIZE = " + Config.ERODE_KERNEL_SIZE + "\nERODE_ITERATIONS = " + Config.ERODE_ITERATIONS + "\n\nPIXEL_TO_CROP = " + Config.PIXEL_TO_CROP
         )
         val start = System.currentTimeMillis()
+        Logging.createLogEntry(Logging.loggingLevel_critical, 1500, "runReturnMultiple input image", originalImage)
 
-        val edgeImage = adaptiveThresh(originalImage)
+        //val edgeImage = adaptiveThresh(originalImage)
+        //Logging.createLogEntry(Logging.loggingLevel_critical, 1500, "edgeImage", edgeImage)
 
-        var edgesDilated = dilate(edgeImage)
-        edgesDilated = erode(edgesDilated)
+        //var edgesDilated = dilate(edgeImage)
+        //edgesDilated = erode(edgesDilated)
+        //Logging.createLogEntry(Logging.loggingLevel_critical, 1500, "opened edgeImage", edgesDilated)
 
         val thresholdImage = getThresholdImageNew(originalImage)
-        val contour = getFingerContour(thresholdImage)
+        Logging.createLogEntry(Logging.loggingLevel_critical, 1500, "thresholdImage", thresholdImage)
 
-        val maskImage = getMaskImage(originalImage, contour)
-        val diffMaskEdge = Mat.zeros(originalImage.rows(), originalImage.cols(), CV_8UC1)
-        Core.subtract(maskImage, edgesDilated, diffMaskEdge)
+        //val contour = getFingerContour(thresholdImage)
 
-        releaseImage(contour)
-        releaseImage(listOf(thresholdImage, edgeImage, edgesDilated, maskImage))
+        //val maskImage = getMaskImage(originalImage, contour)
+        //Logging.createLogEntry(Logging.loggingLevel_critical, 1500, "maskImage", maskImage)
 
-        val newImages = cropPalmIfNeeded(originalImage, diffMaskEdge, (originalImage.rows() * 0.5).toInt())
+        //val diffMaskEdge = Mat.zeros(originalImage.rows(), originalImage.cols(), CV_8UC1)
+        //Core.subtract(thresholdImage, edgesDilated, diffMaskEdge)
+        //Logging.createLogEntry(Logging.loggingLevel_critical, 1500, "diffMaskEdge", diffMaskEdge)
+
+        //releaseImage(listOf(thresholdImage) + contour) //edgeImage, edgesDilated
+
+        val newImages = cropPalmIfNeeded(originalImage, thresholdImage, (originalImage.rows() * 0.5).toInt())
 
         var sepImages = emptyList<Mat>()
 

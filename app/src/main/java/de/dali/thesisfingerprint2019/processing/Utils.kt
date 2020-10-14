@@ -2,6 +2,7 @@ package de.dali.thesisfingerprint2019.processing
 
 import android.graphics.Bitmap
 import android.util.Log
+import de.dali.thesisfingerprint2019.logging.Logging
 import de.dali.thesisfingerprint2019.processing.Config.BLOCKSIZE
 import de.dali.thesisfingerprint2019.processing.Config.DELTA
 import de.dali.thesisfingerprint2019.processing.Config.DILATE_ITERATIONS
@@ -116,11 +117,15 @@ object Utils {
     }
 
     fun adaptiveThresh(mat: Mat): Mat {
-        val y = getYCbCRComponent(mat, Y)
+        val img_hsv = Mat(mat.rows(), mat.cols(), CvType.CV_8UC3)
+        cvtColor(mat, img_hsv, COLOR_RGB2HSV)
+        val lHSV = ArrayList<Mat>(3)
+        Core.split(img_hsv, lHSV)
+
         val result = Mat()
 
         val blurred = Mat.zeros(mat.rows(), mat.cols(), CvType.CV_64FC1)
-        GaussianBlur(y, blurred, Size(KERNEL_SIZE_BLUR, KERNEL_SIZE_BLUR), 0.0, 0.0, Core.BORDER_CONSTANT)
+        GaussianBlur(lHSV[2], blurred, Size(KERNEL_SIZE_BLUR, KERNEL_SIZE_BLUR), 0.0, 0.0, Core.BORDER_CONSTANT)
 
         adaptiveThreshold(
             blurred,
@@ -131,10 +136,12 @@ object Utils {
             BLOCKSIZE,
             12.0
         )
+        Logging.createLogEntry(Logging.loggingLevel_critical, 1500, "adaptiveThreshold", result)
 
         threshold(result, result, 1.0, 255.0, THRESH_BINARY + THRESH_OTSU)
+        Logging.createLogEntry(Logging.loggingLevel_critical, 1500, "threshold", result)
 
-        releaseImage(listOf(y, blurred))
+        releaseImage(listOf(img_hsv, blurred))
 
         return result
     }
@@ -255,13 +262,4 @@ object Utils {
         return countNonZero(gray) >= (gray.rows() * gray.cols()) * (3 / 4)
     }
 
-    private fun getYCbCRComponent(mat: Mat, component: YCrCb): Mat {
-        val ycrcb = Mat(mat.rows(), mat.cols(), CvType.CV_8UC3)
-        val lYCrCb = ArrayList<Mat>(3)
-
-        cvtColor(mat, ycrcb, COLOR_BGR2YCrCb)
-        Core.split(mat, lYCrCb)
-
-        return lYCrCb[component.channelID]
-    }
 }
