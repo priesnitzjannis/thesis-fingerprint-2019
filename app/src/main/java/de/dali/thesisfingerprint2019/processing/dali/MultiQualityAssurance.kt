@@ -1,5 +1,6 @@
 package de.dali.thesisfingerprint2019.processing.dali
 
+import de.dali.thesisfingerprint2019.logging.Logging
 import de.dali.thesisfingerprint2019.processing.Config.CENTER_OFFSET_X
 import de.dali.thesisfingerprint2019.processing.Config.CENTER_OFFSET_Y
 import de.dali.thesisfingerprint2019.processing.Config.CENTER_SIZE_X
@@ -20,6 +21,7 @@ class MultiQualityAssurance @Inject constructor() : ProcessingStep() {
     override fun run(originalImage: Mat): Mat {
         val point = calcCenterPoint(originalImage)
         val result = sobel(originalImage)
+        Logging.createLogEntry(Logging.loggingLevel_medium, 1900, "Sobel result", result)
 
         edgeDensity = edgeDensity(result, point)
 

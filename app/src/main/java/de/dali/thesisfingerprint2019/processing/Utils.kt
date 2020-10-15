@@ -60,13 +60,13 @@ object Utils {
     }
 
     fun sobel(frame: Mat): Mat {
-        val blurred = Mat.zeros(frame.rows(), frame.cols(), CvType.CV_64FC1)
-        GaussianBlur(frame, blurred, Size(KERNEL_SIZE_GAUS, KERNEL_SIZE_GAUS), 0.0, 0.0, Core.BORDER_DEFAULT)
+        //val blurred = Mat.zeros(frame.rows(), frame.cols(), CvType.CV_64FC1)
+        //GaussianBlur(frame, blurred, Size(KERNEL_SIZE_GAUS, KERNEL_SIZE_GAUS), 0.0, 0.0, Core.BORDER_DEFAULT)
 
         val gray = Mat.zeros(frame.rows(), frame.cols(), CvType.CV_64FC1)
-        cvtColor(blurred, gray, COLOR_RGB2GRAY)
+        cvtColor(frame, gray, COLOR_RGB2GRAY)
 
-        releaseImage(listOf(blurred))
+        //releaseImage(listOf(blurred))
 
         val grad_x = Mat.zeros(frame.rows(), frame.cols(), CvType.CV_64FC1)
         val grad_y = Mat.zeros(frame.rows(), frame.cols(), CvType.CV_64FC1)
