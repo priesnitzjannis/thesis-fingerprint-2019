@@ -1,17 +1,21 @@
 package de.dali.thesisfingerprint2019.ui.main.fragment.scanning
 
 import android.app.ProgressDialog
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.*
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.NavHostFragment
+import com.google.gson.Gson
 import dagger.android.support.AndroidSupportInjection
 import de.dali.thesisfingerprint2019.R
 import de.dali.thesisfingerprint2019.databinding.FragmentFingerScanningBinding
@@ -31,6 +35,11 @@ import org.opencv.android.LoaderCallbackInterface
 import org.opencv.android.OpenCVLoader
 import org.opencv.core.CvType
 import org.opencv.core.Mat
+import java.io.BufferedReader
+import java.io.File
+import java.io.FileOutputStream
+import java.io.FileReader
+import java.nio.file.Path
 import javax.inject.Inject
 
 // Akquise Workflow
@@ -218,6 +227,45 @@ class FingerScanningFragment : BaseFragment() {
         progressDialog.setTitle("Please Wait..")
         progressDialog.setMessage("Processing the image ...")
         progressDialog.show()
+    }
+
+    fun storeRecordSetIDs(list: MutableMap<Int, Int>, path: String){
+        var filename = "recordSetIDs.txt"
+        var text: String = ""
+
+        list.forEach { (index, element) ->
+            text = text + index + ":" + element + "_"
+        }
+        //TODO absoluten Pfad nicht hardcoden
+        var file = File("sdcard/$path/$filename")
+        file.writeText(text)
+
+    }
+
+    fun readFileDirectlyAsText(fileName: String): String
+            = File(fileName).readText(Charsets.UTF_8)
+
+    fun getRecordSetIDs(path: String): MutableMap<Int, Int> {
+        var filename = "recordSetIDs.txt"
+        var file = File("sdcard/$path/$filename")
+        var outText: String
+        var out: MutableMap<Int, Int> = mutableMapOf()
+
+        // Einlesen und zu Map verarbeiten korrigieren
+
+        if (file.exists()){
+           outText = readFileDirectlyAsText("sdcard/$path/$filename")
+
+            while(outText.isNotEmpty()){
+                var key: Int = outText.substring(0, 1).toInt()
+                var value: Int = outText.substring(2,3).toInt()
+                out[key] = value
+                outText = outText.substring(4)
+            }
+            return out
+        } else {
+            return out
+        }
     }
 
     companion object {
