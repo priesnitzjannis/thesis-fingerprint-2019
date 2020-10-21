@@ -3,7 +3,6 @@ package de.dali.thesisfingerprint2019.ui.base.custom
 import android.content.Context
 import android.text.Editable
 import android.text.InputType.TYPE_CLASS_NUMBER
-import android.text.SpannableStringBuilder
 import android.text.TextWatcher
 import android.util.AttributeSet
 import android.view.inputmethod.EditorInfo.IME_ACTION_DONE
@@ -63,7 +62,7 @@ class EditTextWithTitle @JvmOverloads constructor(
         })
     }
 
-    fun setText(text: SpannableStringBuilder) {
+    fun setText(text: Editable) {
         editText.text = text
     }
 

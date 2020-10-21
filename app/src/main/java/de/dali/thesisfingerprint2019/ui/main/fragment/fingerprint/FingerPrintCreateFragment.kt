@@ -7,12 +7,11 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Bundle
 import android.text.SpannableStringBuilder
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
+import android.view.View.*
 import android.view.ViewGroup
+import android.widget.Switch
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -31,9 +30,12 @@ import de.dali.thesisfingerprint2019.ui.main.viewmodel.fingerprint.FingerPrintCr
 import de.dali.thesisfingerprint2019.utils.Utils
 import de.dali.thesisfingerprint2019.utils.update
 import kotlinx.android.synthetic.main.fragment_finger_print_create.*
+import kotlinx.android.synthetic.main.row_finger_selection.view.*
+import kotlinx.android.synthetic.main.row_multiselect.*
 import kotlinx.android.synthetic.main.row_multiselect.view.*
 import javax.inject.Inject
 
+// Fingerabdruck aufnehmen - Einstellungen
 class FingerPrintCreateFragment : BaseFragment() {
 
     @Inject
@@ -90,7 +92,12 @@ class FingerPrintCreateFragment : BaseFragment() {
 
                 fingerPrintCreateViewModel.selectedFinger.observe(this, Observer { fingers ->
                     binding.btnScan.isEnabled = fingers.isNotEmpty()
+
+                    checkPossibility(fingers)
+
                 })
+
+
 
                 if (entity != null) {
                     fingerPrintCreateViewModel.fingerPrintEntity = entity
@@ -106,6 +113,78 @@ class FingerPrintCreateFragment : BaseFragment() {
 
             fingerPrintCreateViewModel.loadImages(entity?.fingerPrintId ?: -1)
         }
+    }
+
+    private fun checkPossibility(fingers: MutableList<Int>) {
+        if (fingers.isNotEmpty()) {
+            if (fingers.contains(1) || fingers.contains(2) || fingers.contains(3) || fingers.contains(4) || fingers.contains(5)){
+                binding.multiSelect.fingerSelectionThumb.cbLeft.isEnabled = false
+                binding.multiSelect.fingerSelectionIndexFinger.cbLeft.isEnabled = false
+                binding.multiSelect.fingerSelectionMiddleFinger.cbLeft.isEnabled = false
+                binding.multiSelect.fingerSelectionRingFinger.cbLeft.isEnabled = false
+                binding.multiSelect.fingerSelectionLittleFinger.cbLeft.isEnabled = false
+
+                binding.multiSelect.fingerSelectionThumb.cbRight.isEnabled = true
+                binding.multiSelect.fingerSelectionIndexFinger.cbRight.isEnabled = true
+                binding.multiSelect.fingerSelectionMiddleFinger.cbRight.isEnabled = true
+                binding.multiSelect.fingerSelectionRingFinger.cbRight.isEnabled = true
+                binding.multiSelect.fingerSelectionLittleFinger.cbRight.isEnabled = true
+
+                if (fingers.contains(1)) {
+                    binding.multiSelect.fingerSelectionIndexFinger.cbRight.isEnabled = false
+                    binding.multiSelect.fingerSelectionMiddleFinger.cbRight.isEnabled = false
+                    binding.multiSelect.fingerSelectionRingFinger.cbRight.isEnabled = false
+                    binding.multiSelect.fingerSelectionLittleFinger.cbRight.isEnabled = false
+                }
+
+                if (fingers.contains(2) || fingers.contains(3) || fingers.contains(4) || fingers.contains(5)){
+                    binding.multiSelect.fingerSelectionThumb.cbRight.isEnabled = false
+                }
+
+
+            } else if (fingers.contains(6) || fingers.contains(7) || fingers.contains(8) || fingers.contains(9) || fingers.contains(10)){
+                binding.multiSelect.fingerSelectionThumb.cbRight.isEnabled = false
+                binding.multiSelect.fingerSelectionIndexFinger.cbRight.isEnabled = false
+                binding.multiSelect.fingerSelectionMiddleFinger.cbRight.isEnabled = false
+                binding.multiSelect.fingerSelectionRingFinger.cbRight.isEnabled = false
+                binding.multiSelect.fingerSelectionLittleFinger.cbRight.isEnabled = false
+
+                binding.multiSelect.fingerSelectionThumb.cbLeft.isEnabled = true
+                binding.multiSelect.fingerSelectionIndexFinger.cbLeft.isEnabled = true
+                binding.multiSelect.fingerSelectionMiddleFinger.cbLeft.isEnabled = true
+                binding.multiSelect.fingerSelectionRingFinger.cbLeft.isEnabled = true
+                binding.multiSelect.fingerSelectionLittleFinger.cbLeft.isEnabled = true
+
+                if (fingers.contains(6)) {
+                    binding.multiSelect.fingerSelectionIndexFinger.cbLeft.isEnabled = false
+                    binding.multiSelect.fingerSelectionMiddleFinger.cbLeft.isEnabled = false
+                    binding.multiSelect.fingerSelectionRingFinger.cbLeft.isEnabled = false
+                    binding.multiSelect.fingerSelectionLittleFinger.cbLeft.isEnabled = false
+                }
+
+                if (fingers.contains(7) || fingers.contains(8) || fingers.contains(9) || fingers.contains(10)){
+                    binding.multiSelect.fingerSelectionThumb.cbLeft.isEnabled = false
+                }
+
+            } else { activateAll()}
+
+        } else {
+            activateAll()
+        }
+    }
+
+    private fun activateAll() {
+        binding.multiSelect.fingerSelectionThumb.cbRight.isEnabled = true
+        binding.multiSelect.fingerSelectionIndexFinger.cbRight.isEnabled = true
+        binding.multiSelect.fingerSelectionMiddleFinger.cbRight.isEnabled = true
+        binding.multiSelect.fingerSelectionRingFinger.cbRight.isEnabled = true
+        binding.multiSelect.fingerSelectionLittleFinger.cbRight.isEnabled = true
+
+        binding.multiSelect.fingerSelectionThumb.cbLeft.isEnabled = true
+        binding.multiSelect.fingerSelectionIndexFinger.cbLeft.isEnabled = true
+        binding.multiSelect.fingerSelectionMiddleFinger.cbLeft.isEnabled = true
+        binding.multiSelect.fingerSelectionRingFinger.cbLeft.isEnabled = true
+        binding.multiSelect.fingerSelectionLittleFinger.cbLeft.isEnabled = true
     }
 
     private fun initialiseListener() {
@@ -150,8 +229,11 @@ class FingerPrintCreateFragment : BaseFragment() {
         }
         binding.multiSelect.fingerSelectionLittleFinger.setOnChangeListener { i, j ->
             fingerPrintCreateViewModel.selectedFinger.update(i, j)
+
         }
+
     }
+
 
     private fun initOnCLick() {
         binding.btnScan.setOnClickListener {
@@ -196,6 +278,7 @@ class FingerPrintCreateFragment : BaseFragment() {
 
         binding.multiSelect.fingerSelectionLittleFinger.update(listOfFingerIds)
         binding.multiSelect.fingerSelectionLittleFinger.lock(lockCB)
+
     }
 
     private fun hideParts() {

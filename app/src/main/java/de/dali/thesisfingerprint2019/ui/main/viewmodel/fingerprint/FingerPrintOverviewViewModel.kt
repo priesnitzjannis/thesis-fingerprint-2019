@@ -1,6 +1,7 @@
 package de.dali.thesisfingerprint2019.ui.main.viewmodel.fingerprint
 
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import de.dali.thesisfingerprint2019.data.local.entity.FingerPrintEntity
 import de.dali.thesisfingerprint2019.data.local.entity.TestPersonEntity
@@ -11,6 +12,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
+// Fingerprintübersicht einer Testperson
 class FingerPrintOverviewViewModel @Inject constructor(private val fingerPrintRepository: FingerPrintRepository) :
     BaseViewModel() {
 
@@ -19,12 +21,14 @@ class FingerPrintOverviewViewModel @Inject constructor(private val fingerPrintRe
     val listOfFingerPrints = MutableLiveData<List<FingerPrintEntity>>()
     private var compositeDisposable = CompositeDisposable()
 
+
     fun loadFingerPrints(personID: Long) {
         val fingerprintDisposable = fingerPrintRepository.getAllFingerprintsByTestPerson(personID)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(this::onFingerPrintsFetched, this::onError)
         compositeDisposable.add(fingerprintDisposable)
+
     }
 
     private fun onError(throwable: Throwable) {

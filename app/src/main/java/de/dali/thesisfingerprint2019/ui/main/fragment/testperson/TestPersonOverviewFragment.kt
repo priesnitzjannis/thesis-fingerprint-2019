@@ -26,6 +26,7 @@ import kotlinx.android.synthetic.main.childview_list.view.*
 import kotlinx.android.synthetic.main.fragment_finger_selection.view.*
 import javax.inject.Inject
 
+// Testpersonen Übersicht
 class TestPersonOverviewFragment : BaseFragment() {
 
     @Inject
@@ -52,6 +53,7 @@ class TestPersonOverviewFragment : BaseFragment() {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_test_person_overview, container, false)
         setHasOptionsMenu(true)
         return binding.root
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -141,7 +143,6 @@ class TestPersonOverviewFragment : BaseFragment() {
     private fun hideProgressDialog() {
         progressDialog.dismiss()
     }
-
 
     companion object {
         val TAG = TestPersonOverviewFragment::class.java.simpleName

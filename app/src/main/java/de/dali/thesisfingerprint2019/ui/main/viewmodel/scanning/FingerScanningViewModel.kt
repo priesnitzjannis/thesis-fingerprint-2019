@@ -17,6 +17,7 @@ import de.dali.thesisfingerprint2019.processing.Utils.hasEnoughContent
 import de.dali.thesisfingerprint2019.processing.Utils.hasValidSize
 import de.dali.thesisfingerprint2019.processing.common.RotateFinger
 import de.dali.thesisfingerprint2019.ui.base.BaseViewModel
+import de.dali.thesisfingerprint2019.ui.main.fragment.scanning.FingerScanningFragment
 import de.dali.thesisfingerprint2019.utils.Constants.NAME_MAIN_FOLDER
 import de.dali.thesisfingerprint2019.utils.Utils
 import io.reactivex.Single
@@ -28,6 +29,7 @@ import java.math.RoundingMode
 import javax.inject.Inject
 import javax.inject.Named
 
+// Worflow Akquise
 class FingerScanningViewModel @Inject constructor(
     private val fingerPrintRepository: FingerPrintRepository,
     private val imageRepository: ImageRepository,
@@ -38,9 +40,13 @@ class FingerScanningViewModel @Inject constructor(
     lateinit var list: List<Int>
     lateinit var entity: FingerPrintEntity
 
-    var frameCounter: Int = 0
+    var sucessfullFingersCounter: Int = 0
+
+    var processedFingers: Int = 0
 
     var record: Boolean = false
+
+    private var recordSetIDs: String = "recordSetIDs"
 
     var amountOfFinger: Int = 0
         set(value) {
@@ -86,12 +92,31 @@ class FingerScanningViewModel @Inject constructor(
 
             entity.fingerPrintId = id
 
+            
+            var textGet: MutableMap<Int, Int> = FingerScanningFragment().getRecordSetIDs(NAME_MAIN_FOLDER)
+            var nextRecordID: Int = 0
+
+            if (textGet.containsKey(entity.personID.toInt())){
+                nextRecordID = textGet[entity.personID.toInt()]!!
+                textGet[entity.personID.toInt()] = nextRecordID + 1
+            } else {
+              textGet[entity.personID.toInt()] = 1
+                nextRecordID = 1
+                textGet[entity.personID.toInt()] = nextRecordID + 1
+            }
+
+            FingerScanningFragment().storeRecordSetIDs(textGet, NAME_MAIN_FOLDER)
+            
             images.forEachIndexed { index, pair ->
                 val pathName = NAME_MAIN_FOLDER
                 val timestamp = System.currentTimeMillis()
-                val fileName = "${timestamp}_enhanced.jpg"
-                val fileNameOriginal = "${timestamp}_orig.jpg"
-                val fileNameGray = "${timestamp}_gray.jpg"
+
+                // TestpersonID_RecordSetID_biometrischeFingerID_(FingerID)
+                var baseFileName = entity.personID.toString() + "_" + nextRecordID + "_" + list[index] + "_(" + entity.fingerPrintId.toString() + ")"
+
+                val fileName = baseFileName + "_enhanced.jpg"
+                val fileNameOriginal = baseFileName +"_orig.jpg"
+                val fileNameGray = baseFileName + "_gray.jpg"
 
                 Utils.saveImage(pathName, fileNameOriginal, convertMatToBitMap(pair.mat)!!, 100)
 
@@ -99,8 +124,10 @@ class FingerScanningViewModel @Inject constructor(
                 val correctionDegree = (qualityAssuranceThread.processingStep[3] as RotateFinger).correctionAngle
 
                 val grayBmp = convertMatToBitMap(processingThread.grayMat)
-                Utils.saveImage(pathName, fileNameGray, grayBmp!!, 100)
 
+                processedFingers += 1
+
+                Utils.saveImage(pathName, fileNameGray, grayBmp!!, 100)
                 Utils.saveImage(pathName, fileName, processedImage, 100)
 
                 val imageEntity = ImageEntity(
