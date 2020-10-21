@@ -51,11 +51,11 @@ class FingerBorderDetection @Inject constructor() : ProcessingStep() {
         //val contour = getFingerContour(thresholdImage)
 
         //val maskImage = getMaskImage(originalImage, contour)
-        val diffMaskEdge = Mat.zeros(originalImage.rows(), originalImage.cols(), CV_8UC1)
-        Core.subtract(thresholdImage, edgeImage, diffMaskEdge)
+        //val diffMaskEdge = Mat.zeros(originalImage.rows(), originalImage.cols(), CV_8UC1)
+        //Core.subtract(thresholdImage, edgeImage, diffMaskEdge)
 
         //releaseImage(contour)
-        releaseImage(listOf(thresholdImage, edgeImage)) //maskImage
+        //releaseImage(listOf(thresholdImage, edgeImage)) //maskImage
 
         //val diffMaskEdge = Mat.zeros(originalImage.rows(), originalImage.cols(), CV_8UC1)
         //Core.subtract(thresholdImage, edgesDilated, diffMaskEdge)
