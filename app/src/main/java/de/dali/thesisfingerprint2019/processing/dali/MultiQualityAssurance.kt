@@ -1,5 +1,6 @@
 package de.dali.thesisfingerprint2019.processing.dali
 
+import de.dali.thesisfingerprint2019.logging.Logging
 import de.dali.thesisfingerprint2019.processing.Config.CENTER_OFFSET_X
 import de.dali.thesisfingerprint2019.processing.Config.CENTER_OFFSET_Y
 import de.dali.thesisfingerprint2019.processing.Config.CENTER_SIZE_X
@@ -13,6 +14,7 @@ import javax.inject.Inject
 class MultiQualityAssurance @Inject constructor() : ProcessingStep() {
 
     var edgeDensity: Double = 0.0
+    var validImageSize: Boolean = false
 
     override val TAG: String
         get() = MultiQualityAssurance::class.java.simpleName
@@ -20,9 +22,10 @@ class MultiQualityAssurance @Inject constructor() : ProcessingStep() {
     override fun run(originalImage: Mat): Mat {
         val point = calcCenterPoint(originalImage)
         val result = sobel(originalImage)
+        Logging.createLogEntry(Logging.loggingLevel_medium, 1900, "Sobel result", result)
 
         edgeDensity = edgeDensity(result, point)
-
+        validImageSize = hasValidSize(originalImage)
         return originalImage
     }
 
@@ -54,6 +57,13 @@ class MultiQualityAssurance @Inject constructor() : ProcessingStep() {
         }
 
         return sum / (CENTER_SIZE_X * CENTER_SIZE_Y)
+    }
+
+    // Here would be a good starting point for visual feedback 
+    private fun hasValidSize(mat: Mat): Boolean {
+        validImageSize = mat.cols() < 333 && mat.cols() > 150 && mat.rows() < 500 && mat.rows() > 225 && mat.rows().toDouble() / mat.cols().toDouble() < 1.75 && (mat.rows().toDouble() / mat.cols().toDouble()) > 1.25
+
+        return validImageSize
     }
 
 }

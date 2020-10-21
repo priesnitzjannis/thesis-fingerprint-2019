@@ -46,15 +46,16 @@ class FingerBorderDetection @Inject constructor() : ProcessingStep() {
 
         //var edgesDilated = dilate(edgeImage)
         //edgesDilated = erode(edgesDilated)
-        //Logging.createLogEntry(Logging.loggingLevel_critical, 1500, "opened edgeImage", edgesDilated)
 
         val thresholdImage = getThresholdImageNew(originalImage)
-        Logging.createLogEntry(Logging.loggingLevel_critical, 1500, "thresholdImage", thresholdImage)
-
         //val contour = getFingerContour(thresholdImage)
 
         //val maskImage = getMaskImage(originalImage, contour)
-        //Logging.createLogEntry(Logging.loggingLevel_critical, 1500, "maskImage", maskImage)
+        val diffMaskEdge = Mat.zeros(originalImage.rows(), originalImage.cols(), CV_8UC1)
+        Core.subtract(thresholdImage, edgeImage, diffMaskEdge)
+
+        //releaseImage(contour)
+        releaseImage(listOf(thresholdImage, edgeImage)) //maskImage
 
         //val diffMaskEdge = Mat.zeros(originalImage.rows(), originalImage.cols(), CV_8UC1)
         //Core.subtract(thresholdImage, edgesDilated, diffMaskEdge)

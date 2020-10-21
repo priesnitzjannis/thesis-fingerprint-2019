@@ -61,13 +61,13 @@ object Utils {
     }
 
     fun sobel(frame: Mat): Mat {
-        val blurred = Mat.zeros(frame.rows(), frame.cols(), CvType.CV_64FC1)
-        GaussianBlur(frame, blurred, Size(KERNEL_SIZE_GAUS, KERNEL_SIZE_GAUS), 0.0, 0.0, Core.BORDER_DEFAULT)
+        //val blurred = Mat.zeros(frame.rows(), frame.cols(), CvType.CV_64FC1)
+        //GaussianBlur(frame, blurred, Size(KERNEL_SIZE_GAUS, KERNEL_SIZE_GAUS), 0.0, 0.0, Core.BORDER_DEFAULT)
 
         val gray = Mat.zeros(frame.rows(), frame.cols(), CvType.CV_64FC1)
-        cvtColor(blurred, gray, COLOR_RGB2GRAY)
+        cvtColor(frame, gray, COLOR_RGB2GRAY)
 
-        releaseImage(listOf(blurred))
+        //releaseImage(listOf(blurred))
 
         val grad_x = Mat.zeros(frame.rows(), frame.cols(), CvType.CV_64FC1)
         val grad_y = Mat.zeros(frame.rows(), frame.cols(), CvType.CV_64FC1)
@@ -252,7 +252,10 @@ object Utils {
         return destMat.cropToMinArea()
     }
 
-    fun hasValidSize(mat: Mat): Boolean = mat.cols() < 400 && mat.rows() < 540 && mat.cols() < mat.rows()
+    fun hasValidSize(mat: Mat): Boolean {
+        var valid = mat.cols() < 333 && mat.cols() > 150 && mat.rows() < 500 && mat.rows() > 225 && mat.rows().toDouble() / mat.cols().toDouble() < 1.75 && (mat.rows().toDouble() / mat.cols().toDouble()) > 1.25
+        return valid
+    }
 
     fun hasEnoughContent(mat: Mat): Boolean {
         val gray = Mat(mat.rows(), mat.cols(), CvType.CV_8UC1)

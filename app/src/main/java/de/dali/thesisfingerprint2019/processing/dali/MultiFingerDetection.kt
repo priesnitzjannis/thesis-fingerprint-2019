@@ -37,24 +37,24 @@ class MultiFingerDetection @Inject constructor() : ProcessingStep() {
 
         try {
             val imageThresh = getThresholdImageNew(originalImage)
-            Logging.createLogEntry(
-                Logging.loggingLevel_param,
-                1400,
-                "Threshold Image",
-                imageThresh
-            )
+//            Logging.createLogEntry(
+//                Logging.loggingLevel_critical,
+//                1400,
+//                "Threshold Image",
+//                imageThresh
+//            )
             val fingerContours = getFingerContour(imageThresh)
 
             releaseImage(listOf(imageThresh))
 
             val maskImage = getMaskImage(originalImage, fingerContours)
             val imageWithOutBackground = getMaskedImage(originalImage, maskImage)
-            Logging.createLogEntry(
-                Logging.loggingLevel_param,
-                1400,
-                "imageWithOutBackground",
-                imageWithOutBackground
-            )
+//            Logging.createLogEntry(
+//                Logging.loggingLevel_critical,
+//                1400,
+//                "imageWithOutBackground",
+//                imageWithOutBackground
+//            )
 
             if (fingerContours.isNotEmpty()) {
                 val rect = Imgproc.boundingRect(fingerContours.toMat())
@@ -80,12 +80,12 @@ class MultiFingerDetection @Inject constructor() : ProcessingStep() {
             } else {
                 // This has commented out code surrounding it that measures the time it takes to log a normal message and an image
                 //val startImageMessage = System.currentTimeMillis()
-                Logging.createLogEntry(
-                    Logging.loggingLevel_critical,
-                    1400,
-                    "Multi Finger Detection done, see image for results.",
-                    croppedImage
-                )
+//                Logging.createLogEntry(
+//                    Logging.loggingLevel_critical,
+//                    1400,
+//                    "Multi Finger Detection done, see image for results.",
+//                    croppedImage
+//                )
                 //val imageMessageDuration = System.currentTimeMillis() - startImageMessage
                 //val startTextMessage = System.currentTimeMillis()
                 //Logging.createLogEntry(

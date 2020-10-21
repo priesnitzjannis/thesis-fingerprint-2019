@@ -69,13 +69,18 @@ class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
                 //val image = Utils.readImageFromDisk()
                 totalImages++
 
-                Logging.startRun()
-                Logging.createLogEntry(
-                    Logging.loggingLevel_critical,
-                    1100,
-                    "Started processing of an image.",
-                    image
-                )
+                try {
+                    Logging.startRun()
+                    Logging.createLogEntry(
+                        Logging.loggingLevel_critical,
+                        1100,
+                        "Started processing of an image.",
+                        image
+                    )
+                } catch (e: NullPointerException){
+                    e.printStackTrace()
+                }
+
 
                 val processedMat = Mat()
                 //val rotatedImage = rotateImageByDegree(0.0 - sensorOrientation, image)
@@ -106,42 +111,55 @@ class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
                             val qualityCheckedImage =
                                 (processingStep[5] as MultiQualityAssurance).run(it)
                             val edgeDens = (processingStep[5] as MultiQualityAssurance).edgeDensity
-
+                            val imgSize = (processingStep[5] as MultiQualityAssurance).validImageSize
                             val fingerPrintIntermediate =
                                 FingerPrintIntermediateEntity(
                                     qualityCheckedImage,
                                     edgeDens,
+                                    imgSize,
                                     degreeImprecise
                                 )
 
                             qualityCheckedImages.add(fingerPrintIntermediate)
                         }
                         if (qualityCheckedImages.none { it.edgeDens < 5.0 }) {
-                            if (highestEdgeDenseMats.isEmpty()) {
-                                highestEdgeDenseMats.addAll(qualityCheckedImages)
+
+                            if (qualityCheckedImages.all { it.imgSizeOk == true }) {
+                                if (highestEdgeDenseMats.isEmpty()) {
+                                    highestEdgeDenseMats.addAll(qualityCheckedImages)
+                                } else {
+                                    highestEdgeDenseMats.mapInPlace(qualityCheckedImages)
+                                }
+
+                                processedImages++
+
+                                releaseImage(listOf(image, processedMat)) //rotatedImage
+
+                                onUpdate(SUCCESSFUL, "Processed frame successfully.", processedImages)
+
+                                Logging.createLogEntry(
+                                    Logging.loggingLevel_critical,
+                                    1100,
+                                    "Processing of image completed."
+                                )
+                                Logging.endRun(0)
+
+                                if (processedImages == 5) {
+                                    clearQueue()
+                                    quit()
+                                    onSuccess(highestEdgeDenseMats)
+                                    Logging.createLogEntry(Logging.loggingLevel_critical, 1100, "Processing completed.")
+                                }
                             } else {
-                                highestEdgeDenseMats.mapInPlace(qualityCheckedImages)
+                                onUpdate(FAILURE, "Finger Segmentation failed", processedImages)
+                                Logging.createLogEntry(
+                                    Logging.loggingLevel_critical,
+                                    1100,
+                                    "Processing cancelled. Image size inappropriate."
+                                )
+                                Logging.endRun(-1)
                             }
 
-                            processedImages++
-
-                            releaseImage(listOf(image, processedMat)) //rotatedImage
-
-                            onUpdate(SUCCESSFUL, "Processed frame successfully.", processedImages)
-
-                            Logging.createLogEntry(
-                                Logging.loggingLevel_critical,
-                                1100,
-                                "Processing of image completed."
-                            )
-                            Logging.endRun(0)
-
-                            if (processedImages == 5) {
-                                clearQueue()
-                                quit()
-                                onSuccess(highestEdgeDenseMats)
-                                Logging.createLogEntry(Logging.loggingLevel_critical, 1100, "Processing completed.")
-                            }
                         } else {
                             onUpdate(FAILURE, "Fingers too blurry.", processedImages)
                             Logging.createLogEntry(
@@ -213,15 +231,9 @@ class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
             val valA = iterateA.next()
             val valB = iterateB.next()
 
-            if (!hasValidSize(valA.mat) && !hasEnoughContent(valA.mat) && hasValidSize(valB.mat) && hasEnoughContent(
-                    valB.mat
-                )
-            ) {
+            if (!hasValidSize(valA.mat) && !hasEnoughContent(valA.mat) && hasValidSize(valB.mat) && hasEnoughContent(valB.mat)) {
                 iterateA.set(valB)
-            } else if (valA.edgeDens < valB.edgeDens && hasValidSize(valB.mat) && hasEnoughContent(
-                    valB.mat
-                )
-            ) {
+            } else if (valA.edgeDens < valB.edgeDens && hasValidSize(valB.mat) && hasEnoughContent(valB.mat)) {
                 iterateA.set(valB)
             }
         }
