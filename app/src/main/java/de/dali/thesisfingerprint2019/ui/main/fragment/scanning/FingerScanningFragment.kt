@@ -134,6 +134,13 @@ class FingerScanningFragment : BaseFragment() {
 
             fingerScanningViewModel.amountOfFinger = list.size
             fingerScanningViewModel.hand = if (list.any { it <= 5 }) RIGHT else LEFT
+
+            if (fingerScanningViewModel.hand == RIGHT){
+                javaCamera2ViewOverlay.setImageResource(R.drawable.overlay)
+                javaCamera2ViewOverlay.scaleX = (-1).toFloat()
+            } else {
+                javaCamera2ViewOverlay.setImageResource(R.drawable.overlay)
+            }
         }
 
 
@@ -150,13 +157,6 @@ class FingerScanningFragment : BaseFragment() {
 
         binding.buttonfoo.setOnClickListener{
             javaCamera2View.toggleFlash()
-
-            // Overlay Toggle Test
-            if (javaCamera2ViewOverlay.visibility == VISIBLE) {
-                javaCamera2ViewOverlay.visibility = GONE
-            } else {
-                javaCamera2ViewOverlay.visibility = VISIBLE
-            }
 
             //binding.buttonfoo.isEnabled = false
             Log.e(TAG, "\n\n\nBUTTONFOO PRESSED \n\n\n")
