@@ -1,5 +1,6 @@
 package de.dali.demonstrator.ui.main.fragment.scanning
 
+import android.annotation.SuppressLint
 import android.app.ProgressDialog
 import android.os.Bundle
 import android.os.Handler
@@ -116,6 +117,8 @@ class FingerScanningFragment : BaseFragment() {
         return binding.root
     }
 
+
+    @SuppressLint("StringFormatMatches")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -140,7 +143,7 @@ class FingerScanningFragment : BaseFragment() {
         binding.javaCamera2View.visibility = VISIBLE
         binding.javaCamera2View.setCvCameraViewListener(listener)
 
-        binding.txtSuccessfulFrames.text = fingerScanningViewModel.processedFingers.toString() + "/" + fingerScanningViewModel.amountOfFinger.toString()
+        binding.txtSuccessfulFrames.text = context?.getString(R.string.fragment_finger_scanning_frame_counter, 0)
 
         binding.button.setOnClickListener {
             fingerScanningViewModel.record = true
