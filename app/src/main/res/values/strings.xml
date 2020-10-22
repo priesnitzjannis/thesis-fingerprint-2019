@@ -72,8 +72,8 @@
     <string name="fragment_details_correction_degree">Degree:</string>
     <string name="fragment_details_correction_broken">Possibly broken:</string>
     <string name="export_db">Export DB</string>
-    <string name="fragment_finger_scanning_frame_counter">%1$d/5</string>
-    <string name="fragment_finger_scanning_frame_text">Number of successfully processed fingers:</string>
+    <string name="fragment_finger_scanning_frame_counter">%1$d/100</string>
+    <string name="fragment_finger_scanning_frame_text">Processing progress:</string>
     <string name="fragment_finger_scanning_last_frame">Last frame in pipeline:</string>
     <string name="fragment_finger_scanning_record">Record</string>
     <string name="Autofill">Auto</string>

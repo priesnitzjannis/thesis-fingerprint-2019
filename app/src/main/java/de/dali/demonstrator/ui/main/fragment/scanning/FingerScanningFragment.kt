@@ -176,8 +176,7 @@ class FingerScanningFragment : BaseFragment() {
             when (result) {
                 SUCCESSFUL -> {
                     binding.txtLastFrame.text = message
-                    binding.txtSuccessfulFrames.text =
-                        fingerScanningViewModel.processedFingers.toString() + "/" + fingerScanningViewModel.amountOfFinger.toString()
+                    binding.txtSuccessfulFrames.text = context?.getString(R.string.fragment_finger_scanning_frame_counter, frameNumber * 20)
                 }
 
                 FAILURE -> {
