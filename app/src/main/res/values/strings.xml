@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Thesis Fingerprint 2019</string>
+    <string name="app_name">Demonstrator</string>
 
     <string name="dialog_title_requierments">Required Permissions</string>
     <string name="dialog_title_permission">Camera &amp; Storage Permission</string>

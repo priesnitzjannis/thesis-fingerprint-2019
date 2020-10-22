@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
-          package="de.dali.thesisfingerprint2019">
+          package="de.dali.demonstrator">
 
     <!-- Camera Permission -->
     <uses-permission android:name="android.permission.CAMERA"/>
@@ -12,7 +12,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
     <application
-            android:name=".AppController"
+            android:name="de.dali.demonstrator.AppController"
             android:allowBackup="false"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/app_name"
@@ -23,7 +23,7 @@
             tools:ignore="GoogleAppIndexingWarning">
 
         <activity
-                android:name=".ui.main.activity.MainActivity"
+                android:name="de.dali.demonstrator.ui.main.activity.MainActivity"
                 android:screenOrientation="portrait"
                 android:windowSoftInputMode="adjustPan">
             <intent-filter>

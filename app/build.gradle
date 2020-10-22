@@ -7,7 +7,7 @@ apply plugin: "androidx.navigation.safeargs"
 android {
     compileSdkVersion 29
     defaultConfig {
-        applicationId "de.dali.thesisfingerprint2019"
+        applicationId "de.dali.demonstrator"
         minSdkVersion 23
         targetSdkVersion 29
         versionCode 1

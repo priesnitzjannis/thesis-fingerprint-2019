@@ -16,7 +16,7 @@
                           android:layout_height="wrap_content"
                           android:orientation="vertical">
 
-                <de.dali.thesisfingerprint2019.ui.base.custom.EditTextWithTitle
+                <de.dali.demonstrator.ui.base.custom.EditTextWithTitle
                         android:id="@+id/editName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -35,9 +35,9 @@
                             android:text="@string/Autofill"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
-                </de.dali.thesisfingerprint2019.ui.base.custom.EditTextWithTitle>
+                </de.dali.demonstrator.ui.base.custom.EditTextWithTitle>
 
-                <de.dali.thesisfingerprint2019.ui.base.custom.SpinnerWithTitle
+                <de.dali.demonstrator.ui.base.custom.SpinnerWithTitle
                         android:id="@+id/spinnerGender"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -46,7 +46,7 @@
                         app:title="@string/fragment_details_gender"
                         app:values="@array/fragment_details_spinner_gender"/>
 
-                <de.dali.thesisfingerprint2019.ui.base.custom.EditTextWithTitle
+                <de.dali.demonstrator.ui.base.custom.EditTextWithTitle
                         android:id="@+id/editAge"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -56,7 +56,7 @@
                         app:enabled="true"
                         app:title="@string/fragment_details_age"/>
 
-                <de.dali.thesisfingerprint2019.ui.base.custom.SpinnerWithTitle
+                <de.dali.demonstrator.ui.base.custom.SpinnerWithTitle
                         android:id="@+id/spinnerColor"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

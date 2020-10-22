@@ -6,7 +6,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-    <de.dali.thesisfingerprint2019.ui.base.custom.FingerSelectionRow
+    <de.dali.demonstrator.ui.base.custom.FingerSelectionRow
             android:id="@+id/fingerSelectionThumb"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -17,9 +17,9 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:row_title="@string/row_multiselect_thumb"
-            app:showHeader="true"></de.dali.thesisfingerprint2019.ui.base.custom.FingerSelectionRow>
+            app:showHeader="true"></de.dali.demonstrator.ui.base.custom.FingerSelectionRow>
 
-    <de.dali.thesisfingerprint2019.ui.base.custom.FingerSelectionRow
+    <de.dali.demonstrator.ui.base.custom.FingerSelectionRow
             android:id="@+id/fingerSelectionIndexFinger"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -31,7 +31,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginTop="8dp"/>
 
-    <de.dali.thesisfingerprint2019.ui.base.custom.FingerSelectionRow
+    <de.dali.demonstrator.ui.base.custom.FingerSelectionRow
             android:id="@+id/fingerSelectionMiddleFinger"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -43,7 +43,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginTop="8dp"/>
 
-    <de.dali.thesisfingerprint2019.ui.base.custom.FingerSelectionRow
+    <de.dali.demonstrator.ui.base.custom.FingerSelectionRow
             android:id="@+id/fingerSelectionRingFinger"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -55,7 +55,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginTop="8dp"/>
 
-    <de.dali.thesisfingerprint2019.ui.base.custom.FingerSelectionRow
+    <de.dali.demonstrator.ui.base.custom.FingerSelectionRow
             android:id="@+id/fingerSelectionLittleFinger"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

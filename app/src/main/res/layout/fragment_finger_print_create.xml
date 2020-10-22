@@ -28,7 +28,7 @@
                           android:layout_height="wrap_content"
                           android:orientation="vertical">
 
-                <de.dali.thesisfingerprint2019.ui.base.custom.SpinnerWithTitle
+                <de.dali.demonstrator.ui.base.custom.SpinnerWithTitle
                         android:id="@+id/spinnerLocation"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -37,7 +37,7 @@
                         app:title="@string/fragment_details_location"
                         app:values="@array/fragment_details_spinner_location"/>
 
-                <de.dali.thesisfingerprint2019.ui.base.custom.EditTextWithTitle
+                <de.dali.demonstrator.ui.base.custom.EditTextWithTitle
                         android:id="@+id/editIllumination"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -46,7 +46,7 @@
                         app:enabled="false"
                         app:title="@string/fragment_details_illumination"/>
 
-                <de.dali.thesisfingerprint2019.ui.base.custom.EditTextWithTitle
+                <de.dali.demonstrator.ui.base.custom.EditTextWithTitle
                         android:id="@+id/editVendor"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

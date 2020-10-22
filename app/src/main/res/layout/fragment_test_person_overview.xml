@@ -8,7 +8,7 @@
             android:layout_height="match_parent"
             tools:context=".ui.main.fragment.testperson.TestPersonOverviewFragment">
 
-        <de.dali.thesisfingerprint2019.ui.base.custom.ListWithLoadingSpinner
+        <de.dali.demonstrator.ui.base.custom.ListWithLoadingSpinner
                 android:id="@+id/personItems"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
