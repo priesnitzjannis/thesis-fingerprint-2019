@@ -112,9 +112,9 @@ class FingerScanningViewModel @Inject constructor(
                 val timestamp = System.currentTimeMillis()
 
                 // TestpersonID_RecordSetID_biometrischeFingerID_(FingerID)
-                var baseFileName = entity.personID.toString() + "_" + nextRecordID + "_" + list[index] + "_(" + entity.fingerPrintId.toString() + ")"
+                var baseFileName = entity.personID.toString() + "_" + nextRecordID + "_" + list[index]
 
-                val fileName = baseFileName + "_enhanced.jpg"
+                val fileName = baseFileName + ".jpg"
                 val fileNameOriginal = baseFileName +"_orig.jpg"
                 val fileNameGray = baseFileName + "_gray.jpg"
 
