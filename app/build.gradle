@@ -22,6 +22,23 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+
+    }
+
+    flavorDimensions "all"
+    productFlavors{
+        self_service {
+            applicationId "de.dali.demonstrator.self_Service"
+            resValue "string", "app_name", "Demonstrator (Self_Service)"
+            dimension "all"
+            versionName "1.0-self_servie"
+        }
+        guided {
+            applicationId "de.dali.demonstrator.guided"
+            resValue "string", "app_name", "Demonstrator (Guided)"
+            dimension "all"
+            versionName "1.0-guided"
+        }
     }
 
     dataBinding {
