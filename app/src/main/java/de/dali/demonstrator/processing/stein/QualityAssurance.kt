@@ -17,7 +17,7 @@ import javax.inject.Inject
 
 class QualityAssurance @Inject constructor() : ProcessingStep() {
 
-    var edgeDensity: Double = 0.0
+    private var edgeDensity: Double = 0.0
 
     override val TAG: String
         get() = QualityAssurance::class.java.simpleName

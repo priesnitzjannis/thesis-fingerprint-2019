@@ -42,11 +42,11 @@ class RotateFinger @Inject constructor() : ProcessingStep() {
             val rect = Imgproc.minAreaRect(myPt)
             angle = rect.angle
             if (angle > 45.0 && angle < 135.0) {
-                angle = angle - 90
+                angle -= 90
             } else if (angle < -45.0 && angle < 135.0){
-                angle = angle + 90
+                angle += 90
             } else if(angle > 135.0 && angle < 135.0){
-                angle = angle + 180
+                angle += 180
 
             }
             rotatedFinger = rotateImageByDegree(angle, originalImage)

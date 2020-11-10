@@ -251,8 +251,7 @@ object Utils {
     }
 
     fun hasValidSize(mat: Mat): Boolean {
-        var valid = mat.cols() < 333 && mat.cols() > 150 && mat.rows() < 500 && mat.rows() > 225 && mat.rows().toDouble() / mat.cols().toDouble() < 1.75 && (mat.rows().toDouble() / mat.cols().toDouble()) > 1.25
-        return valid
+        return mat.cols() < 333 && mat.cols() > 150 && mat.rows() < 500 && mat.rows() > 225 && mat.rows().toDouble() / mat.cols().toDouble() < 1.75 && (mat.rows().toDouble() / mat.cols().toDouble()) > 1.25
     }
 
     fun hasEnoughContent(mat: Mat): Boolean {

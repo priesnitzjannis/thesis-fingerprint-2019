@@ -19,7 +19,7 @@ class FingerPrintCreateViewModel @Inject constructor(
 ) :
     BaseViewModel() {
 
-    var compositeDisposable: CompositeDisposable = CompositeDisposable()
+    private var compositeDisposable: CompositeDisposable = CompositeDisposable()
 
     lateinit var testPersonEntity: TestPersonEntity
     lateinit var fingerPrintEntity: FingerPrintEntity

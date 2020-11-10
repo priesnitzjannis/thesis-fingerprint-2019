@@ -2,7 +2,6 @@ package de.dali.demonstrator.utils
 
 import androidx.appcompat.widget.AppCompatSpinner
 import androidx.lifecycle.MutableLiveData
-import de.dali.demonstrator.databinding.FragmentFingerPrintCreateBinding
 
 
 fun AppCompatSpinner.setString(value: String) {

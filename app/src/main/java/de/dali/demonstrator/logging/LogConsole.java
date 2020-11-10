@@ -6,10 +6,6 @@ public final class LogConsole {
     private LogConsole() {
     }
 
-    public static int init() {
-        return 0;
-    }
-
     /*public static boolean createLogEntry(short loggingLevel, short moduleid, String message) {
         System.out.println("New log entry:\n\tlevel: " + loggingLevel + "\n\tmodule: " + moduleid + "\n\tmessage:\n\t\t" + message);
         return true;

@@ -24,7 +24,7 @@ class Enhancement @Inject constructor() : ProcessingStep() {
         Logging.createLogEntry(
             Logging.loggingLevel_param,
             1900,
-            "Config data for Enhancement:\nCLIP_LIMIT = " + Config.CLIP_LIMIT + "\nCLAHE_ITERATIONS = " + Config.CLAHE_ITERATIONS + "\n\nGAUSSIAN_KERNEL_SIZE_LOW = " + Config.GAUSSIAN_KERNEL_SIZE_LOW + "\nGAUSSIAN_KERNEL_SIZE_HIGH = " + Config.GAUSSIAN_KERNEL_SIZE_HIGH
+            "Config data for Enhancement:\nCLIP_LIMIT = " + CLIP_LIMIT + "\nCLAHE_ITERATIONS = " + CLAHE_ITERATIONS + "\n\nGAUSSIAN_KERNEL_SIZE_LOW = " + GAUSSIAN_KERNEL_SIZE_LOW + "\nGAUSSIAN_KERNEL_SIZE_HIGH = " + GAUSSIAN_KERNEL_SIZE_HIGH
         )
         Logging.createLogEntry(Logging.loggingLevel_critical, 1900, "Enhancement started.")
         val start = System.currentTimeMillis()

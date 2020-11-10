@@ -42,7 +42,7 @@ class FingerScanningViewModel @Inject constructor(
 
     var sucessfullFingersCounter: Int = 0
 
-    var processedFingers: Int = 0
+    private var processedFingers: Int = 0
 
     var record: Boolean = false
 
@@ -93,7 +93,7 @@ class FingerScanningViewModel @Inject constructor(
             entity.fingerPrintId = id
 
             
-            var textGet: MutableMap<Int, Int> = FingerScanningFragment().getRecordSetIDs(NAME_MAIN_FOLDER)
+            val textGet: MutableMap<Int, Int> = FingerScanningFragment().getRecordSetIDs(NAME_MAIN_FOLDER)
             var nextRecordID: Int = 0
 
             if (textGet.containsKey(entity.personID.toInt())){
@@ -112,7 +112,7 @@ class FingerScanningViewModel @Inject constructor(
                 val timestamp = System.currentTimeMillis()
 
                 // TestpersonID_RecordSetID_biometrischeFingerID_(FingerID)
-                var baseFileName = entity.personID.toString() + "_" + nextRecordID + "_" + list[index]
+                val baseFileName = entity.personID.toString() + "_" + nextRecordID + "_" + list[index]
 
                 val fileName = baseFileName + ".jpg"
                 val fileNameOriginal = baseFileName +"_orig.jpg"

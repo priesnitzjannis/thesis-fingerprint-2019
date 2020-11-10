@@ -312,7 +312,6 @@ public final class Logging {
         setLogger(loggingLocation);
         switch (logger) {
             case logConsole: {
-                LogConsole.init();
                 initialised = true;
                 break;
             }

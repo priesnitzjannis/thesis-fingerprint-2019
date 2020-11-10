@@ -13,7 +13,7 @@ class FlashButton @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : AppCompatImageView(context, attrs, defStyleAttr) {
 
-    var flashState: Boolean = false
+    private var flashState: Boolean = false
         set(value) {
             if (field != value) {
                 field = value

@@ -61,7 +61,7 @@ class FingerPrintAdapter(val context: Context?) : RecyclerView.Adapter<FingerPri
         val intent = Intent()
         intent.action = ACTION_VIEW
         intent.setDataAndType(fileUri, "image/*")
-        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         startActivity(context!!, intent, null)
     }
 

@@ -10,6 +10,9 @@ import de.dali.demonstrator.processing.Utils.getThresholdImageNew
 import de.dali.demonstrator.processing.Utils.rotateImageByDegree
 import org.opencv.core.Mat
 import javax.inject.Inject
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.sin
 
 
 class FingerRotationImprecise @Inject constructor() : ProcessingStep() {
@@ -67,8 +70,8 @@ class FingerRotationImprecise @Inject constructor() : ProcessingStep() {
             var cnt = 0
 
             for (i in 0 until lBorderPixel.size){
-                if (lBorderPixel.get(i) == 255){
-                    cnt = cnt + 1
+                if (lBorderPixel[i] == 255){
+                    cnt += 1
                 }
                 if (i % reducedToDeg == reducedToDeg - 1){
                     lreducedToDeg.add(cnt)
@@ -79,12 +82,12 @@ class FingerRotationImprecise @Inject constructor() : ProcessingStep() {
             var x = 0.0
             var y = 0.0
             for (i in 0 until lreducedToDeg.size)
-                if (lreducedToDeg.get(i) > reducedToDeg / 2) {
-                    x = x + Math.cos(Math.toRadians(i.toDouble()))
-                    y = y + Math.sin(Math.toRadians(i.toDouble()))
+                if (lreducedToDeg[i] > reducedToDeg / 2) {
+                    x += cos(Math.toRadians(i.toDouble()))
+                    y += sin(Math.toRadians(i.toDouble()))
                 }
 
-            angle = Math.toDegrees(Math.atan2(y, x))
+            angle = Math.toDegrees(atan2(y, x))
             angle = -angle
 
         } catch (e:Exception){
@@ -93,7 +96,7 @@ class FingerRotationImprecise @Inject constructor() : ProcessingStep() {
 
         Log.e("Rotation angle", "Angle: " + angle.toString())
 
-        val rotatedImage = rotateImageByDegree((angle).toDouble(), originalImage)
+        val rotatedImage = rotateImageByDegree((angle), originalImage)
 
         val duration = System.currentTimeMillis() - start
         Logging.createLogEntry(

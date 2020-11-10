@@ -33,9 +33,9 @@ class TestPersonCreateFragment : BaseFragment() {
 
     lateinit var binding: FragmentTestPersonCreateBinding
 
-    lateinit var testPersonCreateViewModel: TestPersonCreateViewModel
+    private lateinit var testPersonCreateViewModel: TestPersonCreateViewModel
 
-    lateinit var progressDialog: ProgressDialog
+    private lateinit var progressDialog: ProgressDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

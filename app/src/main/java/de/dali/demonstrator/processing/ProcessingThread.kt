@@ -7,7 +7,7 @@ import org.opencv.core.CvType.CV_8UC1
 import org.opencv.core.Mat
 import org.opencv.imgproc.Imgproc
 
-class ProcessingThread(vararg val processingSteps: ProcessingStep) {
+class ProcessingThread(private vararg val processingSteps: ProcessingStep) {
 
     lateinit var grayMat: Mat
 

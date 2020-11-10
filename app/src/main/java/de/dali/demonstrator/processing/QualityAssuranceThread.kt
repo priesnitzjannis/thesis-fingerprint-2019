@@ -123,7 +123,7 @@ class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
                         }
                         if (qualityCheckedImages.none { it.edgeDens < 5.0 }) {
 
-                            if (qualityCheckedImages.all { it.imgSizeOk == true }) {
+                            if (qualityCheckedImages.all { it.imgSizeOk }) {
                                 if (highestEdgeDenseMats.isEmpty()) {
                                     highestEdgeDenseMats.addAll(qualityCheckedImages)
                                 } else {

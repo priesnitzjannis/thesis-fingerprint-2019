@@ -19,7 +19,7 @@ class FindFingerTip @Inject constructor() : ProcessingStep() {
         Logging.createLogEntry(
             Logging.loggingLevel_param,
             1600,
-            "Config data for Find Finger Tip:\nROW_TO_COL_RATIO = " + Config.ROW_TO_COL_RATIO
+            "Config data for Find Finger Tip:\nROW_TO_COL_RATIO = " + ROW_TO_COL_RATIO
         )
         val start = elapsedRealtimeNanos()
 
@@ -30,7 +30,7 @@ class FindFingerTip @Inject constructor() : ProcessingStep() {
 
         val rect = Rect(0, 0, cols, newRows)
 
-        var result = Mat(originalImage, rect)
+        val result = Mat(originalImage, rect)
 
 
         val duration = elapsedRealtimeNanos() - start

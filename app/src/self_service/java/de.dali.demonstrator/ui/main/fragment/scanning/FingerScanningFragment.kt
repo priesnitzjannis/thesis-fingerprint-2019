@@ -45,7 +45,7 @@ class FingerScanningFragment : BaseFragment() {
 
     lateinit var fingerScanningViewModel: FingerScanningViewModel
 
-    lateinit var progressDialog: ProgressDialog
+    private lateinit var progressDialog: ProgressDialog
 
     lateinit var mRgba: Mat
 
@@ -224,26 +224,26 @@ class FingerScanningFragment : BaseFragment() {
     }
 
     fun storeRecordSetIDs(list: MutableMap<Int, Int>, path: String){
-        var filename = "recordSetIDs.txt"
-        var text: String = ""
+        val filename = "recordSetIDs.txt"
+        var text = ""
 
         list.forEach { (index, element) ->
             text = text + index + ":" + element + "_"
         }
         //TODO absoluten Pfad nicht hardcoden
-        var file = File("sdcard/$path/$filename")
+        val file = File("sdcard/$path/$filename")
         file.writeText(text)
 
     }
 
-    fun readFileDirectlyAsText(fileName: String): String
+    private fun readFileDirectlyAsText(fileName: String): String
             = File(fileName).readText(Charsets.UTF_8)
 
     fun getRecordSetIDs(path: String): MutableMap<Int, Int> {
-        var filename = "recordSetIDs.txt"
-        var file = File("sdcard/$path/$filename")
+        val filename = "recordSetIDs.txt"
+        val file = File("sdcard/$path/$filename")
         var outText: String
-        var out: MutableMap<Int, Int> = mutableMapOf()
+        val out: MutableMap<Int, Int> = mutableMapOf()
 
         // Einlesen und zu Map verarbeiten korrigieren
 
@@ -251,8 +251,8 @@ class FingerScanningFragment : BaseFragment() {
            outText = readFileDirectlyAsText("sdcard/$path/$filename")
 
             while(outText.isNotEmpty()){
-                var key: Int = outText.substring(0, 1).toInt()
-                var value: Int = outText.substring(2,3).toInt()
+                val key: Int = outText.substring(0, 1).toInt()
+                val value: Int = outText.substring(2,3).toInt()
                 out[key] = value
                 outText = outText.substring(4)
             }

@@ -33,7 +33,7 @@ class AppController : Application(), HasActivityInjector {
             .inject(this)
 
         //val start2 = System.currentTimeMillis()
-        var modules: ArrayList<Module> = ArrayList<Module>()
+        val modules: ArrayList<Module> = ArrayList()
 
         modules.add(Module(0, "N/A"))
         modules.add(Module(1, "App General"))
@@ -56,7 +56,7 @@ class AppController : Application(), HasActivityInjector {
 
         // Enhancement
         modules.add(Module(1900, "Enhancement"))
-        Logging.init(Logging.loggerValues.logSQLite, Logging.loggingLevel_debug, "1.0.0", modules, this);
+        Logging.init(Logging.loggerValues.logSQLite, Logging.loggingLevel_debug, "1.0.0", modules, this)
         //Logging.disableImageLogging()
 
         //val duration2 = System.currentTimeMillis() - start2

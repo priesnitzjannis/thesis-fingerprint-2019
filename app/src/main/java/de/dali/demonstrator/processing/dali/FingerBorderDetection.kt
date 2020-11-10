@@ -31,7 +31,7 @@ class FingerBorderDetection @Inject constructor() : ProcessingStep() {
         Logging.createLogEntry(
             Logging.loggingLevel_param,
             1500,
-            "Config data for Finger Border Detection:\nKERNEL_SIZE_BLUR = " + Config.KERNEL_SIZE_BLUR + "\n\nTHRESHOLD_MAX = " + Config.THRESHOLD_MAX + "\nBLOCKSIZE = " + Config.BLOCKSIZE + "\n\nDILATE_KERNEL_SIZE = " + Config.DILATE_KERNEL_SIZE + "\nDILATE_ITERATIONS = " + Config.DILATE_ITERATIONS + "\n\nERODE_KERNEL_SIZE = " + Config.ERODE_KERNEL_SIZE + "\nERODE_ITERATIONS = " + Config.ERODE_ITERATIONS + "\n\nPIXEL_TO_CROP = " + Config.PIXEL_TO_CROP
+            "Config data for Finger Border Detection:\nKERNEL_SIZE_BLUR = " + Config.KERNEL_SIZE_BLUR + "\n\nTHRESHOLD_MAX = " + Config.THRESHOLD_MAX + "\nBLOCKSIZE = " + Config.BLOCKSIZE + "\n\nDILATE_KERNEL_SIZE = " + Config.DILATE_KERNEL_SIZE + "\nDILATE_ITERATIONS = " + Config.DILATE_ITERATIONS + "\n\nERODE_KERNEL_SIZE = " + Config.ERODE_KERNEL_SIZE + "\nERODE_ITERATIONS = " + Config.ERODE_ITERATIONS + "\n\nPIXEL_TO_CROP = " + PIXEL_TO_CROP
         )
         val start = System.currentTimeMillis()
         Logging.createLogEntry(Logging.loggingLevel_critical, 1500, "runReturnMultiple input image", originalImage)

@@ -46,9 +46,9 @@ class FingerPrintCreateFragment : BaseFragment() {
 
     lateinit var binding: FragmentFingerPrintCreateBinding
 
-    lateinit var fingerPrintCreateViewModel: FingerPrintCreateViewModel
+    private lateinit var fingerPrintCreateViewModel: FingerPrintCreateViewModel
 
-    lateinit var adapter: FingerPrintAdapter
+    private lateinit var adapter: FingerPrintAdapter
 
     lateinit var lightEventListener: SensorEventListener
 

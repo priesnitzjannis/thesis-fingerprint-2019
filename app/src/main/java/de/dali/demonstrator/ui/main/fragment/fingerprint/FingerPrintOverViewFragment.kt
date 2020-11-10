@@ -35,11 +35,11 @@ class FingerPrintOverViewFragment : BaseFragment() {
 
     lateinit var binding: FragmentFingerPrintOverviewBinding
 
-    lateinit var fingerPrintOverViewModel: FingerPrintOverviewViewModel
+    private lateinit var fingerPrintOverViewModel: FingerPrintOverviewViewModel
 
     lateinit var testPersonOverviewFragment: TestPersonOverviewFragment
 
-    lateinit var adapter: FingerPrintListAdapter
+    private lateinit var adapter: FingerPrintListAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
