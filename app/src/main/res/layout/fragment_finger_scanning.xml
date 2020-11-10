@@ -27,7 +27,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 android:scaleType="fitXY"
                 android:visibility="visible"
-                />
+                android:contentDescription="Holds the Camera Overlay" />
 
 
 

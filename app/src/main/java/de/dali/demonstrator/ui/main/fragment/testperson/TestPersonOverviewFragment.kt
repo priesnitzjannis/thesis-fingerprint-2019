@@ -23,7 +23,7 @@ import de.dali.demonstrator.ui.main.viewmodel.testperson.TestPersonOverviewViewM
 import de.dali.demonstrator.utils.Constants
 import de.dali.demonstrator.utils.PermissionHandling
 import kotlinx.android.synthetic.main.childview_list.view.*
-import kotlinx.android.synthetic.main.fragment_finger_selection.view.*
+import kotlinx.android.synthetic.main.view_list_with_loading_spinner.view.*
 import javax.inject.Inject
 
 // Testpersonen Übersicht

@@ -18,7 +18,8 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:contentDescription="Holds the Fingerprint Icon" />
 
     <TextView
             android:id="@+id/txtRecordSet"

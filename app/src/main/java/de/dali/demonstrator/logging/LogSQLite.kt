@@ -111,7 +111,7 @@ class LogSQLite {
         Thread(Runnable {
             val loggingMessage =
                 LoggingMessage(
-                    appVersion!!,
+                    appVersion,
                     phone.phoneID,
                     loggingLevel,
                     moduleID,
@@ -148,7 +148,7 @@ class LogSQLite {
         Thread(Runnable {
             val loggingMessage =
                 LoggingMessage(
-                    appVersion!!,
+                    appVersion,
                     phone.phoneID,
                     loggingLevel,
                     moduleID,
@@ -188,7 +188,7 @@ class LogSQLite {
 
             val loggingMessage =
                 LoggingMessage(
-                    appVersion!!, phone.phoneID,
+                    appVersion, phone.phoneID,
                     loggingLevel,
                     moduleID,
                     message,
@@ -227,7 +227,7 @@ class LogSQLite {
 
             val loggingMessage =
                 LoggingMessage(
-                    appVersion!!, phone.phoneID,
+                    appVersion, phone.phoneID,
                     loggingLevel,
                     moduleID,
                     message,
@@ -266,9 +266,6 @@ class LogSQLite {
     }
 
     fun endRun(runID: Long, returnCode: Int) {
-        if (runID == null) {
-            return
-        }
         Thread(Runnable {
             var runs = SQLDB!!.runDao().getRunByID(runID)
 
@@ -297,9 +294,6 @@ class LogSQLite {
     }
 
     fun cancelAcquisition(acquisitionID: Long) {
-        if (acquisitionID == null) {
-            return
-        }
         Thread(Runnable {
             var acquisitions = SQLDB!!.acquisitionDao().getAcquisitionByID(acquisitionID)
 
@@ -311,9 +305,6 @@ class LogSQLite {
     }
 
     fun completeAcquisition(acquisitionID: Long, fingerPrintID: Long) {
-        if (acquisitionID == null) {
-            return
-        }
         Thread(Runnable {
             var acquisitions = SQLDB!!.acquisitionDao().getAcquisitionByID(acquisitionID)
 
@@ -364,16 +355,12 @@ class LogSQLite {
                 loggingModuleID,
                 "Cannot save image."
             )
-            Log.d("Exception", e.message)
+            Log.d("Exception", e.message.toString())
             return null
         }
     }
 
     fun convertMatToBitMap(input: Mat): Bitmap? {
-        if (input == null) {
-            //println("Cannot save image, cannot convert null to bitmap")
-            return null
-        }
 
         var bmp: Bitmap? = null
         val rgb = Mat()
@@ -395,17 +382,13 @@ class LogSQLite {
                 loggingModuleID,
                 "Cannot save image."
             )
-            Log.d("Exception", e.message)
+            Log.d("Exception", e.message.toString())
         }
 
         return bmp
     }
 
     fun saveImageToGallery(pathName: String, fileName: String, bitmap: Bitmap, quality: Int) {
-        if (bitmap == null) {
-            //println("Cannot save image, cannot save null")
-            return
-        }
 
         //println("saving to gallery...")
 
@@ -434,7 +417,7 @@ class LogSQLite {
                 loggingModuleID,
                 "Cannot save image."
             )
-            Log.d("Exception", e.message)
+            Log.d("Exception", e.message.toString())
         }
     }
 

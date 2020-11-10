@@ -78,7 +78,7 @@ object Utils {
     fun getDeviceName(): String {
         val manufacturer = Build.MANUFACTURER
         val model = Build.MODEL
-        return if (model.toLowerCase().startsWith(manufacturer.toLowerCase())) {
+        return if (model.toLowerCase(Locale.ROOT).startsWith(manufacturer.toLowerCase(Locale.ROOT))) {
             capitalize(model)
         } else {
             capitalize(manufacturer) + " " + model

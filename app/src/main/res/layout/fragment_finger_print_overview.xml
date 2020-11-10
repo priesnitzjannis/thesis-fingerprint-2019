@@ -28,7 +28,8 @@
                 android:src="@drawable/ic__plus"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                app:layout_constraintEnd_toEndOf="parent"
+                android:contentDescription="Add new Fingerprints" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/btnBackToMainMenu"
@@ -39,7 +40,8 @@
                 android:src="@drawable/ic_user_white"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                android:contentDescription="Go back to Main Menu" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

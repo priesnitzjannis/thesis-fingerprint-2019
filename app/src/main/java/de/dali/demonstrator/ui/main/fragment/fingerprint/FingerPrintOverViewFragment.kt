@@ -24,7 +24,7 @@ import de.dali.demonstrator.ui.main.activity.MainActivity
 import de.dali.demonstrator.ui.main.fragment.testperson.TestPersonOverviewFragment
 import de.dali.demonstrator.ui.main.viewmodel.fingerprint.FingerPrintOverviewViewModel
 import kotlinx.android.synthetic.main.childview_list.view.*
-import kotlinx.android.synthetic.main.fragment_finger_selection.view.*
+import kotlinx.android.synthetic.main.view_list_with_loading_spinner.view.*
 import javax.inject.Inject
 
 // Recordsetübersicht einer einzelnen Person
