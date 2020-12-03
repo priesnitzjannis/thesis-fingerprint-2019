@@ -29,12 +29,12 @@ public final class Logging {
 
     private static LogSQLite SQLDB = null;
 
-    public static long loggingLevel_param = 1;
-    public static long loggingLevel_critical = 2;
-    public static long loggingLevel_medium = 3;
-    public static long loggingLevel_debug = 4;
+    public static final long loggingLevel_param = 1;
+    public static final long loggingLevel_critical = 2;
+    public static final long loggingLevel_medium = 3;
+    public static final long loggingLevel_debug = 4;
 
-    private static Map<Long, Boolean> paramsWritten = new HashMap<Long, Boolean>();
+    private static final Map<Long, Boolean> paramsWritten = new HashMap<Long, Boolean>();
 
     /**
      * All methods are static, therefore a callable constructor does not make sense
@@ -46,11 +46,9 @@ public final class Logging {
      * Set the location for logs to be saved
      *
      * @param logger the logation as enum
-     * @return true if successful, false otherwise
      */
-    public static boolean setLogger(loggerValues logger) {
+    public static void setLogger(loggerValues logger) {
         Logging.logger = logger;
-        return true;
     }
 
     public static void enableImageLogging() {
@@ -457,12 +455,12 @@ public final class Logging {
 
         if (loggingLevel > loggingLevel_debug) {
             System.out.println("invalid logging level");
-            return false;
+            return true;
         }
 
         // Check if the logging module has been initialised and if the logging level is low enough
         if (loggingLevel > Logging.loggingLevel || !initialised) {
-            return false;
+            return true;
         }
 
         Mat imageMat = origMat.clone();
@@ -495,11 +493,11 @@ public final class Logging {
             }
             default: {
                 // all possible cases for logging methods should be covered by the switch statement, i.e. the default case should never be used
-                return false;
+                return true;
             }
         }
 
-        return result;
+        return !result;
     }
 
     /*

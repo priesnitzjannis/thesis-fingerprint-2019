@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey;
 @Entity(tableName = "module")
 public class Module {
 
-    @PrimaryKey(autoGenerate = false)
+    @PrimaryKey()
     @NonNull
     private long moduleID;
 
