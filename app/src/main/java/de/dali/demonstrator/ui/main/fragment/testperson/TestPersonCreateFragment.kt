@@ -15,6 +15,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.NavHostFragment
+import com.facebook.stetho.inspector.protocol.module.Network
 import dagger.android.support.AndroidSupportInjection
 import de.dali.demonstrator.R
 import de.dali.demonstrator.data.local.entity.TestPersonEntity
@@ -22,6 +23,9 @@ import de.dali.demonstrator.databinding.FragmentTestPersonCreateBinding
 import de.dali.demonstrator.logging.Logging
 import de.dali.demonstrator.ui.base.BaseFragment
 import de.dali.demonstrator.ui.main.viewmodel.testperson.TestPersonCreateViewModel
+import de.dali.demonstrator.utils.Constants.NAME_MAIN_FOLDER
+import org.json.JSONObject
+import java.io.File
 import java.time.LocalDateTime
 import javax.inject.Inject
 
@@ -111,9 +115,26 @@ class TestPersonCreateFragment : BaseFragment() {
     }
 
     private fun navToFingerPrintOverViewFrag(entity: TestPersonEntity) {
+        writeTestPersonToConfig(entity)
+
         val action = TestPersonCreateFragmentDirections
             .toFingerPrintOverViewFragment(entity)
         NavHostFragment.findNavController(this).navigate(action)
+    }
+
+    private fun writeTestPersonToConfig(entity: TestPersonEntity){
+        val filename = "TestPersonEntity.txt"
+        var textJSON = JSONObject()
+        textJSON.put("personID", entity.personID)
+        textJSON.put("name", entity.name)
+        textJSON.put("gender", entity.gender)
+        textJSON.put("age", entity.age)
+        textJSON.put("skinColor", entity.skinColor)
+        textJSON.put("timestamp", entity.timestamp)
+
+        val file = File("sdcard/$NAME_MAIN_FOLDER/$filename")
+
+        file.writeText(textJSON.toString())
     }
 
     private fun handleOnClick() {

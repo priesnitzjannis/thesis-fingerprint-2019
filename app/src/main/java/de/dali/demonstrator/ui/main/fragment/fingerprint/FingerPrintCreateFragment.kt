@@ -26,10 +26,13 @@ import de.dali.demonstrator.logging.Logging
 import de.dali.demonstrator.ui.base.BaseFragment
 import de.dali.demonstrator.ui.base.custom.FingerPrintAdapter
 import de.dali.demonstrator.ui.main.viewmodel.fingerprint.FingerPrintCreateViewModel
+import de.dali.demonstrator.utils.Constants.NAME_MAIN_FOLDER
 import de.dali.demonstrator.utils.Utils
 import de.dali.demonstrator.utils.update
 import kotlinx.android.synthetic.main.fragment_finger_print_create.*
 import kotlinx.android.synthetic.main.row_multiselect.view.*
+import org.json.JSONObject
+import java.io.File
 import javax.inject.Inject
 
 // Fingerabdruck aufnehmen - Einstellungen
@@ -233,6 +236,7 @@ class FingerPrintCreateFragment : BaseFragment() {
 
 
     private fun initOnCLick() {
+
         binding.btnScan.setOnClickListener {
             handleOnClick()
         }
@@ -295,11 +299,41 @@ class FingerPrintCreateFragment : BaseFragment() {
 
         Logging.createLogEntry(Logging.loggingLevel_critical, 100, "Finger selection includes finger" + fingers)
 
+        writeFingerPrintToConfig(entity)
+        writeListToConfig(list.toIntArray())
 
         val action = FingerPrintCreateFragmentDirections
             .toFingerScanningFragment(entity, list.toIntArray())
         NavHostFragment.findNavController(this).navigate(action)
     }
+
+    private fun writeFingerPrintToConfig(entity: FingerPrintEntity) {
+        val filename = "FingerPrintEntity.txt"
+        var textJSON = JSONObject()
+        textJSON.put("fingerPrintId", entity.fingerPrintId)
+        textJSON.put("personID", entity.personID)
+        textJSON.put("location", entity.location)
+        textJSON.put("vendor", entity.vendor)
+        textJSON.put("timestamp", entity.timestamp)
+
+        val file = File("sdcard/$NAME_MAIN_FOLDER/$filename")
+
+        file.writeText(textJSON.toString())
+    }
+
+    private fun writeListToConfig(list: IntArray) {
+        val filename = "ListConfig.txt"
+        var textJSON = JSONObject()
+
+        var listPosition = 0
+        list.forEach { textJSON.put(listPosition.toString(), it)
+        listPosition += 1}
+
+        val file = File("sdcard/$NAME_MAIN_FOLDER/$filename")
+
+        file.writeText(textJSON.toString())
+    }
+
 
     private fun handleOnClick() {
         if (fingerPrintCreateViewModel.isEntityInitialized()) {
