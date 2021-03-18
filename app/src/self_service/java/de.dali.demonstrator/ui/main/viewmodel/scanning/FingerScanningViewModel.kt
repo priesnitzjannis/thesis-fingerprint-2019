@@ -155,6 +155,7 @@ class FingerScanningViewModel @Inject constructor(
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(onSuccess, onError)
 
+
         compositeDisposable.add(disposable)
     }
 

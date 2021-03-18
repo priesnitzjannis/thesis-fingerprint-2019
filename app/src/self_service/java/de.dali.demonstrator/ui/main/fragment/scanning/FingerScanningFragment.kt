@@ -171,8 +171,9 @@ class FingerScanningFragment : BaseFragment() {
                 }, {
                     Log.e(TAG, it.message)
                 })
-            }
-        }
+            }   // zwischen hier
+            //TODO: Endlosschleife reparieren
+        } // und hier passiert die endlosschleife
 
         fingerScanningViewModel.setOnUpdate { result, message, frameNumber ->
             when (result) {
