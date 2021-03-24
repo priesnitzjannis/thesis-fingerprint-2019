@@ -83,8 +83,8 @@ class FingerScanningViewModel @Inject constructor(
 
     fun processImages(
         images: List<FingerPrintIntermediateEntity>,
-        onSuccess: (Unit) -> Unit,
-        onError: (Throwable) -> Unit
+        onSuccess: (Unit) -> Unit //,
+//        onError: (Throwable) -> Unit
     ) {
 
         val disposable = Single.fromCallable {
@@ -153,7 +153,7 @@ class FingerScanningViewModel @Inject constructor(
         }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(onSuccess, onError)
+            .subscribe(onSuccess/*, onError*/)
 
 
         compositeDisposable.add(disposable)

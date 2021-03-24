@@ -251,10 +251,10 @@ class FingerScanningFragment : BaseFragment() {
            outText = readFileDirectlyAsText("sdcard/$path/$filename")
 
             while(outText.isNotEmpty()){
-                var key: Int = outText.substring(0, 1).toInt()
-                var value: Int = outText.substring(2,3).toInt()
+                val key: Int = outText.substring(0, outText.indexOf(':')).toInt()
+                val value: Int = outText.substring(outText.indexOf(':') + 1,outText.indexOf('_')).toInt()
                 out[key] = value
-                outText = outText.substring(4)
+                outText = outText.substring(outText.indexOf('_') + 1)
             }
             return out
         } else {

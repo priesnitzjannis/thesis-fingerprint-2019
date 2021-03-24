@@ -165,15 +165,15 @@ class FingerScanningFragment : BaseFragment() {
                 binding.javaCamera2View.disableView()
                 showProgressDialogWithTitle()
 
-                fingerScanningViewModel.processImages(it, {
+                fingerScanningViewModel.processImages(it) {
                     progressDialog.dismiss()
                     NavHostFragment.findNavController(this).navigateUp()
-                }, {
+                }/*, {
                     Log.e(TAG, it.message)
-                })
+                }*/
             }   // zwischen hier
             //TODO: Endlosschleife reparieren
-        } // und hier passiert die endlosschleife
+        }  // und hier passiert die endlosschleife
 
         fingerScanningViewModel.setOnUpdate { result, message, frameNumber ->
             when (result) {
@@ -222,6 +222,7 @@ class FingerScanningFragment : BaseFragment() {
         progressDialog.setTitle("Please Wait..")
         progressDialog.setMessage("Processing the image ...")
         progressDialog.show()
+
     }
 
     fun storeRecordSetIDs(list: MutableMap<Int, Int>, path: String){
@@ -252,10 +253,10 @@ class FingerScanningFragment : BaseFragment() {
            outText = readFileDirectlyAsText("sdcard/$path/$filename")
 
             while(outText.isNotEmpty()){
-                val key: Int = outText.substring(0, 1).toInt()
-                val value: Int = outText.substring(2,3).toInt()
+                val key: Int = outText.substring(0, outText.indexOf(':')).toInt()
+                val value: Int = outText.substring(outText.indexOf(':') + 1,outText.indexOf('_')).toInt()
                 out[key] = value
-                outText = outText.substring(4)
+                outText = outText.substring(outText.indexOf('_') + 1)
             }
             return out
         } else {
