@@ -287,7 +287,7 @@ class FingerPrintCreateFragment : BaseFragment() {
     }
 
     private fun navToFingerScanningFrag(entity: FingerPrintEntity, list: List<Int>) {
-        // TODO
+        // to do:
         // Check that the finger numbering is correct
         var fingers = ""
         for (currentFinger in list) {

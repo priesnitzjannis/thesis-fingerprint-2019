@@ -104,7 +104,7 @@ class LogSQLite {
         message: String,
         timestamp: String
     ): Boolean {
-        // TODO
+        // to do:
         // See if you can get a return code from the other thread
         // could introduce problems if the main threads waits
 
@@ -141,7 +141,7 @@ class LogSQLite {
         timestamp: String,
         runID: Long
     ): Boolean {
-        // TODO
+        // to do:
         // See if you can get a return code from the other thread
         // could introduce problems if the main threads waits
 
@@ -180,7 +180,7 @@ class LogSQLite {
         timestamp: String,
         imageMat: Mat
     ): Boolean {
-        // TODO
+        // to do:
         // See if you can get a return code from the other thread
         // could introduce problems if the main threads waits
 
@@ -219,7 +219,7 @@ class LogSQLite {
         runID: Long,
         imageMat: Mat
     ): Boolean {
-        // TODO
+        // to do:
         // See if you can get a return code from the other thread
         // could introduce problems if the main threads waits
 

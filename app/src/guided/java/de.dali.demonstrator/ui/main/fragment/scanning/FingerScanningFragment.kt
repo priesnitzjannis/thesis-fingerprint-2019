@@ -59,7 +59,7 @@ class FingerScanningFragment : BaseFragment() {
         override fun onCameraViewStopped() {
             mRgba.release()
             Logging.createLogEntry(Logging.loggingLevel_critical, 1300, "Scanning stopped.")
-            // TODO:
+            // to do:
             // distinguish between cancellation (back) & home button (possible to return)
             //Logging.cancelAcquisition()
         }
@@ -169,7 +169,7 @@ class FingerScanningFragment : BaseFragment() {
                     progressDialog.dismiss()
                     NavHostFragment.findNavController(this).navigateUp()
                 }, {
-                    Log.e(TAG, it.message)
+                    /*Log.e(TAG, it.message)*/
                 })
             }
         }
@@ -230,7 +230,7 @@ class FingerScanningFragment : BaseFragment() {
         list.forEach { (index, element) ->
             text = text + index + ":" + element + "_"
         }
-        //TODO absoluten Pfad nicht hardcoden
+        //to do: absoluten Pfad nicht hardcoden
         var file = File("sdcard/$path/$filename")
         file.writeText(text)
 

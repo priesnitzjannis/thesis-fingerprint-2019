@@ -59,7 +59,7 @@ class FingerScanningFragment : BaseFragment() {
         override fun onCameraViewStopped() {
             mRgba.release()
             Logging.createLogEntry(Logging.loggingLevel_critical, 1300, "Scanning stopped.")
-            // TODO:
+            // to do:
             // distinguish between cancellation (back) & home button (possible to return)
             //Logging.cancelAcquisition()
         }
@@ -172,7 +172,7 @@ class FingerScanningFragment : BaseFragment() {
                     Log.e(TAG, it.message)
                 }*/
             }   // zwischen hier
-            //TODO: Endlosschleife reparieren
+            // to do: Endlosschleife reparieren
         }  // und hier passiert die endlosschleife
 
         fingerScanningViewModel.setOnUpdate { result, message, frameNumber ->
@@ -232,7 +232,7 @@ class FingerScanningFragment : BaseFragment() {
         list.forEach { (index, element) ->
             text = text + index + ":" + element + "_"
         }
-        //TODO absoluten Pfad nicht hardcoden
+        // to do: absoluten Pfad nicht hardcoden
         val file = File("sdcard/$path/$filename")
         file.writeText(text)
 

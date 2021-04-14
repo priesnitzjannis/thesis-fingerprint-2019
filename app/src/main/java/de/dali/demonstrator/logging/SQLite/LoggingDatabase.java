@@ -29,7 +29,7 @@ import de.dali.demonstrator.logging.SQLite.Entity.Acquisition;
         Acquisition.class},
         exportSchema = false, version = 18)
 public abstract class LoggingDatabase extends RoomDatabase {
-    // TODO
+    // to do:
     // Add Person, connected to run as expected Person or similar
 
 

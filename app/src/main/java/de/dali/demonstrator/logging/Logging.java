@@ -255,7 +255,7 @@ public final class Logging {
      */
     private static String getISOTimestamp() {
         // Z stands for UTC±00:00
-        // TODO
+        // to do:
         // Check if Z can be safely replaced by UTC±00:00
         ZonedDateTime zdt = ZonedDateTime.now();
         return zdt.format(DateTimeFormatter.ISO_INSTANT);
@@ -334,7 +334,7 @@ public final class Logging {
         }
 
         if (initialised) {
-            // TODO
+            // to do:
             // redo createLogEntry signature
             createLogEntry(Logging.loggingLevel_critical, loggingModuleID, "Logging initialised, logging level: " + newLoggingLevel + "; App version: " + newAppVersion);
             return 0;
@@ -388,7 +388,7 @@ public final class Logging {
      * @return true if the message has been logged, false otherwise
      */
     public static boolean createLogEntry(long loggingLevel, long moduleid, String message) {
-        // TODO
+        // to do:
         // implement possible logging locations
         // implement all items that need to be logged
         // error code as return values
@@ -450,7 +450,7 @@ public final class Logging {
      * @return true if the message has been logged, false otherwise
      */
     public static boolean createLogEntry(long loggingLevel, long moduleID, String message, Mat origMat) {
-        // TODO
+        // to do:
         // error code as return values
 
         if (loggingLevel > loggingLevel_debug) {
