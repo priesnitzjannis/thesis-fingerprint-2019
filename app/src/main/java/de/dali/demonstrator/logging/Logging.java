@@ -36,6 +36,9 @@ public final class Logging {
 
     private static final Map<Long, Boolean> paramsWritten = new HashMap<Long, Boolean>();
 
+
+    private static long imageRunStartTime = 0;
+    private static long acquisitionStartTime = 0;
     /**
      * All methods are static, therefore a callable constructor does not make sense
      */
@@ -130,8 +133,8 @@ public final class Logging {
             }
         }
 
-        createLogEntry(Logging.loggingLevel_critical, loggingModuleID, "ImageRun " + run + " has begun");
-
+        imageRunStartTime = System.currentTimeMillis();
+        createLogEntry(Logging.loggingLevel_critical, loggingModuleID, "ImageRun " + run + " has begun" + getISOTimestamp());
         return;
     }
 
@@ -146,7 +149,7 @@ public final class Logging {
             return;
         }
 
-        createLogEntry(Logging.loggingLevel_critical, loggingModuleID, "ImageRun " + run + " has ended with return code " + code);
+        createLogEntry(Logging.loggingLevel_critical, loggingModuleID, "ImageRun " + run + " has ended with return code " + code + "in " +  (System.currentTimeMillis() - imageRunStartTime));
 
         switch (logger) {
             case logSQLite: {
@@ -189,7 +192,8 @@ public final class Logging {
             }
         }
 
-        createLogEntry(Logging.loggingLevel_critical, loggingModuleID, "Acquisition " + acquisition + " has begun");
+        acquisitionStartTime = System.currentTimeMillis();
+        createLogEntry(Logging.loggingLevel_critical, loggingModuleID, "Acquisition " + acquisition + " has begun" +  getISOTimestamp());
     }
 
     public static void cancelAcquisition() {
@@ -198,7 +202,7 @@ public final class Logging {
             return;
         }
 
-        createLogEntry(Logging.loggingLevel_critical, loggingModuleID, "Acquisition " + acquisition + " has been cancelled");
+        createLogEntry(Logging.loggingLevel_critical, loggingModuleID, "Acquisition " + acquisition + " has been cancelled in "  + (System.currentTimeMillis() - imageRunStartTime));
 
         switch (logger) {
             case logSQLite: {
@@ -226,7 +230,7 @@ public final class Logging {
         }
 
 
-        createLogEntry(Logging.loggingLevel_critical, loggingModuleID, "Acquisition " + acquisition + " has been completed");
+        createLogEntry(Logging.loggingLevel_critical, loggingModuleID, "Acquisition " + acquisition + " has been completed in " + (System.currentTimeMillis() - acquisitionStartTime));
 
         switch (logger) {
             case logSQLite: {
@@ -243,7 +247,6 @@ public final class Logging {
                 return;
             }
         }
-
         acquisition = null;
     }
 

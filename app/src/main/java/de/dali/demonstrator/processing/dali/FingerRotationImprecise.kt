@@ -94,7 +94,7 @@ class FingerRotationImprecise @Inject constructor() : ProcessingStep() {
             return originalImage
         }
 
-        Log.e("Rotation angle", "Angle: " + angle.toString())
+        //Log.e("Rotation angle", "Angle: " + angle.toString())
 
         val rotatedImage = rotateImageByDegree((angle), originalImage)
 

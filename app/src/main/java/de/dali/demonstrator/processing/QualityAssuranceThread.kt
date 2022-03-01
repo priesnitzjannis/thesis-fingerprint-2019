@@ -73,7 +73,7 @@ class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
                     Logging.createLogEntry(
                         Logging.loggingLevel_critical,
                         1100,
-                        "Started processing of an image.",
+                        "Started processing of an image. Start time:" + start,
                         image
                     )
                 } catch (e: NullPointerException){
@@ -147,7 +147,7 @@ class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
                                     clearQueue()
                                     quit()
                                     onSuccess(highestEdgeDenseMats)
-                                    Logging.createLogEntry(Logging.loggingLevel_critical, 1100, "Processing completed.")
+                                    Logging.createLogEntry(Logging.loggingLevel_critical, 1100, "Processing completed")
                                 }
                             } else {
                                 onUpdate(FAILURE, "Finger Segmentation failed", processedImages)
@@ -217,8 +217,6 @@ class QualityAssuranceThread(vararg val processingStep: ProcessingStep) :
             val image = originalImage.clone()
             message.obj = image
             handler.sendMessage(message)
-
-            //Logging.createLogEntry(40, 1100, "Pipeline started with an image.", originalImage) duplicate
         }
     }
 
