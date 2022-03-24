@@ -4,6 +4,7 @@ package de.dali.demonstrator.ui.main.viewmodel.scanning
 import de.dali.demonstrator.data.local.entity.FingerPrintEntity
 import de.dali.demonstrator.data.local.entity.FingerPrintIntermediateEntity
 import de.dali.demonstrator.data.local.entity.ImageEntity
+import de.dali.demonstrator.data.local.entity.TestPersonEntity
 import de.dali.demonstrator.data.repository.FingerPrintRepository
 import de.dali.demonstrator.data.repository.ImageRepository
 import de.dali.demonstrator.logging.Logging
@@ -18,13 +19,16 @@ import de.dali.demonstrator.processing.Utils.hasValidSize
 import de.dali.demonstrator.processing.common.RotateFinger
 import de.dali.demonstrator.ui.base.BaseViewModel
 import de.dali.demonstrator.ui.main.fragment.scanning.FingerScanningFragment
+import de.dali.demonstrator.ui.main.fragment.testperson.TestPersonCreateFragment
 import de.dali.demonstrator.utils.Constants.NAME_MAIN_FOLDER
 import de.dali.demonstrator.utils.Utils
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import org.json.JSONObject
 import org.opencv.core.Mat
+import java.io.File
 import java.math.RoundingMode
 import javax.inject.Inject
 import javax.inject.Named
@@ -39,7 +43,6 @@ class FingerScanningViewModel @Inject constructor(
 
     lateinit var list: List<Int>
     lateinit var entity: FingerPrintEntity
-
     var sucessfullFingersCounter: Int = 0
 
     var processedFingers: Int = 0
@@ -81,6 +84,17 @@ class FingerScanningViewModel @Inject constructor(
         qualityAssuranceThread.sensorOrientation = sensorOrientation
     }
 
+
+    fun getTestPersonFromConfig(): String {
+        val filename = "TestPersonEntity.txt"
+        val file = File("sdcard/$NAME_MAIN_FOLDER/$filename")
+        var textJSON = file.readText()
+        var name = textJSON.replace("\"", "")
+        var name2 = name.split(",")
+        var name3 = name2[1].split(":")
+        return name3[1]
+    }
+
     fun processImages(
         images: List<FingerPrintIntermediateEntity>,
         onSuccess: (Unit) -> Unit,
@@ -91,7 +105,7 @@ class FingerScanningViewModel @Inject constructor(
             val id = fingerPrintRepository.insert(entity)
 
             entity.fingerPrintId = id
-
+            var name = getTestPersonFromConfig()
             
             var textGet: MutableMap<Int, Int> = FingerScanningFragment().getRecordSetIDs(NAME_MAIN_FOLDER)
             var nextRecordID: Int = 0
@@ -112,8 +126,8 @@ class FingerScanningViewModel @Inject constructor(
                 val timestamp = System.currentTimeMillis()
 
                 // TestpersonID_RecordSetID_biometrischeFingerID_(FingerID)
-                var baseFileName = entity.personID.toString() + "_" + nextRecordID + "_" + list[index]
-
+                //var baseFileName = entity.personID.toString() + "_" + nextRecordID + "_" + list[index]
+                var baseFileName = name + "_" + nextRecordID + "_" + list[index]
                 val fileName = baseFileName + ".jpg"
                 val fileNameOriginal = baseFileName +"_orig.jpg"
                 val fileNameGray = baseFileName + "_gray.jpg"
